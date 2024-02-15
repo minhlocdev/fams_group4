@@ -1,5 +1,6 @@
 import { lazy } from "react"
 import AppContainer from "../components/shared/layout/AppContainer"
+import UserPermission from "../pages/UserPermission"
 
 const UserManagement = lazy(() => import('../pages/UserManagement'))
 const SyllabusListing = lazy(() => import('../pages/SyllabusListing'))
@@ -19,6 +20,10 @@ export const publicRoute = [
     {
         path: "/user",
         element: <UserManagement />,
+    },
+    {
+        path: "/user/permission",
+        element: <UserPermission />,
     },
     {
         path: "/syllabus",

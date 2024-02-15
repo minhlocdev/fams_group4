@@ -95,12 +95,11 @@ const menus = [
   },
   {
     id: "6",
-    to: "/user/list",
     icon: <GroupIcon />,
     title: "User Management",
     submenu: [
       {
-        to: "/user/list",
+        to: "/user",
         id: "1",
         title: "User List",
       },
@@ -235,7 +234,15 @@ export default function Sidebar({ open, setOpen }) {
   };
   return (
     <Box sx={{ display: "flex" }}>
-      <Drawer variant="permanent" open={open}>
+      <Drawer
+        variant="permanent"
+        open={open}
+        sx={{
+          "& .css-12i7wg6-MuiPaper-root-MuiDrawer-paper": {
+            backgroundColor: "#EDF2F7",
+          },
+        }}
+      >
         <DrawerHeader></DrawerHeader>
         <Divider />
         {open && (

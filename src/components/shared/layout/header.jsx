@@ -41,18 +41,14 @@ export function Header() {
             justifyContent: "space-between",
           }}
         >
-          <Avatar
-            sx={{ marginRight: 1 }}
-            alt="Username"
-            src="img/FakeAvatar.png"
-          />
+          <Avatar sx={{ marginRight: 1 }} alt="Username" src="img/logo.png" />
           <Box sx={{ justifyContent: "space-between" }}>
             <Typography
               sx={{ color: "white", fontSize: 10, height: 15 }}
               variant="overline"
               display="block"
             >
-              Warrior Tran
+              User Name
             </Typography>
             <Link
               sx={{

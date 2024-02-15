@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext } from "react";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -10,9 +10,11 @@ const style = {
   borderRadius: "20px",
   border: " 1px solid black",
 };
+export const ModalProvider = createContext();
 const ModalContainer = ({ children, title, isOpen, handleOpen }) => {
   const [open, setOpen] = React.useState(true);
   const handleClose = () => setOpen(false);
+
   return (
     <div>
       <Modal
@@ -55,10 +57,15 @@ const ModalContainer = ({ children, title, isOpen, handleOpen }) => {
                   fontSize: "large",
                 }}
               >
-                <HighlightOffIcon onClick={handleClose} />
+                <HighlightOffIcon
+                  onClick={handleClose}
+                  sx={{ cursor: "pointer" }}
+                />
               </div>
             </div>
-            {children}
+            <ModalProvider.Provider value={handleClose}>
+              {children}
+            </ModalProvider.Provider>
           </div>
         </Box>
       </Modal>
