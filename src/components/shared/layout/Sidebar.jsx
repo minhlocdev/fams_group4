@@ -12,7 +12,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { ExpandMoreOutlined } from "@mui/icons-material";
 import {
   HomeIcon,
   Biotech,
@@ -23,24 +23,24 @@ import {
   SchoolIcon,
   SettingIcon,
 } from "../../../assets/icon";
-import { Link } from "@mui/material";
+import { Collapse, Link } from "@mui/material";
 
 const drawerWidth = 256;
 const menus = [
   {
     id: "1",
     title: "Home",
-    to: "/home",
+    to: "/",
     icon: <HomeIcon />,
   },
   {
     id: "2",
     icon: <BookIcon />,
-    to: "/syllabus",
+    to: "",
     title: "Syllabus",
     submenu: [
       {
-        to: "/syllabus/view",
+        to: "/syllabus",
         id: "1",
         title: "View Syllabus",
       },
@@ -54,11 +54,12 @@ const menus = [
   {
     id: "3",
     icon: <Biotech />,
-    to: "/tranning/list",
+    // select view program -> traningProgramList
+    to: "",
     title: "Tranning Program",
     submenu: [
       {
-        to: "/tranning/view",
+        to: "/tranning/list",
         id: "1",
         title: "View Program",
       },
@@ -72,12 +73,12 @@ const menus = [
   {
     id: "4",
     icon: <SchoolIcon />,
-    to: "/class",
+    to: "",
     title: "Class",
     submenu: [
       {
         id: "1",
-        to: "/class/view",
+        to: "/class",
         title: "View Class",
       },
       {
@@ -91,7 +92,7 @@ const menus = [
     id: "5",
     to: "/calendar",
     icon: <CalendarIcon />,
-    title: "Tranning Calendar",
+    title: "Training Calendar",
   },
   {
     id: "6",
@@ -175,55 +176,23 @@ const Drawer = styled(MuiDrawer, {
   }),
   zIndex: 0,
 }));
-const SubMenu = ({ index, isOpen }) => {
-  return (
-    <List>
-      {menus.at(index).submenu.map((item) => (
-        <ListItem
-          key={item.id}
-          disablePadding={true}
-          sx={{
-            display: "block",
-            transition: "max-height 0.3s ease",
-          }}
-          id={item.id}
-          style={{ maxHeight: isOpen ? "45px" : "0", overflow: "hidden" }}
-        >
-          <ListItemButton
-            sx={{
-              minHeight: 30,
-              px: 2.5,
-            }}
-          >
-            <ListItemText
-              sx={{
-                opacity: 1,
-                textAlign: "left",
-                marginLeft: "60px",
-              }}
-            >
-              <Link
-                href={item.to}
-                sx={{
-                  textDecoration: "none",
-                  color: "#000",
-                }}
-              >
-                {item.title}
-              </Link>
-            </ListItemText>
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
-  );
-};
+
+const ExpandMoreIcon = styled((props) => {
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
+  transition: theme.transitions.create("transform", {
+    duration: theme.transitions.duration.shortest,
+  }),
+}));
 
 export default function Sidebar({ open, setOpen }) {
   const theme = useTheme();
-  const [openSubmenu, setOpenSubmenu] = React.useState(-1);
-  const handleOpenSubmenu = (i) => {
-    setOpenSubmenu(i);
+  const [openSubmenu, setOpenSubmenu] = React.useState(null);
+
+  const handleOpenSubmenu = (index) => {
+    setOpenSubmenu((prevIndex) => (prevIndex === index ? null : index));
   };
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -274,11 +243,7 @@ export default function Sidebar({ open, setOpen }) {
               disablePadding
               sx={{ display: "block" }}
               id={menu.id}
-              onClick={() =>
-                openSubmenu !== index && menu.submenu
-                  ? handleOpenSubmenu(index)
-                  : handleOpenSubmenu(-1)
-              }
+              onClick={() => handleOpenSubmenu(index)}
             >
               <ListItemButton
                 sx={{
@@ -296,6 +261,7 @@ export default function Sidebar({ open, setOpen }) {
                 >
                   {menu.icon}
                 </ListItemIcon>
+
                 <ListItemText
                   sx={{
                     opacity: open ? 1 : 0,
@@ -313,21 +279,67 @@ export default function Sidebar({ open, setOpen }) {
                     {menu.title}
                   </Link>
                 </ListItemText>
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    ml: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {open &&
-                    menu.submenu &&
-                    (openSubmenu === index ? <ExpandLess /> : <ExpandMore />)}
-                </ListItemIcon>
+
+                {open && menu.submenu && (
+                  <ExpandMoreIcon
+                    expand={openSubmenu === index}
+                    aria-expanded={openSubmenu === index}
+                    aria-label="show more"
+                  >
+                    <ExpandMoreOutlined />
+                  </ExpandMoreIcon>
+                )}
               </ListItemButton>
-              {openSubmenu === index && open && (
-                <SubMenu index={index} isOpen={openSubmenu} />
-              )}
+              <Collapse
+                in={openSubmenu === index && menu?.submenu !== undefined}
+                timeout="auto"
+                unmountOnExit
+              >
+                {openSubmenu === index && open && (
+                  <List>
+                    {menus.at(index)?.submenu?.map((item) => (
+                      <ListItem
+                        key={item.id}
+                        disablePadding={true}
+                        sx={{
+                          display: "block",
+                          transition: "max-height 0.3s ease",
+                        }}
+                        id={item.id}
+                        style={{
+                          maxHeight: openSubmenu === index ? "45px" : "0",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <ListItemButton
+                          sx={{
+                            minHeight: 30,
+                            px: 2.5,
+                          }}
+                        >
+                          <ListItemText
+                            sx={{
+                              opacity: 1,
+                              textAlign: "left",
+                              marginLeft: "60px",
+                            }}
+                          >
+                            <Link
+                              href={item.to}
+                              sx={{
+                                textDecoration: "none",
+                                color: "#000",
+                              }}
+                            >
+                              {item.title}
+                            </Link>
+                          </ListItemText>
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                )}
+              </Collapse>
             </ListItem>
           ))}
         </List>

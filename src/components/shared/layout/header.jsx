@@ -20,7 +20,7 @@ export function Header() {
       <img
         className="logo"
         style={{ background: "#2D3748", width: 70, height: 40 }}
-        src="img/logo.png"
+        src="/img/logo.png"
         alt="logo fpt"
       />
       <Stack
@@ -29,7 +29,7 @@ export function Header() {
         spacing={3}
       >
         <Chip
-          avatar={<img src="img/uniGate.png" alt="unigate" />}
+          avatar={<img src="/img/uniGate.png" alt="unigate" />}
           sx={{ background: "#0B2136", color: "white", padding: 1 }}
           label={"uniGate"}
         />
@@ -41,7 +41,7 @@ export function Header() {
             justifyContent: "space-between",
           }}
         >
-          <Avatar sx={{ marginRight: 1 }} alt="Username" src="img/logo.png" />
+          <Avatar sx={{ marginRight: 1 }} alt="Username" src="/img/logo.png" />
           <Box sx={{ justifyContent: "space-between" }}>
             <Typography
               sx={{ color: "white", fontSize: 10, height: 15 }}

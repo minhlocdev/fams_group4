@@ -18,11 +18,12 @@ export default function AppContainer({ children }) {
             sx={{
               marginTop: "60px",
               transition: "margin-left 0.3s ease",
-              marginLeft: open ? "240px" : "60px",
+              marginLeft: open ? "270px" : "60px",
               minHeight: "85dvh",
               "@media screen and (min-width: 1200px)": {
+                paddingRight: 0,
+                paddingLeft: 1,
                 maxWidth: !open ? "96%" : "100%",
-                paddingLeft: "40px",
               },
             }}
           >

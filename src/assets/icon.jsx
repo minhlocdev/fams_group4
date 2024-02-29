@@ -212,20 +212,50 @@ export function SettingIcon() {
     </svg>
   );
 }
-
-export function CheckedIcon() {
+export function CreateIcon() {
   return (
-    <svg
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-      style={{
-        color: "rgba(0, 0, 0, 0.6)",
-        width: "1em",
-        height: "1em",
-      }}
-      viewBox="0 0 448 512"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M384 32H64C28.65 32 0 60.65 0 96v320c0 35.35 28.65 64 64 64h320c35.35 0 64-28.65 64-64V96C448 60.65 419.3 32 384 32zM400 416c0 8.836-7.164 16-16 16H64c-8.836 0-16-7.164-16-16V96c0-8.838 7.164-16 16-16h320c8.836 0 16 7.162 16 16V416zM303 175L192 286.1L144.1 239c-9.375-9.375-24.56-9.375-33.94 0s-9.375 24.56 0 33.94l64 64C179.7 341.7 185.8 344 192 344s12.28-2.344 16.97-7.031l128-128c9.375-9.375 9.375-24.56 0-33.94S312.4 165.7 303 175z" />
+    <svg width="24"
+      height="24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <g clip-path="url(#a)">
+        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25ZM5.92 19H5v-.92l9.06-9.06.92.92L5.92 19ZM20.71 5.63l-2.34-2.34c-.2-.2-.45-.29-.71-.29-.26 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83a.996.996 0 0 0 0-1.41Z"
+          fill="#2D3748" />
+      </g>
+      <defs>
+        <clipPath id="a">
+          <path fill="#fff" d="M0 0h24v24H0z" />
+        </clipPath>
+      </defs>
     </svg>
   );
+}
+export function DeleteForeverIcon() {
+  return (
+    <svg width="24"
+      height="24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <g clip-path="url(#a)">
+        <path d="M14.12 10.47 12 12.59l-2.13-2.12-1.41 1.41L10.59 14l-2.12 2.12 1.41 1.41L12 15.41l2.12 2.12 1.41-1.41L13.41 14l2.12-2.12-1.41-1.41ZM15.5 4l-1-1h-5l-1 1H5v2h14V4h-3.5ZM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12ZM8 9h8v10H8V9Z"
+          fill="#2D3748" />
+      </g>
+      <defs>
+        <clipPath id="a"><path fill="#fff" d="M0 0h24v24H0z" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}
+
+export function ThreeDotIcon() {
+  return (
+    <svg width="48"
+      height="48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <path d="M26 30a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM40 30a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM12 30a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+        fill="#2D3748" />
+    </svg>
+  )
 }

@@ -1,5 +1,7 @@
 import React from "react";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import dayjs from "dayjs";
+
 import {
   Card,
   CardContent,
@@ -39,7 +41,7 @@ const SyllabusCard = ({ data, onDelete }) => {
                 fontSize: 24,
               }}
             >
-              {data?.title}
+              {data?.name}
             </Typography>
 
             {isActive ? (
@@ -49,7 +51,7 @@ const SyllabusCard = ({ data, onDelete }) => {
                 variant="filled"
                 sx={{
                   ml: 1.5,
-                  bgcolor: "rgb(0,0,0)",
+                  bgcolor: "#2D3748",
                   color: "white",
                   border: "none",
                   fontWeight: 600,
@@ -68,7 +70,7 @@ const SyllabusCard = ({ data, onDelete }) => {
                 variant="outlined"
                 sx={{
                   ml: 1.5,
-                  bgcolor: "rgba(0,0,0,0.5)",
+                  bgcolor: "#B9B9B9",
                   color: "white",
                   border: "none",
                   fontWeight: 600,
@@ -93,7 +95,7 @@ const SyllabusCard = ({ data, onDelete }) => {
               }}
             >
               {data?.version} | {data?.duration} | Modified on{" "}
-              {data?.modifiedDate} by {data?.modifiedBy}
+              {dayjs(data.modifiedDate).format("DD/MM/YYYY")}  by {data?.modifiedBy}
             </Typography>
           </Grid>
 

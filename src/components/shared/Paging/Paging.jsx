@@ -1,6 +1,6 @@
 import React from "react";
 import Pagination from "@mui/material/Pagination";
-import { PaginationItem } from "@mui/material";
+import { PaginationItem, Stack } from "@mui/material";
 import TablePagination from "@mui/material/TablePagination";
 import { Box } from "@mui/material";
 import { styled } from "@mui/system";
@@ -47,7 +47,7 @@ export default function Paging() {
   }
   return (
     <>
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           width: "1174px",
@@ -57,30 +57,33 @@ export default function Paging() {
           gap: "25%",
         }}
       >
-        <PaginationStyled
-          size="small"
-          count={10} //set so trang
-          siblingCount={0}
-          page={page}
-          onChange={handlePage}
-          showFirstButton
-          showLastButton
-          renderItem={(item) => (
-            <PaginationItem
-              slots={{ previous: ArrowBackIosIcon, next: ArrowForwardIosIcon }}
-              {...item}
-            />
-          )}
-        />
-        <TablePaginationStyled
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
-          count={10}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          slotProps={{ select: { IconComponent: ExpandMore } }}
-          defaultValue={5}
-        />
-      </Box>
+        
+      </Box> */}
+      <PaginationStyled
+        size="small"
+        count={10} //set so trang
+        siblingCount={0}
+        page={page}
+        onChange={handlePage}
+        showFirstButton
+        showLastButton
+        renderItem={(item) => (
+          <PaginationItem
+            slots={{ previous: ArrowBackIosIcon, next: ArrowForwardIosIcon }}
+            {...item}
+          />
+        )}
+      />
+      <TablePaginationStyled
+        rowsPerPageOptions={[5, 10, 25, 50, 100]}
+        page={page}
+        count={10}
+        onPageChange={handlePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        slotProps={{ select: { IconComponent: ExpandMore } }}
+        defaultValue={5}
+      />
     </>
   );
 }

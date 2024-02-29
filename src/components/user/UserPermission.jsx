@@ -12,40 +12,14 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { ExpandMore } from "@mui/icons-material";
 import { Box } from "@mui/material";
+
 function createData(name, syllabus, training, classes, material, user) {
   return { name, syllabus, training, classes, material, user };
 }
-const menuItems = [
-  {
-    id: "1",
-    text: "Access Denied",
-    icon: "visibility_off.png",
-  },
-  {
-    id: "2",
-    text: "View",
-    icon: "visibility.png",
-  },
-  {
-    id: "3",
-    text: "Modify",
-    icon: "create.png",
-  },
-  {
-    id: "4",
-    text: "Create",
-    icon: "add.png",
-  },
-  {
-    id: "5",
-    text: "Full access",
-    icon: "grade.png",
-  },
-];
+
 export function SelectForm(props) {
-  const { id, updating, data } = props;
-  const [selected, isSelected] = React.useState(false);
   const [Value, setValue] = React.useState("");
+  const [selected, isSelected] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
   const handleChange = (event) => {
@@ -64,9 +38,37 @@ export function SelectForm(props) {
     }
     setOpen(false);
   };
+
+  const menuItems = [
+    {
+      id: "1",
+      text: "Access Denied",
+      icon: "visibility_off.png",
+    },
+    {
+      id: "2",
+      text: "View",
+      icon: "visibility.png",
+    },
+    {
+      id: "3",
+      text: "Modify",
+      icon: "create.png",
+    },
+    {
+      id: "4",
+      text: "Create",
+      icon: "add.png",
+    },
+    {
+      id: "5",
+      text: "Full access",
+      icon: "grade.png",
+    },
+  ];
   return (
     <>
-      {updating ? (
+      {selected === false ? (
         <FormControl
           sx={{
             Width: "165px",
@@ -95,7 +97,7 @@ export function SelectForm(props) {
             }}
             IconComponent={ExpandMore}
             defaultValue=""
-            id={id}
+            id={props.id}
             label="Grouping"
             value={Value}
             onChange={handleChange}
@@ -110,9 +112,9 @@ export function SelectForm(props) {
               <MenuItem key={menu.id} value={menu.text}>
                 <img
                   style={{ paddingRight: "10px" }}
-                  src={`${menu.icon}`} // Updated image path
+                  src={menu.icon}
                   alt=""
-                />
+                ></img>
                 {menu.text}
               </MenuItem>
             ))}
@@ -137,9 +139,9 @@ export function SelectForm(props) {
                     style={{
                       paddingRight: "10px",
                     }}
-                    src={`${menu.icon}`} // Updated image path
+                    src={menu.icon}
                     alt=""
-                  />
+                  ></img>{" "}
                   {menu.text}
                 </React.Fragment>
               )
@@ -149,32 +151,31 @@ export function SelectForm(props) {
     </>
   );
 }
-
-export default function UserPermisson({ isUpdate }) {
+export default function UserPermisson() {
   const rows = [
     createData(
       "Super Admin",
-      <SelectForm id="1" updating={isUpdate} />,
-      <SelectForm id="2" updating={isUpdate} />,
-      <SelectForm id="3" updating={isUpdate} />,
-      <SelectForm id="4" updating={isUpdate} />,
-      <SelectForm id="5" updating={isUpdate} />
+      <SelectForm id="1" />,
+      <SelectForm id="2" />,
+      <SelectForm id="3" />,
+      <SelectForm id="4" />,
+      <SelectForm id="5" />
     ),
     createData(
       "Class admin",
-      <SelectForm id="1" updating={isUpdate} />,
-      <SelectForm id="2" updating={isUpdate} />,
-      <SelectForm id="3" updating={isUpdate} />,
-      <SelectForm id="4" updating={isUpdate} />,
-      <SelectForm id="5" updating={isUpdate} />
+      <SelectForm id="6" />,
+      <SelectForm id="7" />,
+      <SelectForm id="8" />,
+      <SelectForm id="9" />,
+      <SelectForm id="10" />
     ),
     createData(
       "Trainer",
-      <SelectForm id="1" updating={isUpdate} />,
-      <SelectForm id="2" updating={isUpdate} />,
-      <SelectForm id="3" updating={isUpdate} />,
-      <SelectForm id="4" updating={isUpdate} />,
-      <SelectForm id="5" updating={isUpdate} />
+      <SelectForm id="11" />,
+      <SelectForm id="12" />,
+      <SelectForm id="13" />,
+      <SelectForm id="14" />,
+      <SelectForm id="15" />
     ),
   ];
   return (

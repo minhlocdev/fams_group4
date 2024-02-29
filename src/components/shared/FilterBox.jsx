@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import LimitTags from "./InputBox/InputBox";
 import DateRangePicker from "./calendar/DateRangePicker";
-import { CheckedIcon } from "../../assets/icon";
+import { CheckBoxOutlined } from "@mui/icons-material";
 const checkboxData = [
   { "Class time": ["Morning", "Noon", "Night", "Online"] },
   { Status: ["Planning", "Openning", "Closed"] },
@@ -116,7 +116,7 @@ export default function FilterBox() {
                             tabIndex={-1}
                             disableRipple
                             checked={checked.indexOf(option) !== -1}
-                            checkedIcon={<CheckedIcon />}
+                            checkedIcon={<CheckBoxOutlined/>}
                           />
                         </ListItemIcon>
                         <ListItemText primary={option} />
