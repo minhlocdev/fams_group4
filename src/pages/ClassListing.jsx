@@ -5,7 +5,7 @@ import theme from "../assets/theme";
 import { InputBoxSearch } from "../components/shared/InputBox/InputBox";
 import { BasicFilterbtn } from "../components/shared/filterButton";
 import { AddCircleOutline } from "@mui/icons-material";
-import Paging from "../components/shared/Paging/Paging";
+import ListofClass from "../components/ClassList/ListofClass";
 
 export default function ClassListing() {
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
@@ -53,9 +53,8 @@ export default function ClassListing() {
         </Button>
       </Stack>
       <Stack gap={5} sx={{ marginTop: "20px" }}>
-        //table
+        <ListofClass/>
       </Stack>
-      <Paging />
     </AppContainer>
   );
 }

@@ -5,8 +5,7 @@ import theme from "../assets/theme";
 import { InputBoxSearch } from "../components/shared/InputBox/InputBox";
 import { BasicFilterbtn } from "../components/shared/filterButton";
 import { AddCircleOutline } from "@mui/icons-material";
-import Paging from "../components/shared/Paging/Paging";
-import UserListing from "../components/UserListing";
+import UserListing from "../components/UserManagement/UserList/UserListing";
 
 export default function UserManagement() {
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
@@ -56,7 +55,6 @@ export default function UserManagement() {
       <Stack gap={5} sx={{ marginTop: "20px" }}>
         <UserListing/>
       </Stack>
-      <Paging />
     </AppContainer>
   );
 }

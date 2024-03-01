@@ -14,7 +14,7 @@ const UserPermission = lazy(() => import("../pages/UserPermission"))
 const UserManagement = lazy(() => import('../pages/UserManagement'))
 const SyllabusListing = lazy(() => import('../pages/SyllabusListing'))
 const SyllabusDetail = lazy(() => import('../pages/SyllabusDetail'))
-const TranningProgramList = lazy(() => import('../pages/TranningProgramList'))
+const TrainingProgramList = lazy(() => import('../pages/TrainingProgramList'))
 const TrainingCalendar = lazy(() => import('../pages/TrainingCalendar'))
 const TrainingProgramDetail = lazy(() => import('../pages/TrainingProgramDetail'))
 
@@ -53,7 +53,7 @@ export const publicRoute = [
     },
     {
         path: "/tranning/list",
-        element: <TranningProgramList />,
+        element: <TrainingProgramList />,
     },
     {
         path: "/tranning/detail/:code",

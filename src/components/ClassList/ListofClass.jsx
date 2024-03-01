@@ -8,26 +8,29 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TableCell from '@mui/material/TableCell';
 import Chip from '@mui/material/Chip';
-import EnhancedTableHead from '../../components/TraningProgramList/EnhancedTableHead';
+import EnhancedTableHead from './EnhancedTableHead';
+import Popup from './Popup';
 import TablePagination from '@mui/material/TablePagination';
 import Pagination from '@mui/material/Pagination';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import { Skeleton } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+
 
 const headCells = [
-  { id: 'id', label: 'ID' },
-  { id: 'programName', label: 'Program name' },
+  { id: 'className', label: 'Class' },
+  { id: 'classCode', label: 'Class Code' },
   { id: 'createdOn', label: 'Created on' },
   { id: 'createdBy', label: 'Created by' },
   { id: 'duration', label: 'Duration' },
-  { id: 'status', label: 'Status' },
+  { id: 'attendee', label: 'Attendee' },
+  { id: 'location', label: 'Location' },
+  { id: 'fsu', label: 'FSU' },
 ];
-const statusColors = {
-  'Active': '#2D3748',
-  'Inactive': '#B9B9B9',
-  'Draft': '#285D9A',
+const attendeeColors = {
+  'Fresher': '#FF7568',
+  'Online fee-fresher': '#2F903F',
+  'Intern': '#2D3748',
+  'Offline fee-fresher': '#D45B13',
 };
 
 
@@ -62,10 +65,11 @@ function stableSort(array, comparator) {
 }
 
 
-export default function TrainingProgramTable() {
+export default function ListofClass() {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('className');
   const [rows, setRows] = useState([]);
+  const [isDomChange, setIsDomChange] = useState(false);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [loading, isLoading] = React.useState(true);
@@ -74,7 +78,7 @@ export default function TrainingProgramTable() {
   useEffect(() => {
     async function getClass() {
       try {
-        const response = await axios.get(`https://65d8432ec96fbb24c1bb11b2.mockapi.io/TrainingProgramList`);
+        const response = await axios.get(`https://653d1d13f52310ee6a99e3b7.mockapi.io/class`);
         setRows(response.data);
       } catch (error) {
         console.error(error);
@@ -83,7 +87,7 @@ export default function TrainingProgramTable() {
       }
     }
     getClass();
-  });
+  }, [isDomChange]);
 
 
   const handleRequestSort = (event, property) => {
@@ -115,7 +119,7 @@ export default function TrainingProgramTable() {
 
 
   return (
-    <Box sx={{ width: '100%', marginTop:4, marginX:'auto' }}>
+    <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <TableContainer sx={{ boxShadow: '0px 10px 15px rgba(0, 0, 0, 0.1)', borderRadius: '5px', border: 'none' }}>
           <Table
@@ -151,19 +155,23 @@ export default function TrainingProgramTable() {
                       padding="none"
                       style={{ padding: '10px 20px' }}
                     >
-                      {row.id}
+                      {row.className}
                     </TableCell>
-                    <TableCell align="left">{row.programName}</TableCell>
+                    <TableCell align="left">{row.classCode}</TableCell>
                     <TableCell align="left">{row.createdOn}</TableCell>
                     <TableCell align="left">{row.createdBy}</TableCell>
                     <TableCell align="left">{row.duration}</TableCell>
                     <TableCell align="left">
-                      <Chip label={row.status} style={{ backgroundColor: statusColors[row.status], color: '#FFFFFF' }} />
+                      <Chip label={row.attendee} style={{ backgroundColor: attendeeColors[row.attendee], color: '#FFFFFF' }} />
                     </TableCell>
+                    <TableCell align="left">{row.location}</TableCell>
+                    <TableCell align="left">{row.fsu}</TableCell>
                     <TableCell align="right">
-                      <IconButton>
-                      <MoreVertIcon/>
-                      </IconButton>
+                      <Popup
+                        item={row}
+                        setClasses={() => setIsDomChange(true)}
+                        setClassSuccess={() => setIsDomChange(false)}
+                      />
                     </TableCell>
                   </TableRow>
                 );
@@ -173,27 +181,27 @@ export default function TrainingProgramTable() {
               {emptyRows > 0 && loading&&(
                 <>
                 <TableRow >
-                <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
+                <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
                  
                 </TableRow>
                 <TableRow >
-                  <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
+                  <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
                  
                 </TableRow>
                 <TableRow >
-                  <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
+                  <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
                  
                 </TableRow>
                 <TableRow >
-                  <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
+                  <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
                  
                 </TableRow>
                 <TableRow >
-                  <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
+                  <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
                  
                 </TableRow>
                 <TableRow >
-                  <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
+                  <TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell><TableCell><Skeleton variant='rectangle'/></TableCell>
                  
                 </TableRow>
                 </>
