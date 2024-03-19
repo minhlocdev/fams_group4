@@ -2,38 +2,65 @@ import * as React from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Stack } from "@mui/material";
+import { Button, Menu, Stack } from "@mui/material";
+import { DayPicker } from "react-day-picker";
 
+import { isSameDay } from "date-fns";
 export default function DateRangePicker() {
+  const [range, setRange] = React.useState();
+
+  let footer = "Please pick a day.";
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  if (range?.from && range?.to) {
+    if (isSameDay(range.from, range.to)) {
+      footer = "Choose more days.";
+    } else {
+      footer = `${range.from.toLocaleDateString()}—${range.to.toLocaleDateString()}.`;
+    }
+  }
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Stack
-        direction="row"
-        spacing={1}
-        alignItems={"center"}
-        sx={{ marginTop: "5px" }}
+    <Stack
+      direction="row"
+      spacing={1}
+      alignItems={"center"}
+      sx={{ marginTop: "5px" }}
+    >
+      <Button
+        id="basic-button"
+        aria-controls={open ? "basic-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClick}
       >
-        <span>from</span>
-        <DatePicker
-          label=""
-          sx={{
-            width: "180px",
-            "& .MuiInputBase-input": {
-              padding: "10px",
-            },
-          }}
+        {footer}
+      </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+        sx={{
+          marginTop: "15px",
+        }}
+      >
+        <DayPicker
+          mode="range"
+          onSelect={setRange}
+          selected={range}
+          showOutsideDays
         />
-        <span>to</span>
-        <DatePicker
-          label=""
-          sx={{
-            width: "180px",
-            "& .MuiInputBase-input": {
-              padding: "10px",
-            },
-          }}
-        />
-      </Stack>
-    </LocalizationProvider>
+      </Menu>
+    </Stack>
   );
 }

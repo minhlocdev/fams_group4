@@ -1,66 +1,77 @@
-import { React, useRef, useState, useEffect, useContext } from "react";
+import React, { useContext, useState } from "react";
+import {
+  Grid,
+  FormControl,
+  TextField,
+  Button,
+  Box,
+  Stack,
+  Chip,
+} from "@mui/material";
+import { postLoginUser } from "../services/User";
+import token from "../utils/token";
+import { ACCESS_TOKEN_KEY } from "../constants/token";
 import AuthContext from "../utils/authUtil";
-import { Typography, Button, Chip, Box, Stack, Container } from "@mui/material";
-import { Footer } from "./shared/layout/footer";
-import axios from "axios";
+import ToastEmitter from "./shared/lib/ToastEmitter";
+import { useNavigate } from "react-router-dom";
 
-const LOGIN_URL = "/auth";
 const LoginPage = () => {
-  const { setAuth } = useContext(AuthContext);
-  const userRef = useRef();
-  const errRef = useRef();
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+  const [formData, setFormData] = useState({
+    email: "classadmin@example.com",
+    password: "classadmin456",
+  });
 
-  const [user, setUser] = useState("");
-  const [pwd, setPwd] = useState("");
-  const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState("");
-
-  useEffect(() => {
-    userRef.current.focus();
-  }, []);
-
-  useEffect(() => {
-    setErrMsg("");
-  }, [user, pwd]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        LOGIN_URL,
-        JSON.stringify({ user, pwd }),
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      console.log(JSON.stringify(response?.data));
-      const accessToken = response?.data.accessToken;
-      const roles = response?.data?.roles;
-      setAuth({ user, pwd, roles, accessToken });
-      setUser("");
-      setPwd("");
-      setSuccess(true);
-    } catch (err) {
-      if (!err?.response) {
-        setErrMsg("No Server Response");
-      } else if (err.response?.status === 400) {
-        setErrMsg("Missing Username or Password");
-      } else if (err.response?.status === 401) {
-        setErrMsg("Unauthorized");
-      } else {
-        setErrMsg("Login Failed");
-      }
-      errRef.current.focus();
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = { ...errors };
+    //Validate Email
+    if (formData.email.trim() === "") {
+      newErrors.email = "Email is required";
+      valid = false;
+    }
+    //Validate Password
+    if (formData.password.trim() === "") {
+      newErrors.password = "Password is Required";
+      valid = false;
+    }
+    setErrors(newErrors);
+    return valid;
+  };
+  const handleSubmit = (e) => {
+    if (!validateForm()) {
+      e.preventDefault();
+    } else {
+      e.preventDefault();
+      postLoginUser(formData)
+        .then((res) => {
+          token.setToken(ACCESS_TOKEN_KEY, res.data.token);
+          login(res.data.token, res.data.expiration);
+          navigate("/", { replace: true });
+        })
+        .catch((errors) => {
+          ToastEmitter.error(errors.response?.data);
+        });
     }
   };
-
   return (
     <>
+      {/* Header Box Component */}
       <Box
         sx={{
           width: "100%",
-          height: "100%",
           paddingTop: 1,
           paddingBottom: 1,
           paddingLeft: 2,
@@ -93,218 +104,105 @@ const LoginPage = () => {
           />
         </Stack>
       </Box>
-      <div
-        className="overlap-group"
-        style={{
-          position: "relative",
-          backgroundPosition: "center",
-          backgroundRepeat: "no - repeat",
-          backgroundSize: "cover",
-          height: "90vh",
-          backgroundImage: "url(/img/5816231-1.png)",
-        }}
-      >
-        <div style={{ height: "5px" }}></div>
-        <Box
-          className="frame-3"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "600px",
-            alignItems: "center",
-            gap: "30px",
-            padding: "25px 20px",
-            position: "relative",
-            left: "50%",
-            backgroundColor: "#ffffff",
-            boxShadow: "0px 20px 40px #00000029",
-            margin: "50px",
-          }}
-        >
+
+      {/* Login Form */}
+      <Grid container spacing={2} justifyContent="center" alignItems="center">
+        <Grid item xs={12} sm={6} alignItems="stretch">
+          {/* Your custom content wrapped in a Box component */}
           <Box
-            className="frame-4"
             sx={{
               display: "inline-flex",
               flexDirection: "column",
-              alignItems: "center",
+              alignItems: "stretch",
               gap: "25px",
               position: "relative",
               flex: "0 0 auto",
+              "@media (max-width: 768px)": { display: "none" }, // Hide the image for screens smaller than 768px
             }}
           >
-            <Typography
-              className="FPT-fresh-academy"
-              sx={{
-                position: "relative",
-                width: "fit-content",
-                marginTop: "-1px",
-                color: "#000000",
-                textAlign: "center",
-                letterSpacing: "5px",
-                fontSize: "38px",
-                fontFamily: "Inter-Bold, Helvetica",
-                fontWeight: "700",
-                lineHeight: "normal",
-                fontStyle: "normal",
+            <img
+              src={process.env.PUBLIC_URL + "/img/5816231-1.png"}
+              alt="Sign In"
+              style={{
+                maxWidth: "100%",
+                height: "90vh",
               }}
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          {/* Sign-in form */}
+          <div>
+            <h2
+              style={{ textAlign: "center", fontSize: "28px", color: "#000" }}
             >
-              FPT Fresh Academy
-              <br />
-              Training Management
-            </Typography>
-            <Typography
-              className="if-you-don-t-have"
-              sx={{
-                position: "relative",
-                width: "fit-content",
-                fontWight: "400",
-                color: "transparent",
-                fontSize: "16px",
-                letterSpacing: 0,
-                lineHeight: "normal",
-                whiteSpace: "nowrap",
-              }}
-            >
-              <span className="span" style={{ color: "#000000" }}>
-                If you don’t have the account, please contact{" "}
-              </span>
-              <span
-                className="text-wrapper-2"
-                style={{ color: "#285d9a", textDecoration: "underline" }}
-              >
+              FPT Fresher Academy
+            </h2>
+            <p style={{ textAlign: "center", fontSize: "16px", color: "#666" }}>
+              If you don’t have the account, please contact{" "}
+              <span style={{ color: "#285d9a", textDecoration: "underline" }}>
                 FA.HCM@fsoft.com.vn
               </span>
-            </Typography>
-          </Box>
-
-          <p
-            ref={errRef}
-            className={errMsg ? "errmsg" : "offscreen"}
-            aria-live="assertive"
-          >
-            {errMsg}
-          </p>
-          <Box
-            className="frame-5"
-            sx={{
-              display: "inline-flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              gap: "20px",
-              position: "relative",
-              flex: "0 0 auto",
-              backgroundColor: "#ffffff",
-            }}
-          >
-            <form onSubmit={handleSubmit} id="loginForm">
-              <div>
-                <Typography className="text-danger" sx={{ display: "none" }}>
-                  The Username or Password is Incorrect
-                </Typography>
-              </div>
-              <Box
-                className="frame-6"
-                sx={{
-                  display: "inline-flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: "10px",
-                  position: "relative",
-                  flex: "0 0 auto",
-                  marginBottom: "20px",
-                }}
-              >
-                <div className="username-input-container">
-                  <input
-                    className="frame-7"
-                    style={{
-                      display: "flex",
-                      width: "389px",
-                      alignItems: "center",
-                      gap: "10px",
-                      padding: "20px",
-                      position: "relative",
-                      flex: "0 0 auto",
-                      backgroundColor: "rgba(241, 241, 241, 1)",
-                      borderRadius: "10px",
-                      caret: "white",
-                    }}
-                    type="text"
-                    id="username"
-                    ref={userRef}
-                    label="Username"
-                    placeholder="Enter Email"
-                    autoComplete="off"
-                    onChange={(e) => setUser(e.target.value)}
-                    value={user}
-                    required
-                  />
-                </div>
-
-                <div
-                  className="password-input-container"
-                  sytle={{
-                    display: "flex",
-                    width: "389px",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    position: "relative",
-                    flex: "0 0 auto",
-                    backgroundColor: "rgba(241, 241, 241, 1)",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <input
-                    className="frame-8"
-                    style={{
-                      display: "flex",
-                      width: "389px",
-                      alignItems: "center",
-                      gap: "10px",
-                      padding: "20px",
-                      position: "relative",
-                      flex: "0 0 auto",
-                      backgroundColor: "rgba(241, 241, 241, 1)",
-                      borderRadius: "10px",
-                    }}
-                    type="password"
-                    id="password"
-                    label="password"
-                    placeholder="Enter Password"
-                    onChange={(e) => setPwd(e.target.value)}
-                    value={pwd}
-                    required
-                  />
-                  {/* <img className="visibility-off" src="" id="password-toggle" alt="" /> */}
-                </div>
-              </Box>
-              <Button
-                sx={{
-                  display: "flex",
-                  width: "389px",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "10px",
-                  padding: "20px",
-                  position: "relative",
-                  flex: "0 0 auto",
-                  borderRadius: "10px",
-                  boxShadow: "0px 4px 4px #00000040",
-                  color: "white",
-                  cursor: "pointer",
-                  fontSize: "large",
-                }}
-                variant="contained"
-                color="success"
-                type="submit"
-              >
+            </p>
+            <form onSubmit={handleSubmit}>
+              <FormControl fullWidth style={{ marginBottom: "15px" }}>
+                <TextField
+                  id="email"
+                  label="Email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  error={Boolean(errors.email)}
+                  helperText={errors.email}
+                />
+              </FormControl>
+              <FormControl fullWidth style={{ marginBottom: "15px" }}>
+                <TextField
+                  id="password"
+                  label="Password"
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  error={Boolean(errors.password)}
+                  helperText={errors.password}
+                />
+              </FormControl>
+              <Button variant="contained" type="submit" fullWidth>
                 Sign In
               </Button>
             </form>
-          </Box>
-        </Box>
-      </div>
-      <Footer />
+          </div>
+        </Grid>
+      </Grid>
+
+      {/* Footer Box Component */}
+      <Box
+        sx={{
+          width: "100%",
+          paddingTop: 1,
+          paddingBottom: 1,
+          paddingLeft: 2,
+          paddingRight: 2,
+          background: "#2D3748",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+        }}
+      >
+        <div
+          style={{
+            color: "white",
+            padding: "10px 0",
+          }}
+        >
+          Copyright @2022 BA Warrior. All right reserved
+        </div>
+      </Box>
     </>
   );
 };

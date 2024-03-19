@@ -1,12 +1,5 @@
-import React, { useContext, useRef, useState } from "react";
-import {
-  Box,
-  Collapse,
-  IconButton,
-  styled,
-  Typography,
-  Chip,
-} from "@mui/material";
+import React, { useContext, useState } from "react";
+import { Box, Collapse, IconButton, Chip } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import SyllabusNewContent from "./SyllabusNewContent";
 import SnippetFolderIcon from "@mui/icons-material/SnippetFolder";
@@ -19,19 +12,30 @@ import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import { PanToolOutlined } from "@mui/icons-material";
 import { SyllabusContext } from "../../../context/SyllabusContext";
 
-export default function DataUnit({unit,day,dayIndex, unitIndex, openState, setOpenState}) {
-  const { outline, setOutline, error, handleFieldValidation } =
-  useContext(SyllabusContext);
+export default function DataUnit({
+  unit,
+  day,
+  dayIndex,
+  unitIndex,
+  openState,
+}) {
+  const {
+    outline,
+    setOutline,
+    error,
+    handleFieldValidation,
+    handleTimeAllocation,
+  } = useContext(SyllabusContext);
   const [openTraining, setOpenTraining] = useState(false);
-  const [openModal, setOpenModal] = React.useState(false)
+  const [openModal, setOpenModal] = React.useState(false);
 
   const AddDataUnit = (obj, dayIndex, unitIndex) => {
     const tempData = [...outline];
     const tempContent = tempData[dayIndex].content;
     const tempUnit = tempContent[unitIndex].dataUnit;
     tempUnit.push(obj);
+    handleTimeAllocation(obj.DeliveryType);
     setOutline(tempData);
-    // onChange(outline, "outline");
   };
   const updateTraining = (
     newTrainingArray,
@@ -69,6 +73,8 @@ export default function DataUnit({unit,day,dayIndex, unitIndex, openState, setOp
       case "Seminar/Workshop":
         IconType = <SettingsInputAntennaOutlinedIcon />;
         break;
+      default:
+        break;
     }
     return IconType;
   }
@@ -79,31 +85,58 @@ export default function DataUnit({unit,day,dayIndex, unitIndex, openState, setOp
         unit.dataUnit.map((dataUnit, dataUnitIndex) => (
           <Collapse
             // in={isShowUnit === unitIndex}
-            in={openState[dayIndex]?.[unitIndex]}
+            in={openState[dayIndex][unitIndex] ? false : true}
             timeout="auto"
             unmountOnExit
             key={dataUnitIndex}
+            sx={{
+              marginLeft: { xs: "", lg: "5%" },
+              // width: { xs: "95%", lg: "90%" },
+            }}
           >
             <Box
               sx={{
                 backgroundColor: "#DFDEDE",
-                height: "34px",
                 padding: "5px 20px",
                 display: "flex",
-                justifyContent: "space-between",
+                alignItems: {
+                  xs: "",
+                  sm: "center",
+                  md: "center",
+                  lg: "center",
+                },
+                justifyContent: {
+                  xs: "",
+                  sm: "space-between",
+                  md: "space-between",
+                  lg: "space-between",
+                },
                 ".MuiChip-filled": {
                   backgroundColor: "#2D3748",
                   color: "white",
                 },
-                alignItems: "center",
+                // alignItems: "center",
                 borderRadius: "10px",
-                width: "900px",
+                flexDirection: {
+                  xs: "column",
+                  sm: "row",
+                  md: "row",
+                  lg: "row",
+                },
+
+                // width: "900px",
               }}
             >
-              <Box>{dataUnit.Name}</Box>
               <Box
                 sx={{
-                  gap: "20px",
+                  fontSize: "14px",
+                }}
+              >
+                {dataUnit.Name}
+              </Box>
+              <Box
+                sx={{
+                  gap: { xs: "5px", sm: "15px", md: "15px", lg: "15px" },
                   display: "flex",
                   alignItems: "center",
                 }}
@@ -123,7 +156,16 @@ export default function DataUnit({unit,day,dayIndex, unitIndex, openState, setOp
                   color={dataUnit.Method === "Online" ? "warning" : "default"}
                   variant={dataUnit.Method === "Online" ? "outlined" : "filled"}
                 ></Chip>
-                <Box>{handleIconDelivery(dataUnit.DeliveryType)}</Box>
+                <Box
+                  sx={{
+                    width: { sm: "24px" },
+                    height: "32px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  {handleIconDelivery(dataUnit.DeliveryType)}
+                </Box>
                 <Box>
                   <IconButton>
                     <SnippetFolderIcon
@@ -144,19 +186,9 @@ export default function DataUnit({unit,day,dayIndex, unitIndex, openState, setOp
                           dataUnitIndex: dataUnitIndex,
                         })
                       }
-                      modalData={day}
-                      unit={unit}
-                      unitData={unit.dataUnit}
-                      dataTraining={dataUnit.TrainingMaterial}
                       dataUnitIndex={openTraining.dataUnitIndex}
-                      updateTraining={(newTraining) =>
-                        updateTraining(
-                          newTraining,
-                          dayIndex,
-                          unitIndex,
-                          dataUnitIndex
-                        )
-                      }
+                      dayIndex={dayIndex}
+                      unitIndex={unitIndex}
                     />
                   )}
                 </Box>
@@ -164,18 +196,20 @@ export default function DataUnit({unit,day,dayIndex, unitIndex, openState, setOp
             </Box>
           </Collapse>
         ))}
-      <IconButton
-        sx={{ justifyContent: "left" }}
-        onClick={(e) =>
-          setOpenModal({
-            openModal: openModal === unitIndex ? -1 : unitIndex,
-            dayIndex: dayIndex,
-            unitIndex: unitIndex,
-          })
-        }
-      >
-        <AddCircleIcon />
-      </IconButton>
+      {unit.title !== null && (
+        <IconButton
+          sx={{ justifyContent: "left", width: "40px" }}
+          onClick={(e) =>
+            setOpenModal({
+              openModal: openModal === unitIndex ? -1 : unitIndex,
+              dayIndex: dayIndex,
+              unitIndex: unitIndex,
+            })
+          }
+        >
+          <AddCircleIcon />
+        </IconButton>
+      )}
       {openModal && (
         <SyllabusNewContent
           unitIndex={unitIndex}

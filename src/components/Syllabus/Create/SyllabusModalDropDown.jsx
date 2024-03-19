@@ -9,7 +9,14 @@ import {
   FormControl,
   FormHelperText,
 } from "@mui/material";
-import { QuizIcon, ConceptIcon, AssignmentIcon, GuideIcon, ExamIcon, WorkShopIcon } from "../../../assets/scss/icon";
+import {
+  QuizIcon,
+  ConceptIcon,
+  AssignmentIcon,
+  GuideIcon,
+  ExamIcon,
+  WorkShopIcon,
+} from "../../../assets/scss/icon";
 const textBox = {
   width: "100%",
   display: "flex",
@@ -19,10 +26,12 @@ const textBox = {
     fontWeight: "500",
     color: "rgb(0, 0, 0)",
   },
+  flexDirection: { xs: "column-reverse", lg: "row-reverse" },
+  alignItems: { xs: "flex-start", lg: "" },
 };
 const textFields = {
   display: "flex",
-  width: "315px",
+  width: { xs: "90%", lg: "315px" },
   flexDirection: "row-reseve",
   "& .MuiInputBase-input": {
     padding: "10px",
@@ -44,27 +53,27 @@ export default function DropDown({
   const Type = [
     {
       type: "Assignment/Lab",
-      icon: <AssignmentIcon />
+      icon: <AssignmentIcon />,
     },
     {
       type: "Concept/Lecture",
-      icon: <ConceptIcon />
+      icon: <ConceptIcon />,
     },
     {
       type: "Guide/Review",
-      icon: <GuideIcon />
+      icon: <GuideIcon />,
     },
     {
       type: "Test/Quiz",
-      icon: <QuizIcon />
+      icon: <QuizIcon />,
     },
     {
       type: "Exam",
-      icon: <ExamIcon />
+      icon: <ExamIcon />,
     },
     {
       type: "Seminar/Workshop",
-      icon: <WorkShopIcon />
+      icon: <WorkShopIcon />,
     },
   ];
   return (
@@ -90,8 +99,8 @@ export default function DropDown({
               boxShadow:
                 "0px 1px 3px 0px rgba(0, 0, 0, 0.30), 0px 4px 8px 3px rgba(0, 0, 0, 0.15)",
               "& .MuiInputBase-input": {
-                display: 'flex'
-              }
+                display: "flex",
+              },
             }}
             labelId="select-one-label"
             value={formData.DeliveryType}
@@ -99,17 +108,13 @@ export default function DropDown({
               setHideLabel(e.target.value !== "");
               handleChange("DeliveryType", e.target.value);
             }}
-            error={Boolean(errors.DeliveryType)}  
+            error={Boolean(errors.DeliveryType)}
             defaultValue={defaultValue ? defaultValue : ""}
           >
             {Type.map((value, index) => (
-              <MenuItem key={index} value={value.type} >
-                <ListItemIcon>
-                  {value.icon}
-                </ListItemIcon>
-                <ListItemText>
-                  {value.type}
-                </ListItemText>
+              <MenuItem key={index} value={value.type}>
+                <ListItemIcon>{value.icon}</ListItemIcon>
+                <ListItemText>{value.type}</ListItemText>
               </MenuItem>
             ))}
           </Select>

@@ -15,7 +15,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import styled from "@emotion/styled";
-export function InputBoxSearch() {
+export function InputBoxSearch(search, setSearch) {
   return (
     <Box
       component="form"
@@ -32,9 +32,11 @@ export function InputBoxSearch() {
         <SearchIcon />
       </IconButton>
       <InputBase
+        value={search}
         sx={{ ml: 1, flex: 1 }}
         placeholder="Search by ..."
         inputProps={{ "aria-label": "search" }}
+        onChange={(e) => setSearch(e.target.value)}
       />
     </Box>
   );
@@ -219,7 +221,8 @@ export default function LimitTags({ selectedTags, onTagsChange }) {
         <TextField {...params} placeholder="Province/City" />
       )}
       sx={{
-        width: "450px",
+        width: "100%",
+        maxWidth: "100%",
         marginTop: "5px",
         "& .MuiInputBase-root": {
           paddingY: "5px",

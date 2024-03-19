@@ -39,7 +39,7 @@ export default function DropDown({
   defaultValue,
 }) {
   const [hideLabel, setHideLabel] = useState(false);
-  const Type = ["Super Admin", "Admin", "Trainer"];
+  const Type = ["Super Admin", "Class Admin", "Trainer"];
   return (
     <FormControlLabel
       sx={textBox}
@@ -64,12 +64,12 @@ export default function DropDown({
                 "0px 1px 3px 0px rgba(0, 0, 0, 0.30), 0px 4px 8px 3px rgba(0, 0, 0, 0.15)",
             }}
             labelId="select-one-label"
-            value={formData.userType}
+            value={formData.permissionId}
             onChange={(e) => {
-              setHideLabel(e.target.value !== ""),
-                handleChange("userType", e.target.value);
+              setHideLabel(e.target.value !== "");
+              handleChange("permissionId", e.target.value);
             }}
-            error={Boolean(errors.userType)}
+            error={Boolean(errors.permissionId)}
             defaultValue={defaultValue ? defaultValue : ""}
           >
             {Type.map((value, index) => (
@@ -79,7 +79,7 @@ export default function DropDown({
             ))}
           </Select>
           <FormHelperText sx={{ color: "#db2f2f" }}>
-            {errors.userType}
+            {errors.permissionId}
           </FormHelperText>
         </FormControl>
       }

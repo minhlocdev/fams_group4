@@ -214,13 +214,12 @@ export function SettingIcon() {
 }
 export function CreateIcon() {
   return (
-    <svg width="24"
-      height="24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg">
-      <g clip-path="url(#a)">
-        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25ZM5.92 19H5v-.92l9.06-9.06.92.92L5.92 19ZM20.71 5.63l-2.34-2.34c-.2-.2-.45-.29-.71-.29-.26 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83a.996.996 0 0 0 0-1.41Z"
-          fill="#2D3748" />
+    <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#a)">
+        <path
+          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25ZM5.92 19H5v-.92l9.06-9.06.92.92L5.92 19ZM20.71 5.63l-2.34-2.34c-.2-.2-.45-.29-.71-.29-.26 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83a.996.996 0 0 0 0-1.41Z"
+          fill="#2D3748"
+        />
       </g>
       <defs>
         <clipPath id="a">
@@ -232,16 +231,16 @@ export function CreateIcon() {
 }
 export function DeleteForeverIcon() {
   return (
-    <svg width="24"
-      height="24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg">
-      <g clip-path="url(#a)">
-        <path d="M14.12 10.47 12 12.59l-2.13-2.12-1.41 1.41L10.59 14l-2.12 2.12 1.41 1.41L12 15.41l2.12 2.12 1.41-1.41L13.41 14l2.12-2.12-1.41-1.41ZM15.5 4l-1-1h-5l-1 1H5v2h14V4h-3.5ZM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12ZM8 9h8v10H8V9Z"
-          fill="#2D3748" />
+    <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#a)">
+        <path
+          d="M14.12 10.47 12 12.59l-2.13-2.12-1.41 1.41L10.59 14l-2.12 2.12 1.41 1.41L12 15.41l2.12 2.12 1.41-1.41L13.41 14l2.12-2.12-1.41-1.41ZM15.5 4l-1-1h-5l-1 1H5v2h14V4h-3.5ZM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12ZM8 9h8v10H8V9Z"
+          fill="#2D3748"
+        />
       </g>
       <defs>
-        <clipPath id="a"><path fill="#fff" d="M0 0h24v24H0z" />
+        <clipPath id="a">
+          <path fill="#fff" d="M0 0h24v24H0z" />
         </clipPath>
       </defs>
     </svg>
@@ -250,12 +249,11 @@ export function DeleteForeverIcon() {
 
 export function ThreeDotIcon() {
   return (
-    <svg width="48"
-      height="48"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg">
-      <path d="M26 30a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM40 30a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM12 30a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
-        fill="#2D3748" />
+    <svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M26 30a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM40 30a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM12 30a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+        fill="#2D3748"
+      />
     </svg>
-  )
+  );
 }

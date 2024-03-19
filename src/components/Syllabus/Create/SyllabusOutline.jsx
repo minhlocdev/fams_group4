@@ -1,54 +1,41 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Box,
   Button,
-  Collapse,
-  IconButton,
-  TextField,
-  Stack,
   styled,
   Typography,
-  Chip,
-  FormHelperText,
+  Grid,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import { ArrowDownCircle } from "../../../assets/scss/icon";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import CreateIcon from "@mui/icons-material/Create";
 import TimeAllocation from "../../shared/TimeAllocation";
-import DialogDelete from "./DialogDelete";
-import {
-  SyllabusDeleteWarningModal,
-  SyllabusWarningModal,
-} from "./SyllabusWarningModal";
 import { SyllabusContext } from "../../../context/SyllabusContext";
-import Day from "../Create/Day"
+import Day from "../Create/Day";
 
 const button = {
+  backgroundColor: "#2d3748",
+  borderRadius: "8px",
   color: "white",
-  width: "106px",
-  borderRadius: "10px",
-  height: "38px",
-  backgroundColor: "#2D3748",
+  padding: "5px 15px",
+  cursor: "pointer",
   "&:hover": { backgroundColor: "rgb(72 147 222 / 81%)" },
   fontWeight: "bold",
-  margin: "10px",
 };
 
-const Title = styled(Typography)({
-  height: "34px",
-  fontWeight: "bold",
-  background: "#2D3748",
-  color: "white",
-  borderRadius: "10px 10px 0 0",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-});
 export default function SyllabusOutline() {
-  const { outline, setOutline, error, handleFieldValidation } =
-    useContext(SyllabusContext);
-    const [totalDay, setTotalDay] = useState(0);
+  const Title = styled(Typography)({
+    height: "34px",
+    fontWeight: "bold",
+    background: "#2D3748",
+    color: "white",
+    borderRadius: "10px 10px 0 0",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  });
+  const { outline, setOutline } = useContext(SyllabusContext);
+  const theme = useTheme();
+  const [totalDay, setTotalDay] = useState(outline.length);
 
   const addDay = (e) => {
     setTotalDay(totalDay + 1);
@@ -61,44 +48,63 @@ export default function SyllabusOutline() {
     setOutline(tempData);
     e.stopPropagation();
   };
-
-
+  const isDownLg = useMediaQuery(theme.breakpoints.down("lg"));
   return (
     <>
-      <Stack direction="row">
-        <Box sx={{ width: "80%" }} key={"Outline"}>
+      <Grid
+        container
+        direction="row"
+        spacing={2}
+        sx={{ padding: "10px 16px 10px 16px" }}
+      >
+        <Grid item xs={12} lg={10}>
+          {/* <Box sx={{ width: "80%" }} key={"Outline"}> */}
           {outline?.length !== 0 && (
             <Box
               sx={{
                 boxShadow: "0px 20px 40px 0px rgba(0, 0, 0, 0.16)",
                 maxHeight: "500px",
                 overflowY: "auto",
+                marginBottom: "10px",
               }}
             >
               {/* //Day */}
-              <Day setTotalDay={setTotalDay}/>
-              </Box>
+              <Day setTotalDay={setTotalDay} />
+            </Box>
           )}
-            
           <Button sx={button} onClick={(e) => addDay(e)}>
             Add day
           </Button>
-        </Box>
-        <Box
-          sx={{
-            width: "200px",
-            height: "409px",
-            borderRadius: "10px",
-            border: "1px solid #cccc",
-            marginLeft: "auto",
-          }}
-        >
-          <Title>Time Allocation</Title>
-          <Box sx={{ height: "409px" }}>
-            <TimeAllocation />
+          {/* </Box> */}
+        </Grid>
+        <Grid item container lg={2} justifyContent="flex-start">
+          <Box sx={{ width: { xs: "100%", sm: "80%", md: "80%", lg: "100%" } }}>
+            <Box
+              sx={{
+                height: "fit-content",
+                borderRadius: "10px",
+                border: "1px solid #cccc",
+                marginLeft: "auto",
+              }}
+            >
+              <Title>Time Allocation</Title>
+              <Box
+                sx={
+                  isDownLg
+                    ? {
+                        height: "209px",
+                        margin: "35px 0px 20px 0px",
+                        width: { xs: "100%", sm: "80%", md: "80%" },
+                      }
+                    : { height: "409px", width: { lg: "100%" } }
+                }
+              >
+                {isDownLg ? <TimeAllocation control /> : <TimeAllocation />}
+              </Box>
+            </Box>
           </Box>
-        </Box>
-      </Stack>
+        </Grid>
+      </Grid>
     </>
   );
 }

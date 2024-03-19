@@ -32,7 +32,7 @@ import {
 import { InfoTooltip, ExpandMore } from "../shared/lib/CustomMUI";
 import TimePickerViews from "./TimePicker";
 import ClassContext from "../../context/ClassContext";
-import { getAllTrainers } from "../../services/TranningProgram";
+import { useGetAllTrainerQuery } from "../../services/queries/trainingQuery";
 
 export default function CreateGeneral() {
   const location = useLocation();
@@ -53,20 +53,10 @@ export default function CreateGeneral() {
     handleAdmin,
     handleFsu,
   } = useContext(ClassContext);
-  const [loading, setLoading] = useState(true);
-
-  const getAllTrainer = async () => {
-    const response = await getAllTrainers();
-    setLoading(false);
-    if (!response) return;
-    const { data: trainers } = response;
-    if (trainers && trainers.length) {
-      handleTrainers(trainers);
-    }
-  };
+  const { data, isSuccess, isLoading } = useGetAllTrainerQuery();
   useEffect(() => {
-    getAllTrainer();
-  }, []);
+    if (isSuccess) handleTrainers(data);
+  }, [data, isSuccess]);
   const filteredEmails = useMemo(() => {
     if (!fsu && trainers) {
       return trainers.map((user) => user.email);
@@ -170,7 +160,7 @@ export default function CreateGeneral() {
             </Stack>
           </Grid>
           <Grid item xs={8} paddingBottom={2}>
-            {loading ? (
+            {isLoading ? (
               <Skeleton variant="rectangle" width={300} height={30} />
             ) : (
               <Stack spacing={1}>
@@ -186,7 +176,7 @@ export default function CreateGeneral() {
                           <ListItem sx={{ padding: "0" }}>
                             <PhoneInTalk color="primary" />
                             <Typography variant="p" p={1} fontSize={"14px"}>
-                              {a.phoneNumber}
+                              {a.phone}
                             </Typography>
                           </ListItem>
                           <ListItem sx={{ padding: "0" }}>
@@ -234,7 +224,7 @@ export default function CreateGeneral() {
             </Stack>
           </Grid>
           <Grid item xs={8} paddingBottom={2}>
-            {loading ? (
+            {isLoading ? (
               <Skeleton variant="rectangle" width={300} height={30} />
             ) : (
               <FormControl sx={{ width: "100%" }} size="small">
@@ -253,7 +243,7 @@ export default function CreateGeneral() {
           </Grid>
           <Grid item xs={4}></Grid>
           <Grid item xs={8} paddingBottom={3}>
-            {loading ? (
+            {isLoading ? (
               <Skeleton variant="rectangle" width={300} height={30} />
             ) : (
               <FormControl sx={{ width: "100%" }} size="small">

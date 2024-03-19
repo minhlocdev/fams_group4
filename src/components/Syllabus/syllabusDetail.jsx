@@ -1,60 +1,29 @@
-import React from "react";
-import {
-  FolderSyllabusIcon,
-  ConceptIcon,
-  AssignmentIcon,
-  GuideIcon,
-} from "../../assets/scss/icon";
-import { Typography, Card, CardContent, Stack, Chip } from "@mui/material";
-
-const Syllabusdetail = ({
-  Material,
-  setModalData,
-  selectedDay,
-  unitId,
-  unit,
-  day,
-  setSyllabusID,
-  setUnitId,
-  setSelectedDay,
-  openTraining,
-  training,
-}) => {
-  const dataSyllabus = [
-    {
-      id: "1",
-      title: ".NET Introduction",
-      output: "H4SD",
-      time: "30mins",
-      method: "Online",
-      deliveryType: <ConceptIcon />,
-    },
-
-    {
-      id: "2",
-      title: "Declaration & Assignment",
-      output: "H4SD",
-      time: "30mins",
-      method: "Offline",
-      deliveryType: <AssignmentIcon />,
-    },
-
-    {
-      id: "3",
-      title: ".NET Introduction",
-      output: "H4SD",
-      time: "30mins",
-      method: "Online",
-      deliveryType: <GuideIcon />,
-    },
-  ];
+import React, { useContext } from "react";
+import { Typography, Card, CardContent, Stack, Chip, Box } from "@mui/material";
+import { SyllabusContext } from "../../context/SyllabusContext";
+import SettingsInputAntennaOutlinedIcon from "@mui/icons-material/SettingsInputAntennaOutlined";
+import SpellcheckOutlinedIcon from "@mui/icons-material/SpellcheckOutlined";
+import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
+import SnippetFolderOutlinedIcon from "@mui/icons-material/SnippetFolderOutlined";
+import { PanToolOutlined } from "@mui/icons-material";
+const Syllabusdetail = ({ unit, day }) => {
+  const {
+    OpenTrainingMaterialModal,
+    setSyllabusID,
+    selectedDay,
+    setSelectedDay,
+    setModalData,
+    unitId,
+    setUnitId,
+  } = useContext(SyllabusContext);
 
   const layoutOutput = {
     width: "fit-content",
-    padding: "5px 15px",
+    padding: { xs: "5px 5px", lg: "5px 15px" },
     justifyContent: "center",
     alignItems: "center",
-    fontFamily: "Inter",
     fontSize: "12px",
     fontStyle: "normal",
     fontWeight: "500",
@@ -65,10 +34,9 @@ const Syllabusdetail = ({
 
   const layoutMethodOffline = {
     width: "fit-content",
-    padding: "5px 15px",
+    padding: { xs: "5px 5px", lg: "5px 15px" },
     justifyContent: "center",
     alignItems: "center",
-    fontFamily: "Inter",
     fontSize: "10px",
     fontStyle: "normal",
     fontWeight: "400",
@@ -79,10 +47,9 @@ const Syllabusdetail = ({
 
   const layoutMethodOnline = {
     width: "fit-content",
-    padding: "5px 15px",
+    padding: { xs: "5px 5px", lg: "5px 15px" },
     justifyContent: "center",
     alignItems: "center",
-    fontFamily: "Inter",
     fontSize: "10px",
     fontStyle: "normal",
     fontWeight: "400",
@@ -101,25 +68,49 @@ const Syllabusdetail = ({
     color: "#000",
   };
   const handleProps = React.useCallback(
-    (event, data, TrainingMaterial, dayID, unitid) => {
+    (event, data, TrainingMaterial, dayID, unitid, unitTitle) => {
       const newdata = {
         day: dayID,
         title: data,
         unit: unitid,
         TrainingMaterial: TrainingMaterial,
+        unitTitle: unitTitle,
       };
       setModalData(newdata);
       event.stopPropagation();
     },
-    [selectedDay, unitId, training, setModalData]
+    [selectedDay, unitId, setModalData]
   );
-
+  function handleIconDelivery(deliveryData) {
+    let IconType;
+    switch (deliveryData) {
+      case "Assignment/Lab":
+        IconType = <AssignmentIcon />;
+        break;
+      case "Concept/Lecture":
+        IconType = <RecordVoiceOverIcon />;
+        break;
+      case "Guide/Review":
+        IconType = <PanToolOutlined />;
+        break;
+      case "Test/Quiz":
+        IconType = <FactCheckOutlinedIcon />;
+        break;
+      case "Exam":
+        IconType = <SpellcheckOutlinedIcon />;
+        break;
+      case "Seminar/Workshop":
+        IconType = <SettingsInputAntennaOutlinedIcon />;
+        break;
+    }
+    return IconType;
+  }
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
       {unit.datasyllabus.map((e, index) => (
         <Card
           sx={{
-            width: "831px",
+            width: { xs: "95%", lg: "100%" },
             backgroundColor: "#DFDEDE",
             boxShadow: "none",
             padding: "5px",
@@ -128,26 +119,31 @@ const Syllabusdetail = ({
         >
           <CardContent
             sx={{
-              maxWidth: "831px",
-              maxHeight: "34px",
+              maxWidth: { xs: "100%", sm: "100%", md: "100%", lg: "100%" },
+              maxHeight: "fit-content",
               display: "flex", // Thêm dòng này
-              justifyContent: "space-between", // Thêm dòng này
-              alignItems: "center",
+              justifyContent: {
+                xs: "none",
+                sm: "space-between",
+                md: "space-between",
+                lg: "space-between",
+              }, // Thêm dòng này
+              alignItems: { xs: "flex-start", sm: "center" },
               "&.MuiCardContent-root": {
-                padding: "5px 20px",
+                padding: { xs: "5px 10px", md: "5px 18px", lg: "5px 20px" },
               },
+              flexDirection: { xs: "column", sm: "row", md: "row", lg: "row" },
             }}
           >
             <Typography
               sx={{
-                fontFamily: "Inter",
+                width: { xs: "100%", sm: "100%", md: "100%", lg: "100%" },
                 fontSize: "14px",
                 fontStyle: "normal",
                 fontWeight: "500",
-                lineHeight: "22px",
               }}
             >
-              <div>{e.title}</div>
+              {e.title}
             </Typography>
             <CardContent
               sx={{
@@ -158,8 +154,7 @@ const Syllabusdetail = ({
             >
               <Stack
                 direction="row"
-                spacing={3}
-                sx={{ justifyContent: "space-between" }}
+                spacing={{ xs: 0.5, sm: 1.5, md: 2, lg: 3 }}
               >
                 <Chip label={e.output} sx={layoutOutput} />
                 <Chip label={e.time} sx={layoutTime} />
@@ -171,26 +166,40 @@ const Syllabusdetail = ({
                       : layoutMethodOffline
                   }
                 />
-                <div style={{ width: "24px", height: "24px" }}>
-                  {e.deliveryType}
-                </div>
-                <div
+                <Box
+                  sx={{
+                    width: { xs: "0px", sm: "24px" },
+                    height: "32px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  {handleIconDelivery(e.deliveryType)}
+                </Box>
+                <Box
                   onClick={(event) => (
                     setSelectedDay(day.id),
                     setUnitId(unit.id),
-                    Material(event),
+                    OpenTrainingMaterialModal(event),
                     handleProps(
                       event,
                       e.title,
                       e.TrainingMaterial,
                       day.id,
-                      unit.id
+                      unit.id,
+                      unit.title
                     ),
                     setSyllabusID(e.id)
                   )}
+                  sx={{
+                    cursor: "pointer",
+                    backgroundColor: "#dfdede",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
                 >
-                  <FolderSyllabusIcon />
-                </div>
+                  <SnippetFolderOutlinedIcon />
+                </Box>
               </Stack>
             </CardContent>
           </CardContent>

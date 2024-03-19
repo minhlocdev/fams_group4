@@ -19,5 +19,7 @@ const ClassContext = React.createContext({
   handleAttendee: () => {},
   handleSave: () => {},
   handleCancel: () => {},
+  initialDays: [],
+  setInitialDays: () => {},
 });
 export default ClassContext;

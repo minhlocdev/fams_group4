@@ -6,7 +6,7 @@ import theme from "../../assets/theme";
 import Collapse from "@mui/material/Collapse";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandCircleDownOutlined";
-import { Stack } from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import { CalendarToday } from "@mui/icons-material";
 import { useLocation } from "react-router-dom";
 import { ExpandMore } from "../shared/lib/CustomMUI";
@@ -70,58 +70,88 @@ export default function TimeFrame() {
         </ExpandMore>
       </Stack>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <DayPicker
-          style={{ margin: "0", textAlign: "center" }}
-          styles={{
-            caption: {
-              color: theme.primary,
-              marginBottom: "20px",
-            },
-            head_cell: { color: theme.unmodified },
-            months: {
-              display: "inline-flex",
-              borderRadius: "15px",
-              boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
-              padding: "10px 20px",
-              width: "100%",
-              justifyContent: "center",
-            },
-            month: {
-              margin: "0 auto",
-            },
-
-            table: {
-              // maxWidth: "100%",
-              // width: "100%",
-            },
-            caption_label: {
-              borderBottom: ".5px solid #ddd",
-              padding: "0  50px 15px",
-              textAlign: "center",
-              display: "inline-block",
-              fontSize: "16px",
-            },
-            cell: {
-              height: "40px",
-              padding: "5px",
-              fontSize: "13px",
-            },
-          }}
-          mode="multiple"
-          selected={memoizedDays}
-          onSelect={setDays}
-          modifiersStyles={{
-            selected: {
-              backgroundColor: theme.primary,
-
-              width: "40px",
-              height: "40px",
-              fontSize: "13px",
-            },
-          }}
-          numberOfMonths={2}
-          // fromDate={Date.now()}
-        />
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
+          <DayPicker
+            style={{ margin: "0", textAlign: "center" }}
+            styles={{
+              caption: {
+                color: theme.primary,
+                marginBottom: "20px",
+              },
+              head_cell: { color: theme.unmodified },
+              months: {
+                display: "inline-flex",
+                borderRadius: "15px",
+                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                padding: "10px 20px",
+                width: "100%",
+                justifyContent: "center",
+              },
+              month: {
+                margin: "0 auto",
+              },
+              caption_label: {
+                borderBottom: ".5px solid #ddd",
+                padding: "0  50px 15px",
+                textAlign: "center",
+                display: "inline-block",
+                fontSize: "16px",
+              },
+              cell: {
+                height: { lg: "40px" },
+                padding: { lg: "5px" },
+                fontSize: { lg: "13px" },
+              },
+            }}
+            mode="multiple"
+            selected={memoizedDays}
+            onSelect={setDays}
+            modifiersStyles={{
+              selected: {
+                backgroundColor: theme.primary,
+                width: "40px",
+                height: "40px",
+                fontSize: "13px",
+              },
+            }}
+            numberOfMonths={2}
+          />
+        </Box>
+        <Box sx={{ display: { xs: "block", md: "none" } }}>
+          <DayPicker
+            style={{ margin: "0", textAlign: "center" }}
+            styles={{
+              caption: {
+                color: theme.primary,
+                marginBottom: "20px",
+              },
+              head_cell: { color: theme.unmodified },
+              months: {
+                display: "inline-flex",
+                borderRadius: "15px",
+                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                padding: "10px 20px",
+                width: "100%",
+                justifyContent: "center",
+              },
+              month: {
+                margin: "0 auto",
+              },
+            }}
+            mode="multiple"
+            selected={memoizedDays}
+            onSelect={setDays}
+            modifiersStyles={{
+              selected: {
+                backgroundColor: theme.primary,
+                width: "40px",
+                height: "40px",
+                fontSize: "13px",
+              },
+            }}
+            numberOfMonths={1}
+          />
+        </Box>
       </Collapse>
     </>
   );

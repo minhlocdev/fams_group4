@@ -28,17 +28,41 @@ export default function ClassDetail() {
           <ClassHeader />
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={12} lg={4}>
+              <Grid
+                item
+                xs={12}
+                md={4}
+                lg={4}
+                sx={{
+                  transition: "max-width 0.5s ease",
+                }}
+              >
                 <Item>
                   <General />
                 </Item>
               </Grid>
-              <Grid item xs={12} md={12} lg={6}>
+              <Grid
+                item
+                xs={12}
+                md={8}
+                lg={6}
+                sx={{
+                  transition: "max-width 0.5s ease",
+                }}
+              >
                 <Item>
                   <TimeFrame />
                 </Item>
               </Grid>
-              <Grid item xs={12} md={12} lg={4}>
+              <Grid
+                item
+                xs={12}
+                md={12}
+                lg={4}
+                sx={{
+                  transition: "max-width 0.5s ease",
+                }}
+              >
                 <Item>
                   <Attendee />
                 </Item>

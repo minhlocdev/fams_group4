@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import ClassContext from "./ClassContext";
 
 export default function ClassWrapper(props) {
@@ -15,33 +15,49 @@ export default function ClassWrapper(props) {
     accepted: 0,
     actual: 0,
   });
-  const handleAttendee = (type, value) => {
+  const [initialDays, setInitialDays] = useState([]);
+
+  useEffect(() => {
+    setInitialDays([]);
+  }, [search]);
+
+  const handleAttendee = useCallback((type, value) => {
     setAttendee((prevAttendee) => ({
       ...prevAttendee,
       [type]: value,
     }));
-  };
-  const handleTabChange = (event, newValue) => {
+  }, []);
+
+  const handleTabChange = useCallback((event, newValue) => {
     setActiveTab(newValue);
-  };
-  const handleAdmin = (value) => {
-    if (!admin.includes(value)) {
-      setAdmin(value);
-    }
-  };
-  const handleFsu = (value) => {
+  }, []);
+
+  const handleAdmin = useCallback(
+    (value) => {
+      if (!admin.includes(value)) {
+        setAdmin(value);
+      }
+    },
+    [admin]
+  );
+
+  const handleFsu = useCallback((value) => {
     setFsu(value);
-  };
-  const handleContact = (value) => {
+  }, []);
+
+  const handleContact = useCallback((value) => {
     setContact(value);
-  };
-  const handleTrainers = (items) => {
+  }, []);
+
+  const handleTrainers = useCallback((items) => {
     setTrainers(items);
-  };
-  const handleSearch = (item) => {
+  }, []);
+
+  const handleSearch = useCallback((item) => {
     setSearch(item);
-  };
-  const handleCancel = () => {
+  }, []);
+
+  const handleCancel = useCallback(() => {
     setActiveTab(0);
     setSearch(null);
     setClassTitle("");
@@ -55,32 +71,61 @@ export default function ClassWrapper(props) {
       accepted: 0,
       actual: 0,
     });
-  };
-  const handleSave = () => {};
+  }, []);
+
+  const handleSave = useCallback(() => {
+    // Implement your save logic here
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      activeTab,
+      handleTabChange,
+      search,
+      handleSearch,
+      classTitle,
+      setClassTitle,
+      admin,
+      handleAdmin,
+      fsu,
+      handleFsu,
+      contact,
+      handleContact,
+      trainers,
+      handleTrainers,
+      attendee,
+      handleAttendee,
+      handleCancel,
+      handleSave,
+      initialDays,
+      setInitialDays,
+    }),
+    [
+      activeTab,
+      handleTabChange,
+      search,
+      handleSearch,
+      classTitle,
+      setClassTitle,
+      admin,
+      handleAdmin,
+      fsu,
+      handleFsu,
+      contact,
+      handleContact,
+      trainers,
+      handleTrainers,
+      attendee,
+      handleAttendee,
+      handleCancel,
+      handleSave,
+      initialDays,
+      setInitialDays,
+    ]
+  );
+
   return (
-    <ClassContext.Provider
-      value={{
-        activeTab,
-        handleTabChange,
-        search,
-        handleSearch,
-        classTitle,
-        setClassTitle,
-        admin,
-        handleAdmin,
-        fsu,
-        handleFsu,
-        contact,
-        handleContact,
-        trainers,
-        handleTrainers,
-        attendee,
-        handleAttendee,
-        handleCancel,
-        handleSave,
-      }}
-    >
-      {" "}
+    <ClassContext.Provider value={contextValue}>
       {props.children}
     </ClassContext.Provider>
   );

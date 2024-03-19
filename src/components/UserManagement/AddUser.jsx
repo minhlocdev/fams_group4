@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import ModalContainer from "../shared/ModalContainer";
 import {
   TextField,
@@ -17,156 +17,56 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import DropDown from "./DropDown/DropDown";
 import Switch from "./Switch/Switch";
-import { ModalProvider } from "../shared/ModalContainer";
-const textBox = {
-  width: "100%",
-  display: "flex",
-  justifyContent: "space-between",
-  "& .MuiFormControlLabel-label": {
-    fontSize: "16px",
-    fontWeight: "500",
-    color: "rgb(0, 0, 0)",
-  },
-};
-const textFields = {
-  display: "flex",
-  width: "315px",
-  flexDirection: "row-reseve",
-  "& .MuiInputBase-input": {
-    padding: "10px",
-  },
-  "& .MuiInputBase-input::placeholder": {
-    fontStyle: "italic",
-    fontWeight: "bolder",
-    color: "rgb(0, 0, 0)",
-  },
-};
-
-const textCanlender = {
-  width: "315px",
-  "& .MuiInputBase-input": {
-    padding: "10px 10px 10px 10px",
-  },
-  "& .MuiInputBase-input::placeholder": {
-    fontStyle: "italic",
-    fontWeight: "bolder",
-    color: "rgb(0, 0, 0)",
-  },
-  "& .MuiInputBase-root": {
-    flexDirection: "row-reverse",
-  },
-  "& .customDatePickerDay": {
-    backgroundColor: "#E74A3B",
-    borderRadius: "8px",
-  },
-};
-
-const buttonContainer = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-};
-
-const CancerButton = {
-  color: "#E74A3B",
-  firstSize: "17px",
-  fontWeight: "700",
-  textDecoration: "underline",
-};
-
-const SaveButton = {
-  color: "whitesmoke",
-  backgroundColor: "#2D3748",
-  padding: "0px 25px",
-  borderRadius: "8px",
-  fontSize: "17px",
-  fontWeight: "700",
-};
-
-const FormContent = () => {
+import { usePostUserMutation } from "../../services/queries/userQuery";
+import queryClient from "../../services/queries/queryClient";
+import { QUERY_USER_KEY } from "../../constants/query";
+import dayjs from "dayjs";
+import {
+  textFields,
+  CancerButton,
+  SaveButton,
+  buttonContainer,
+  textBox,
+  textCanlender,
+  datePickerStyle,
+} from "./UserModal.style";
+import useValidateForm from "../../utils/useValidateForm";
+import ToastEmitter from "../shared/lib/ToastEmitter";
+const FormContent = ({ handleClose }) => {
   //False = Active, Truth = Unactive
   const [isactive, setActive] = useState(false);
   const [formData, setFormData] = useState({
-    userType: "",
-    userName: "",
-    emailAddress: "",
-    phoneNumber: "",
+    permissionId: "",
+    name: "",
+    email: "",
+    phone: "",
     dateOfBirth: null,
     gender: "male",
-    status: "Active",
+    status: 0,
   });
 
-  const [errors, setErrors] = useState({
-    userType: "",
-    userName: "",
-    emailAddress: "",
-    phoneNumber: "",
-    dateOfBirth: "",
-  });
-  const validateForm = () => {
-    let valid = true;
-    const pickedDate = new Date();
-    const newErrors = { ...errors };
-
-    //Validate User Type
-    if (!formData.userType) {
-      newErrors.userType = "User type is required";
-      valid = false;
-    }
-
-    //Validate Username
-    if (formData.userName.trim() === "") {
-      newErrors.userName = "User name is required";
-      valid = false;
-    }
-    //Validate Email
-    if (formData.emailAddress.trim() === "") {
-      newErrors.emailAddress = "Email address is required";
-      valid = false;
-    } else if (
-      !/^[a-zA-Z0-9._%+-]+@(gmail\.com|fpt\.edu\.vn)$/.test(
-        formData.emailAddress
-      )
-    ) {
-      newErrors.emailAddress = "Email address is invalid";
-      valid = false;
-    }
-    //Validate Phonenumber
-    if (formData.phoneNumber.trim() === "") {
-      newErrors.phoneNumber = "Phone number is required";
-      valid = false;
-    } else if (!/^0\d{9,}$/.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Phone number is invalid";
-      valid = false;
-    }
-    //Validate DateofBirth
-    if (!formData.dateOfBirth) {
-      newErrors.dateOfBirth = "Date of birth is required";
-      valid = false;
-    } else if (formData.dateOfBirth > pickedDate) {
-      newErrors.dateOfBirth = "Date of birth is invalid";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
-  };
-
+  const { errors, validateForm } = useValidateForm();
+  const { mutate: postNewUser, isSuccess } = usePostUserMutation();
   const handleSubmit = (e) => {
-    if (!validateForm()) {
+    if (!validateForm(formData)) {
       e.preventDefault();
-      console.log("non");
+      console.log("form sai");
     } else {
-      //=================================================Put Submit logic here==================================
       e.preventDefault();
-      console.log(formData);
+      postNewUser(formData, {
+        onSuccess: () => {
+          queryClient.resetQueries({ queryKey: [QUERY_USER_KEY] });
+        },
+      });
     }
   };
   const handleChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
-    setErrors({ ...errors, [field]: "" });
   };
-  const handleClose = useContext(ModalProvider);
+  if (isSuccess) {
+    ToastEmitter.success("Create user successfully!!");
+    handleClose();
+  }
   return (
     <div style={{ width: "100%" }}>
       <FormGroup
@@ -191,10 +91,10 @@ const FormContent = () => {
               sx={textFields}
               id="outlined-basic"
               variant="outlined"
-              value={formData.userName}
-              onChange={(e) => handleChange("userName", e.target.value)}
-              error={Boolean(errors.userName)}
-              helperText={errors.userName}
+              value={formData.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              error={Boolean(errors.name)}
+              helperText={errors.name}
             />
           }
           label="Name"
@@ -208,10 +108,10 @@ const FormContent = () => {
               sx={textFields}
               id="outlined-basic"
               variant="outlined"
-              value={formData.emailAddress}
-              onChange={(e) => handleChange("emailAddress", e.target.value)}
-              error={Boolean(errors.emailAddress)}
-              helperText={errors.emailAddress}
+              value={formData.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              error={Boolean(errors.email)}
+              helperText={errors.email}
             />
           }
           label="Email address"
@@ -225,10 +125,10 @@ const FormContent = () => {
               sx={textFields}
               id="outlined-basic"
               variant="outlined"
-              value={formData.phoneNumber}
-              onChange={(e) => handleChange("phoneNumber", e.target.value)}
-              error={Boolean(errors.phoneNumber)}
-              helperText={errors.phoneNumber}
+              value={formData.phone}
+              onChange={(e) => handleChange("phone", e.target.value)}
+              error={Boolean(errors.phone)}
+              helperText={errors.phone}
             />
           }
           label="Phone"
@@ -248,39 +148,22 @@ const FormContent = () => {
                       placeholder: "Select Date",
                       error: Boolean(errors.dateOfBirth),
                       helperText: errors.dateOfBirth,
+                      onChange: (date) => {
+                        handleChange("dateOfBirth", date);
+                      },
                     },
                     layout: {
-                      sx: {
-                        "& .MuiPickersDay-today": {
-                          backgroundColor: "#2D3748",
-                          color: "#fff",
-                        },
-                        "& .MuiPickersDay-root": {
-                          borderRadius: "8px",
-                        },
-                        "& .MuiPickersCalendarHeader-switchViewIcon": {
-                          visibility: "hidden",
-                        },
-                        "& .MuiPickersCalendar-root": {
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        },
-                        "& .MuiPickersCalendarHeader-labelContainer": {
-                          position: "absolute",
-                          transform: "translatex(78px)",
-                        },
-                        "& .MuiPickersArrowSwitcher-root": {
-                          width: "100%",
-                          display: "flex",
-                          justifyContent: "space-between",
-                        },
-                      },
+                      sx: { datePickerStyle },
                     },
                   }}
                   sx={textCanlender}
                   value={formData.dateOfBirth}
-                  onChange={(date) => handleChange("dateOfBirth", date)}
+                  onChange={(date) =>
+                    handleChange(
+                      "dateOfBirth",
+                      dayjs(date).format("YYYY-MM-DD")
+                    )
+                  }
                   showDaysOutsideCurrentMonth
                   className="customDatePickerDay"
                 />
@@ -352,10 +235,15 @@ const FormContent = () => {
     </div>
   );
 };
-const AddUser = () => {
+const AddUser = ({ isOpen, handleClose }) => {
   return (
-    <ModalContainer title={"Add a new user"}>
-      <FormContent />
+    <ModalContainer
+      title={"Add a new user"}
+      isOpen={isOpen}
+      handleClose={handleClose}
+      key={isOpen?.toString()}
+    >
+      <FormContent handleClose={handleClose} />
     </ModalContainer>
   );
 };

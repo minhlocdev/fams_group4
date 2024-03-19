@@ -40,7 +40,6 @@ const SaveButton = {
   fontWeight: "700",
 };
 export default function AcceptUpdate({ onSave, onCancel }) {
-  //   console.log(saving);
   const [open, setOpen] = React.useState(true);
   const handleClose = () => {
     onCancel(); // Notify the parent about cancel action

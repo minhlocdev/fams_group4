@@ -144,7 +144,7 @@ export function SelectForm(props) {
                   ></img>{" "}
                   {menu.text}
                 </React.Fragment>
-              )
+              ),
           )}
         </Box>
       )}
@@ -159,7 +159,7 @@ export default function UserPermisson() {
       <SelectForm id="2" />,
       <SelectForm id="3" />,
       <SelectForm id="4" />,
-      <SelectForm id="5" />
+      <SelectForm id="5" />,
     ),
     createData(
       "Class admin",
@@ -167,7 +167,7 @@ export default function UserPermisson() {
       <SelectForm id="7" />,
       <SelectForm id="8" />,
       <SelectForm id="9" />,
-      <SelectForm id="10" />
+      <SelectForm id="10" />,
     ),
     createData(
       "Trainer",
@@ -175,7 +175,7 @@ export default function UserPermisson() {
       <SelectForm id="12" />,
       <SelectForm id="13" />,
       <SelectForm id="14" />,
-      <SelectForm id="15" />
+      <SelectForm id="15" />,
     ),
   ];
   return (

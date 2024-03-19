@@ -1,5 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, MenuItem, Select, Typography, styled } from "@mui/material";
+import {
+  Box,
+  Grid,
+  MenuItem,
+  Select,
+  Typography,
+  styled,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import RichText from "../RichText";
@@ -8,19 +17,22 @@ import FormHelperText from "@mui/material/FormHelperText";
 import TimeAllocation from "../../shared/TimeAllocation";
 import { SyllabusContext } from "../../../context/SyllabusContext";
 
+const Title = styled(Typography)({
+  height: "34px",
+  fontWeight: "bold",
+  background: "#2D3748",
+  color: "white",
+  borderRadius: "10px 10px 0 0",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+});
 export default function SyllabusGeneral() {
   const { general, setGeneral, error, handleFieldValidation } =
     useContext(SyllabusContext);
-  const Title = styled(Typography)({
-    height: "34px",
-    fontWeight: "bold",
-    background: "#2D3748",
-    color: "white",
-    borderRadius: "10px 10px 0 0",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  });
+  const theme = useTheme();
+  const isDownLg = useMediaQuery(theme.breakpoints.down("lg"));
+
   // const {level, message, attendee, error} = props
   const handleGeneral = (event) => {
     const copy = { ...general };
@@ -45,10 +57,26 @@ export default function SyllabusGeneral() {
   };
   return (
     <>
-      <Stack direction="row">
-        <Box sx={{ padding: "10px 16px 10px 16px", width: "80%", gap: "10px" }}>
+      <Grid
+        container
+        direction="row"
+        spacing={2}
+        xs={12}
+        sm={12}
+        md={12}
+        sx={{ padding: "10px 16px 10px 16px" }}
+      >
+        <Grid
+          item
+          // lg={8}
+          md={12}
+          sm={12}
+          xs={12}
+          lg={8}
+          // xs={} md={} lg={}
+        >
           <Stack direction="column" gap="10px">
-            <Box sx={{ display: "flex", gap: "39px" }}>
+            <Box sx={{ display: "flex", gap: "5px" }}>
               <Typography fontWeight="bold" variant={"h6"}>
                 Level
               </Typography>
@@ -82,7 +110,14 @@ export default function SyllabusGeneral() {
                 ""
               )}
             </Box>
-            <Box sx={{ display: "flex", gap: "41px", alignItems: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                width: "80%",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
               <Typography fontWeight="bold" variant={"h6"}>
                 Attendee number
               </Typography>
@@ -147,22 +182,35 @@ export default function SyllabusGeneral() {
               </Box>
             </Box>
           </Stack>
-        </Box>
-        <Box
-          sx={{
-            width: "200px",
-            height: "409px",
-            borderRadius: "10px",
-            border: "1px solid #cccc",
-            marginLeft: "auto",
-          }}
-        >
-          <Title>Time Allocation</Title>
-          <Box sx={{ height: "409px" }}>
-            <TimeAllocation />
+        </Grid>
+        <Grid item container lg={2} justifyContent="flex-start">
+          <Box sx={{ width: { xs: "100%", sm: "80%", md: "80%", lg: "100%" } }}>
+            <Box
+              sx={{
+                height: "fit-content",
+                borderRadius: "10px",
+                border: "1px solid #cccc",
+                marginLeft: "auto",
+              }}
+            >
+              <Title>Time Allocation</Title>
+              <Box
+                sx={
+                  isDownLg
+                    ? {
+                        height: "209px",
+                        margin: "35px 0px 20px 0px",
+                        width: { xs: "100%", sm: "80%", md: "80%" },
+                      }
+                    : { height: "409px", width: { lg: "100%" } }
+                }
+              >
+                {isDownLg ? <TimeAllocation control /> : <TimeAllocation />}
+              </Box>
+            </Box>
           </Box>
-        </Box>
-      </Stack>
+        </Grid>
+      </Grid>
     </>
   );
 }

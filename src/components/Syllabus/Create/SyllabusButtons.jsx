@@ -1,35 +1,46 @@
-import { Box, Button, Link } from "@mui/material";
+import { Box, Button, Grid, Link } from "@mui/material";
 import React, { useContext } from "react";
 import { SyllabusContext } from "../../../context/SyllabusContext";
 
+const button = {
+  backgroundColor: "#2d3748",
+  borderRadius: "8px",
+  color: "white",
+  padding: "5px 15px",
+  cursor: "pointer",
+  "&:hover": { backgroundColor: "rgb(72 147 222 / 81%)" },
+  fontWeight: "bold",
+};
 export default function SyllabusButtons() {
   const { handleTabChange, activeTab, handleSave } =
     useContext(SyllabusContext);
   return (
-    <Box
+    <Grid
+      container
+      // columns={16}
       sx={{
         margin: "20px 0px 20px 0px",
         display: "flex",
         justifyContent:
           activeTab === 1 || activeTab === 2 ? "space-between" : "flex-end",
-        "& button": { fontWeight: "bold", borderRadius: "8px" },
       }}
     >
       {activeTab >= 1 ? (
-        <Button
-          sx={{
-            color: "white",
-            backgroundColor: "#2D3748",
-            "&:hover": { backgroundColor: "rgb(72 147 222 / 81%)" },
-          }}
-          onClick={() => handleTabChange(activeTab - 1)}
-        >
-          Previous
-        </Button>
+        <Grid item xs={2} sm={4}>
+          <Button sx={button} onClick={() => handleTabChange(activeTab - 1)}>
+            Previous
+          </Button>
+        </Grid>
       ) : (
         ""
       )}
-      <Box sx={{ display: "flex", gap: "10px" }}>
+      <Grid
+        item
+        xs={10}
+        sm={8}
+        sx={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}
+      >
+        {/* <Grid item xs={3}> */}
         <Button
           component={Link}
           to="/syllabus/detail/1"
@@ -37,46 +48,36 @@ export default function SyllabusButtons() {
             color: "red",
             textDecoration: "underline",
             fontWeight: "bold",
+            padding: "5px 0px 5px 15px",
           }}
         >
           Cancel
         </Button>
+        {/* </Grid> */}
+        {/* <Grid item xs={6}> */}
         <Button
           //   onClick={handleDraftButton}
-          sx={{
-            color: "white",
-            backgroundColor: "#474747",
-            "&:hover": { backgroundColor: "rgb(72 147 222 / 81%)" },
-          }}
+          sx={button}
         >
-          Save as draft
+          Save draft
         </Button>
+        {/* </Grid> */}
+        {/* <Grid item xs={3}> */}
         {activeTab === 2 ? (
-          <Button
-            type="submit"
-            onClick={() => handleSave()}
-            sx={{
-              color: "white",
-              backgroundColor: "#2D3748",
-              "&:hover": { backgroundColor: "rgb(72 147 222 / 81%)" },
-            }}
-          >
+          <Button type="submit" onClick={() => handleSave()} sx={button}>
             Save
           </Button>
         ) : (
           <Button
             type="submit"
             onClick={() => handleTabChange(activeTab + 1)}
-            sx={{
-              color: "white",
-              backgroundColor: "#2D3748",
-              "&:hover": { backgroundColor: "rgb(72 147 222 / 81%)" },
-            }}
+            sx={button}
           >
             Next
           </Button>
         )}
-      </Box>
-    </Box>
+        {/* </Grid> */}
+      </Grid>
+    </Grid>
   );
 }

@@ -73,14 +73,14 @@ export default function FilterBox() {
   return (
     <>
       <Grid container spacing={3}>
-        <Grid item xs={6}>
+        <Grid item xs={7}>
           <Typography variant="h8">Class Location</Typography>
           <LimitTags
             selectedTags={selectedTags}
             onTagsChange={handleTagsChange}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={5} ml={"auto"}>
           <Typography variant="h8">Class time frame</Typography>
           <DateRangePicker />
         </Grid>
@@ -116,7 +116,7 @@ export default function FilterBox() {
                             tabIndex={-1}
                             disableRipple
                             checked={checked.indexOf(option) !== -1}
-                            checkedIcon={<CheckBoxOutlined/>}
+                            checkedIcon={<CheckBoxOutlined />}
                           />
                         </ListItemIcon>
                         <ListItemText primary={option} />

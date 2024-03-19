@@ -11,26 +11,31 @@ export default function AppContainer({ children }) {
       <AppBar>
         <Header />
       </AppBar>
-      <Sidebar open={open} setOpen={setOpen} />
-      <Grid container>
-        <Grid item md={open ? 10 : 12}>
+      <Grid
+        sx={{
+          maxWidth: {
+            xs: `100%`,
+          },
+          transition: "all 0.4s ease",
+        }}
+      >
+        <Grid item xs={12} lg={open ? 10 : 12}>
           <Container
             sx={{
               marginTop: "60px",
-              transition: "margin-left 0.3s ease",
-              marginLeft: open ? "270px" : "60px",
-              minHeight: "85dvh",
-              "@media screen and (min-width: 1200px)": {
-                paddingRight: 0,
-                paddingLeft: 1,
-                maxWidth: !open ? "96%" : "100%",
+              marginLeft: { xs: "0", lg: open ? "270px" : "60px" },
+              minHeight: "100dvh",
+              transition: "all 0.4s ease",
+              maxWidth: {
+                xs: `100%`,
+                lg: `calc(100% - ${open ? "270px" : "60px"})`,
               },
             }}
           >
             {children}
           </Container>
         </Grid>
-        <Grid item md={2}>
+        <Grid item lg={2}>
           <Sidebar open={open} setOpen={setOpen} />
         </Grid>
       </Grid>

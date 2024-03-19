@@ -33,6 +33,12 @@ export default function ClassCreateDetail() {
   const handleSaveTitle = () => {
     validateTitle() && setClassTitle(inputRef.current.value);
   };
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSaveTitle();
+    }
+  };
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -52,6 +58,7 @@ export default function ClassCreateDetail() {
                   padding: "10px 10px",
                 },
               }}
+              onKeyDown={handleKeyDown}
             />
             <Button
               sx={{
@@ -72,17 +79,41 @@ export default function ClassCreateDetail() {
         ) : (
           <>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={12} lg={4}>
+              <Grid
+                item
+                xs={12}
+                md={4}
+                lg={4}
+                sx={{
+                  transition: "max-width 0.5s ease",
+                }}
+              >
                 <Item>
                   <CreateGeneral />
                 </Item>
               </Grid>
-              <Grid item xs={12} md={12} lg={6}>
+              <Grid
+                item
+                xs={12}
+                md={8}
+                lg={6}
+                sx={{
+                  transition: "max-width 0.5s ease",
+                }}
+              >
                 <Item>
                   <CreateTimeFrame />
                 </Item>
               </Grid>
-              <Grid item xs={12} md={12} lg={4}>
+              <Grid
+                item
+                xs={12}
+                md={12}
+                lg={4}
+                sx={{
+                  transition: "max-width 0.5s ease",
+                }}
+              >
                 <Item>
                   <CreateAttendee />
                 </Item>

@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import AppContainer from "../components/shared/layout/AppContainer";
-import { Box, Typography } from "@mui/material";
-import Stack from "@mui/material/Stack";
+import { Grid, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import SyllabusWrapper from "../context/SyllabusWrapper";
 import { SyllabusContext } from "../context/SyllabusContext";
@@ -9,20 +8,8 @@ import SyllabusTabContent from "../components/Syllabus/Create/SyllabusTabContent
 import SyllabusHeader from "../components/Syllabus/Create/SyllabusHeader";
 import SyllabusButtons from "../components/Syllabus/Create/SyllabusButtons";
 
-const text1 = `   Trainees’ PCs need to have following software installed & run without any issues:
-• Microsoft SQL Server 2005 Express (in which the trainees can create & manipulate on their own database)
-• Microsoft Visual Studio 2017
-• Microsoft Office 2007 (Visio, Word, PowerPoint) `;
-
-const line = `• Trainee who actively complete online learning according to MOOC links provided</br>
-• At the end of the day, students complete Daily Quiz for 30 minutes</br>
-• Trainer/Mentor supports answering questions, guiding exercises 1.5-2.0h/day</br>
-• Trainer conducts the workshops</br>
-• Trainees complete Assignments and Labs</br>
-• Trainees have 1 final test in 4 hours (1 hour theory + 3 hours of practice)`;
-
 export default function SyllabusCreate() {
-  const { activeTab, handleFieldValidation } = useContext(SyllabusContext);
+  const { activeTab } = useContext(SyllabusContext);
 
   const [syllabusName, setSyllabusName] = useState("");
   const [NameError, setNameError] = useState(false);
@@ -54,25 +41,46 @@ export default function SyllabusCreate() {
     <SyllabusWrapper>
       <AppContainer>
         <form noValidate autoComplete="true" onSubmit={handleSubmit}>
-          <SyllabusHeader />
-          <Stack
+          <Grid
+            container
+            direction="row"
+            sx={{ alignItems: "center", marginBottom: "20px" }}
+          >
+            <SyllabusHeader />
+          </Grid>
+          <Grid
+            spacing={2}
+            container
             direction="row"
             sx={{
-              padding: "20px",
               alignItems: "center",
-              gap: "100px",
+              marginBottom: "20px",
               "& h6": { display: "flex", alignItems: "center", gap: "15px" },
             }}
           >
-            <Box
+            <Grid
+              item
+              xs={12}
               sx={{
                 height: "80px",
                 display: "flex",
                 alignItems: "center",
-                gap: "15px",
               }}
+              lg={6}
+              md={6}
             >
-              <Typography variant={"h6"} fontWeight="bold">
+              <Typography
+                variant={"h6"}
+                fontWeight="bold"
+                sx={{
+                  width: {
+                    sm: "25%",
+                    xs: "50%",
+                    md: "35%",
+                    lg: "25%",
+                  },
+                }}
+              >
                 Syllabus Name*
               </Typography>
               <TextField
@@ -82,7 +90,11 @@ export default function SyllabusCreate() {
                 sx={{
                   borderRadius: "6px",
                   minHeight: "36px",
-                  minWidth: "300px",
+                  minWidth: {
+                    xs: "20px",
+                    md: "20px",
+                    lg: "10px",
+                  },
                 }}
                 variant="outlined"
                 value={syllabusName}
@@ -96,16 +108,24 @@ export default function SyllabusCreate() {
                 onChange={handleSyllabusName}
                 error={NameError}
               />
-            </Box>
-            <Typography variant={"h6"} fontWeight="bold">
-              Code<Typography component="span">NLP</Typography>
-            </Typography>
-            <Typography variant={"h6"} fontWeight="bold">
-              Version<Typography component="span">1.0</Typography>
-            </Typography>
-          </Stack>
+            </Grid>
+            <Grid item xs={12} lg={3} md={3}>
+              <Typography variant={"h6"} fontWeight="bold">
+                Code<Typography component="span">NLP</Typography>
+              </Typography>
+            </Grid>
+            <Grid item xs={12} lg={3} md={3}>
+              <Typography variant={"h6"} fontWeight="bold">
+                Version<Typography component="span">1.0</Typography>
+              </Typography>
+            </Grid>
+          </Grid>
+          {/* <Grid container item xs={12}> */}
           <SyllabusTabContent />
-          <SyllabusButtons />
+          {/* </Grid> */}
+          <Grid container item xs={12} sm={12} spacing={2}>
+            <SyllabusButtons />
+          </Grid>
         </form>
       </AppContainer>
     </SyllabusWrapper>

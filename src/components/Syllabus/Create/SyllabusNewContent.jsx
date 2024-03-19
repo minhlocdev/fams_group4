@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import ModalContainer from "../../shared/ModalContainer";
+import React, { useState } from "react";
 import {
   Box,
   Modal,
@@ -13,6 +12,7 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import DropDown from "./SyllabusModalDropDown";
 import Switch from "./SyllabusModalSwitch";
 import { SyllabusWarningModal } from "./SyllabusWarningModal";
+import LearningObjectiveDropDown from "./LearningObjectiveDropDown";
 
 const style = {
   position: "absolute",
@@ -21,11 +21,14 @@ const style = {
   transform: "translate(-50%, -50%)",
   borderRadius: "20px",
   border: " 1px solid black",
+  width: { xs: "90%", lg: "35%" },
 };
 const textBox = {
   width: "100%",
   display: "flex",
-  justifyContent: "space-between",
+  alignItems: { xs: "flex-start", lg: "" },
+  justifyContent: { lg: "space-between" },
+  flexDirection: { xs: "column-reverse", lg: "row-reverse" },
   "& .MuiFormControlLabel-label": {
     fontSize: "16px",
     fontWeight: "500",
@@ -34,8 +37,8 @@ const textBox = {
 };
 const textFields = {
   display: "flex",
-  width: "315px",
-  flexDirection: "row-reseve",
+  width: { xs: "90%", lg: "315px" },
+  // flexDirection: "row-reverse",
   "& .MuiInputBase-input": {
     padding: "10px",
   },
@@ -43,25 +46,6 @@ const textFields = {
     fontStyle: "italic",
     fontWeight: "bolder",
     color: "rgb(0, 0, 0)",
-  },
-};
-
-const textCanlender = {
-  width: "315px",
-  "& .MuiInputBase-input": {
-    padding: "10px 10px 10px 10px",
-  },
-  "& .MuiInputBase-input::placeholder": {
-    fontStyle: "italic",
-    fontWeight: "bolder",
-    color: "rgb(0, 0, 0)",
-  },
-  "& .MuiInputBase-root": {
-    flexDirection: "row-reverse",
-  },
-  "& .customDatePickerDay": {
-    backgroundColor: "#E74A3B",
-    borderRadius: "8px",
   },
 };
 
@@ -100,7 +84,6 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
     Method: "Online",
     TrainingMaterial: [],
   });
-
   const [errors, setErrors] = useState({
     DeliveryType: "",
     Name: "",
@@ -133,9 +116,6 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
     if (formData.OutputStandard.trim() === "") {
       newErrors.OutputStandard = "This field is required";
       valid = false;
-    } else if (!isNaN(formData.OutputStandard)) {
-      newErrors.OutputStandard = "This field cannot be all number";
-      valid = false;
     }
     //Validate Trainning Time
     if (formData.TrainingTime.trim() === "") {
@@ -146,6 +126,12 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
       valid = false;
     } else if (isNaN(formData.TrainingTime)) {
       newErrors.TrainingTime = "This field must be a number";
+      valid = false;
+    } else if (formData.TrainingTime < 0) {
+      newErrors.TrainingTime = "Invalid time";
+      valid = false;
+    } else if (formData.TrainingTime < 0) {
+      newErrors.TrainingTime = "Invalid time";
       valid = false;
     }
 
@@ -168,37 +154,16 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
       e.preventDefault();
       const DeliveryType = formData.DeliveryType;
       const tempArray = formData.OutputStandard.split(",");
-      // let IconType;
-      // switch (DeliveryType) {
-      //   case "Assignment/Lab":
-      //     IconType = <AssignmentIcon />;
-      //     break;
-      //   case "Concept/Lecture":
-      //     IconType = <RecordVoiceOverIcon />;
-      //     break;
-      //   case "Guide/Review":
-      //     IconType = <PanToolOutlined />;
-      //     break;
-      //   case "Test/Quiz":
-      //     IconType = <FactCheckOutlinedIcon />;
-      //     break;
-      //   case "Exam":
-      //     IconType = <SpellcheckOutlinedIcon />;
-      //     break;
-      //   case "Seminar/Workshop":
-      //     IconType = <SettingsInputAntennaOutlinedIcon />;
-      //     break;
-      // }
       const tempOjb = {
         ...formData,
         DeliveryType: DeliveryType,
         OutputStandard: tempArray,
       };
       AddData(tempOjb);
+
       handleCloseModal();
     }
   };
-
   return (
     <div style={{ width: "100%" }}>
       {isError && (
@@ -210,7 +175,7 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
           display: "flex",
           justifyContent: "space-between",
           gap: "20px",
-          padding: "20px 48px 0px 15px",
+          padding: { xs: "20px", lg: "20px 48px 0px 15px" },
         }}
       >
         <FormControlLabel
@@ -230,22 +195,10 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
           label="Name"
           labelPlacement="start"
         />
-        <FormControlLabel
-          sx={textBox}
-          control={
-            <TextField
-              placeholder="Output Standard"
-              sx={textFields}
-              id="outlined-basic"
-              variant="outlined"
-              value={formData.OutputStandard}
-              onChange={(e) => handleChange("OutputStandard", e.target.value)}
-              error={Boolean(errors.OutputStandard)}
-              helperText={errors.OutputStandard}
-            />
-          }
-          label="Output standard"
-          labelPlacement="start"
+        <LearningObjectiveDropDown
+          handleChange={handleChange}
+          formData={formData}
+          errors={errors}
         />
         <FormControlLabel
           sx={textBox}
@@ -318,8 +271,9 @@ export default function SyllabusNewContent({
         <div
           style={{
             display: "flex",
+            height: "100%",
             flexDirection: "column",
-            width: "33.875rem",
+            // width: "33.875rem",
             height: "fit-content",
             alignItems: "center",
             borderRadius: "20px",

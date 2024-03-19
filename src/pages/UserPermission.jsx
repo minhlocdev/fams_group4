@@ -1,65 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppContainer from "../components/shared/layout/AppContainer";
-import { Box, Button, Skeleton, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import theme from "../assets/theme";
 import UserPermissionTable from "../components/UserManagement/UserPermissionTable";
 import AcceptUpdate from "../components/UserManagement/AcceptUpdate";
+import {
+  useGetUserPermission,
+  usePutPermissionMutation,
+} from "../services/queries/userQuery";
+import queryClient from "../services/queries/queryClient";
+import { QUERY_PERMISSISON_KEY } from "../constants/query";
+import ToastEmitter from "../components/shared/lib/ToastEmitter";
 
 export default function UserPermission() {
   const [isUpdate, setUpdate] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [isSave, setSave] = useState(false);
 
-  const [permissionData, setPermissionData] = React.useState([
-    {
-      permissionId: "AD",
-      roleName: "Class Admin",
-      syllabus: 5,
-      trainingProgram: 5,
-      class: 5,
-      learningMaterial: 5,
-      userManagement: 1,
-    },
-    {
-      permissionId: "SA",
-      roleName: "Super Admin",
-      syllabus: 5,
-      trainingProgram: 5,
-      class: 5,
-      learningMaterial: 5,
-      userManagement: 5,
-    },
-    {
-      permissionId: "TR",
-      roleName: "Trainer",
-      syllabus: 2,
-      trainingProgram: 2,
-      class: 2,
-      learningMaterial: 2,
-      userManagement: 1,
-    },
-  ]);
-
-  const handleUpdatePermission = () => {
-    setUpdate(true);
-  };
-  const handleSave = () => {
-    //lay data
-    console.log(permissionData);
-    setSave(false);
-    setUpdate(false);
-  };
-
-  const handleCancel = () => {
-    setSave(false);
-  };
+  const { data, isLoading, isSuccess } = useGetUserPermission();
+  const [permissionData, setPermissionData] = React.useState([]);
+  useEffect(() => {
+    if (isSuccess) setPermissionData(data.objects);
+  }, [data, isSuccess]);
   const setPermissionType = (roleName, { field, type }) => {
     const updatedPermissionData = permissionData.map((data) =>
       data.roleName === roleName ? { ...data, [field]: type } : data
     );
-
     setPermissionData(updatedPermissionData);
   };
+  const updatePermission = usePutPermissionMutation();
+  const handleSave = () => {
+    console.log("SAve ne");
+    setSave(false);
+    setUpdate(false);
+    updatePermission.mutate(permissionData, {
+      onSuccess: () => {
+        ToastEmitter.success("Update permission successfully!!!");
+        queryClient.invalidateQueries({ queryKey: [QUERY_PERMISSISON_KEY] });
+      },
+    });
+  };
+  const handleUpdatePermission = () => {
+    setUpdate(true);
+  };
+  const handleCancel = () => {
+    setSave(false);
+  };
+
   return (
     <AppContainer>
       {isSave && <AcceptUpdate onSave={handleSave} onCancel={handleCancel} />}
@@ -90,21 +76,15 @@ export default function UserPermission() {
           Update Permission
         </Button>
       </Stack>
-      {!loading ? (
-        <Box mt={2}>
-          <UserPermissionTable
-            isUpdate={isUpdate}
-            permissionData={permissionData}
-            setPermissionType={setPermissionType}
-          />
-        </Box>
-      ) : (
-        <Skeleton
-          variant="rectangular"
-          height={220}
-          sx={{ marginTop: "20px" }}
+      <Box mt={2}>
+        <UserPermissionTable
+          isUpdate={isUpdate}
+          iSave={isSave}
+          isLoading={isLoading}
+          setPermissionType={setPermissionType}
+          permissionData={permissionData}
         />
-      )}
+      </Box>
 
       {isUpdate && (
         <Stack direction="row" spacing={2} justifyContent={"flex-end"} mt={4}>

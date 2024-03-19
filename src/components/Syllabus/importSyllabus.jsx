@@ -120,7 +120,7 @@ export function ImportSyllabus({ isOpen, handleClose }) {
       "status",
     ],
   ];
-
+  
   return (
     <ModalContainer
       title={"Import Syllabus"}
@@ -141,13 +141,12 @@ export function ImportSyllabus({ isOpen, handleClose }) {
                 <Typography>Import template</Typography>
               </Stack>
               <Stack spacing={2}>
-                <Button
-                  sx={{
-                    background: "#2D3748",
+            <Button sx={{
+                    background: '#2D3748',
                     height: 22,
-                    maxWidth: 80,
-                  }}
-                  variant="contained"
+                    maxWidth: 80
+                  }} 
+                  variant="contained" 
                   size="small"
                   component="label"
                   role={undefined}

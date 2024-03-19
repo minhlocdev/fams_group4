@@ -95,7 +95,8 @@ const SyllabusCard = ({ data, onDelete }) => {
               }}
             >
               {data?.version} | {data?.duration} | Modified on{" "}
-              {dayjs(data.modifiedDate).format("DD/MM/YYYY")}  by {data?.modifiedBy}
+              {dayjs(data.modifiedDate).format("DD/MM/YYYY")} by{" "}
+              {data?.modifiedBy}
             </Typography>
           </Grid>
 

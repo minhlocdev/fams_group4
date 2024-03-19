@@ -202,7 +202,7 @@ export default function Sidebar({ open, setOpen }) {
     setOpen(false);
   };
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: { xs: "none", lg: "flex" } }}>
       <Drawer
         variant="permanent"
         open={open}

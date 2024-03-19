@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import "react-day-picker/dist/style.css";
 import theme from "../../assets/theme";

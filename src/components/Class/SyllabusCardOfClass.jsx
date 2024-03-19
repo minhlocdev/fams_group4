@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Box, Grid, IconButton, Stack, Typography } from "@mui/material";
 import SearchTranningProgram from "./SearchTranningProgram";
-import { getAllTrainningProgram } from "../../services/TranningProgram";
 import ClassContext from "../../context/ClassContext";
 import dayjs from "dayjs";
 import {
@@ -9,22 +8,14 @@ import {
   SupervisedUserCircleOutlined,
 } from "@mui/icons-material";
 import theme from "../../assets/theme";
+import { useGetAllTrainingProgramQuery } from "../../services/queries/trainingQuery";
 export default function SyllabusCardOfClass() {
   const [program, setProgram] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { search, handleSearch } = useContext(ClassContext);
-  const getAllProgram = async () => {
-    const response = await getAllTrainningProgram();
-    setLoading(false);
-    if (!response) return;
-    const { data: programs } = response;
-    if (programs && programs.length) {
-      setProgram(programs);
-    }
-  };
+  const { data, isSuccess, isLoading } = useGetAllTrainingProgramQuery();
   useEffect(() => {
-    getAllProgram();
-  }, []);
+    setProgram(data);
+  }, [data, isSuccess]);
 
   return (
     <>
@@ -52,7 +43,7 @@ export default function SyllabusCardOfClass() {
               <Typography variant="h5" gutterBottom>
                 Training Program Name
               </Typography>
-              <SearchTranningProgram program={program} loading={loading} />
+              <SearchTranningProgram program={program} loading={isLoading} />
             </>
           ) : (
             <>

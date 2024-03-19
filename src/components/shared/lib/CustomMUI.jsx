@@ -6,7 +6,9 @@ import { IconButton } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { Unstable_NumberInput as BaseNumberInput } from "@mui/base/Unstable_NumberInput";
-
+import dayjs from "dayjs";
+import isBetweenPlugin from "dayjs/plugin/isBetween";
+import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 export const InfoTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} placement="right-start" />
 ))(({ theme }) => ({
@@ -21,7 +23,7 @@ export const InfoTooltip = styled(({ className, ...props }) => (
 
 export const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
-  return <IconButton {...other} />;
+  return <IconButton {...other} role="button" />;
 })(({ theme, expand }) => ({
   transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
   transition: theme.transitions.create("transform", {
@@ -94,7 +96,7 @@ const StyledInputRoot = styled("div")(
   ({ theme }) => `
   font-family: 'IBM Plex Sans', sans-serif;
   font-weight: 400;
-  color: ${theme.palette.mode === "dark" ? grey[300] : grey[500]};
+  color: ${grey[500]};
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
@@ -108,12 +110,10 @@ const StyledInput = styled("input")(
   font-family: inherit;
   font-weight: 400;
   line-height: 1.375;
-  color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
-  background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
-  border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
-  box-shadow: 0px 2px 4px ${
-    theme.palette.mode === "dark" ? "rgba(0,0,0, 0.5)" : "rgba(0,0,0, 0.05)"
-  };
+  color: ${grey[900]};
+  background: ${"#fff"};
+  border: 1px solid ${grey[200]};
+  box-shadow: 0px 2px 4px ${"rgba(0,0,0, 0.05)"};
   border-radius: 8px;
   margin: 0 8px;
   padding: 10px 12px;
@@ -128,9 +128,7 @@ const StyledInput = styled("input")(
 
   &:focus {
     border-color: ${blue[400]};
-    box-shadow: 0 0 0 3px ${
-      theme.palette.mode === "dark" ? blue[700] : blue[200]
-    };
+    box-shadow: 0 0 0 3px ${blue[200]};
   }
 
   &:focus-visible {
@@ -147,9 +145,9 @@ const StyledButton = styled("button")(
   line-height: 1.5;
   border: 1px solid;
   border-radius: 999px;
-  border-color: ${theme.palette.mode === "dark" ? grey[800] : grey[200]};
-  background: ${theme.palette.mode === "dark" ? grey[900] : grey[50]};
-  color: ${theme.palette.mode === "dark" ? grey[200] : grey[900]};
+  border-color: ${grey[200]};
+  background: ${grey[50]};
+  color: ${grey[900]};
   width: 32px;
   height: 32px;
   display: flex;
@@ -162,8 +160,8 @@ const StyledButton = styled("button")(
 
   &:hover {
     cursor: pointer;
-    background: ${theme.palette.mode === "dark" ? blue[700] : blue[500]};
-    border-color: ${theme.palette.mode === "dark" ? blue[500] : blue[400]};
+    background: ${blue[500]};
+    border-color: ${blue[400]};
     color: ${grey[50]};
   }
 
@@ -176,3 +174,59 @@ const StyledButton = styled("button")(
   }
 `
 );
+
+//week picker
+
+dayjs.extend(isBetweenPlugin);
+
+const CustomPickersDay = styled(PickersDay, {
+  shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "isHovered",
+})(({ theme, isSelected, isHovered, day }) => ({
+  borderRadius: 0,
+  fontSize: "13px",
+  ...(isSelected && {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    "&:hover, &:focus": {
+      backgroundColor: theme.palette.primary.main,
+    },
+  }),
+  ...(isHovered && {
+    backgroundColor: theme.palette.primary[theme.palette.mode],
+    "&:hover, &:focus": {
+      backgroundColor: theme.palette.primary[theme.palette.mode],
+    },
+  }),
+  ...(day.day() === 0 && {
+    borderTopLeftRadius: "20px",
+    borderBottomLeftRadius: "20px",
+  }),
+  ...(day.day() === 6 && {
+    borderTopRightRadius: "20px",
+    borderBottomRightRadius: "20px",
+  }),
+}));
+
+const isInSameWeek = (dayA, dayB) => {
+  if (dayB == null) {
+    return false;
+  }
+
+  return dayA.isSame(dayB, "week");
+};
+
+export function Day(props) {
+  const { day, selectedDay, hoveredDay, ...other } = props;
+
+  return (
+    <CustomPickersDay
+      {...other}
+      day={day}
+      sx={{ px: 2.5 }}
+      disableMargin
+      selected={false}
+      isSelected={isInSameWeek(day, selectedDay)}
+      isHovered={isInSameWeek(day, hoveredDay)}
+    />
+  );
+}

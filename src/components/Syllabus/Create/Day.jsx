@@ -1,32 +1,30 @@
 import React, { useContext, useRef, useState } from "react";
-import {
-  Box,
-  Button,
-  Collapse,
-  IconButton,
-} from "@mui/material";
+import { Box, Button, Collapse, Grid, IconButton } from "@mui/material";
 import { SyllabusContext } from "../../../context/SyllabusContext";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { SyllabusDeleteWarningModal } from "./SyllabusWarningModal";
-import Unit from "../Create/Unit"
+import Unit from "../Create/Unit";
 
 const button = {
+  backgroundColor: "#2d3748",
+  borderRadius: "8px",
   color: "white",
-  width: "106px",
-  borderRadius: "10px",
-  height: "38px",
-  backgroundColor: "#2D3748",
+  padding: "5px 15px",
+  cursor: "pointer",
   "&:hover": { backgroundColor: "rgb(72 147 222 / 81%)" },
   fontWeight: "bold",
-  margin: "10px",
 };
-export default function Day({setTotalDay}) {
-  const { outline, setOutline, error, handleFieldValidation } =
-  useContext(SyllabusContext);
+export default function Day({ setTotalDay }) {
+  const {
+    outline,
+    setOutline,
+    error,
+    handleFieldValidation,
+    setTimeAllocation,
+  } = useContext(SyllabusContext);
   const [isConfirmDelete, setConfirmDelete] = useState(true);
   const [deletedUnitIds, setDeletedUnitIds] = useState([]);
   const [openState, setOpenState] = useState({});
-
 
   const handlePress = (dayIndex) => {
     setOpenState((prevOpenState) => ({
@@ -54,7 +52,6 @@ export default function Day({setTotalDay}) {
     }));
     setOutline(updateData);
     setTotalDay(updateData.length);
-
     handleClose();
   };
   const getTotalUnitCount = () => {
@@ -89,57 +86,68 @@ export default function Day({setTotalDay}) {
       }}
     >
       {/* //Day */}
-      {outline?.map((day, dayIndex) => (
-        <>
-          <Box
-            key={dayIndex}
-            sx={{
-              display: "flex",
-              gap: "5px",
-              padding: "10px",
-              height: "44px",
-              backgroundColor: "#2D3748",
-              color: "white",
-              borderBottom: "1px solid white",
-            }}
-            onClick={() =>
-              // setExpand(expand === dayIndex ? -1 : dayIndex)
-              handlePress(dayIndex)
-            }
-          >
-            Day {day.id + 1}
-            <IconButton onClick={(e) => handleClickConfirmDelete(e, dayIndex)}>
-              <RemoveCircleOutlineIcon sx={{ color: "red" }} />
-            </IconButton>
-          </Box>
-          <SyllabusDeleteWarningModal
-            isConfirm={isConfirmDelete}
-            setConfirm={setConfirmDelete}
-            ConfirmDelete={() => removeDay(day.id, dayIndex)}
-            id={dayIndex}
-          />
-          {outline[dayIndex]?.content?.length !== 0 && (
-            <Collapse
-              in={openState[dayIndex]}
-              sx={{}}
-              timeout="auto"
-              unmountOnExit
-            >
-              {/* //Unit */}
-              <Unit day={day} dayIndex={dayIndex} openState={openState} setOpenState={setOpenState}/>
-            </Collapse>
-          )}
-          <Collapse
-            in={openState[dayIndex]}
-            unmountOnExit
-            sx={{ padding: "10px" }}
-          >
-            <Button sx={button} onClick={() => addUnit(day.id, dayIndex)}>
-              Add Unit
-            </Button>
-          </Collapse>
-        </>
-      ))}
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          {outline?.map((day, dayIndex) => (
+            <>
+              <Box
+                key={dayIndex}
+                sx={{
+                  display: "flex",
+                  gap: "5px",
+                  padding: "10px",
+                  height: "44px",
+                  backgroundColor: "#2D3748",
+                  color: "white",
+                  borderBottom: "1px solid white",
+                }}
+                onClick={() =>
+                  // setExpand(expand === dayIndex ? -1 : dayIndex)
+                  handlePress(dayIndex)
+                }
+              >
+                Day {day.id + 1}
+                <IconButton
+                  onClick={(e) => handleClickConfirmDelete(e, dayIndex)}
+                >
+                  <RemoveCircleOutlineIcon sx={{ color: "red" }} />
+                </IconButton>
+              </Box>
+              <SyllabusDeleteWarningModal
+                isConfirm={isConfirmDelete}
+                setConfirm={setConfirmDelete}
+                ConfirmDelete={() => removeDay(day.id, dayIndex)}
+                id={dayIndex}
+              />
+              {outline[dayIndex]?.content?.length !== 0 && (
+                <Collapse
+                  in={openState[dayIndex]}
+                  sx={{}}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  {/* //Unit */}
+                  <Unit
+                    day={day}
+                    dayIndex={dayIndex}
+                    openState={openState}
+                    setOpenState={setOpenState}
+                  />
+                </Collapse>
+              )}
+              <Collapse
+                in={openState[dayIndex]}
+                unmountOnExit
+                sx={{ padding: "10px" }}
+              >
+                <Button sx={button} onClick={() => addUnit(day.id, dayIndex)}>
+                  Add Unit
+                </Button>
+              </Collapse>
+            </>
+          ))}
+        </Grid>
+      </Grid>
     </Box>
   );
 }
