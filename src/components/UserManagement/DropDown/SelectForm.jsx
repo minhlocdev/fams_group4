@@ -4,48 +4,14 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import {
-  AddCircleOutline,
-  CreateOutlined,
-  ExpandMore,
-  GradeOutlined,
-  VisibilityOffOutlined,
-  VisibilityOutlined,
-} from "@mui/icons-material";
+import { ExpandMore } from "@mui/icons-material";
 import { Box, Stack } from "@mui/material";
+import { PermissionEnums } from "../../../constants/PermissionEnums";
 export default function SelectForm(props) {
-  const menuItems = [
-    {
-      id: "1",
-      text: "Access Denied",
-      icon: <VisibilityOffOutlined />,
-    },
-    {
-      id: "2",
-      text: "View",
-      icon: <VisibilityOutlined />,
-    },
-    {
-      id: "4",
-      text: "Modify",
-      icon: <CreateOutlined />,
-    },
-    {
-      id: "3",
-      text: "Create",
-      icon: <AddCircleOutline />,
-    },
-    {
-      id: "5",
-      text: "Full access",
-      icon: <GradeOutlined />,
-    },
-  ];
-
   const { id, updating, permissionType, setPermissionData } = props;
   const [value, setValue] = React.useState("");
   React.useEffect(() => {
-    let selectedMenuItem = menuItems.find(
+    let selectedMenuItem = PermissionEnums.find(
       (item) => item.id === String(permissionType)
     );
     setValue(selectedMenuItem ? selectedMenuItem.text : "");
@@ -54,7 +20,7 @@ export default function SelectForm(props) {
   const [open, setOpen] = React.useState(false);
 
   const findPermissionTypeId = (value) => {
-    let selectedMenuItem = menuItems.find((item) => item.text === value);
+    let selectedMenuItem = PermissionEnums.find((item) => item.text === value);
     return parseInt(selectedMenuItem.id);
   };
   const handleChange = (event) => {
@@ -109,7 +75,7 @@ export default function SelectForm(props) {
             <MenuItem sx={{ display: "none" }} value="">
               <em>None</em>
             </MenuItem>
-            {menuItems.map((menu) => (
+            {PermissionEnums.map((menu) => (
               <MenuItem key={menu.id} value={menu.text}>
                 <Stack
                   spacing={1}
@@ -135,7 +101,7 @@ export default function SelectForm(props) {
           }}
           onClick={handleSelect}
         >
-          {menuItems.map(
+          {PermissionEnums.map(
             (menu) =>
               value === menu.text && (
                 <Stack

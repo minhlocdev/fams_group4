@@ -214,7 +214,7 @@ export default function LimitTags({ selectedTags, onTagsChange }) {
       limitTags={2}
       id="size-small-outlined-multi"
       options={provinces}
-      getOptionLabel={(option) => option.name}
+      getOptionLabel={(option) => option}
       value={selectedTags}
       onChange={handleAutocompleteChange}
       renderInput={(params) => (
@@ -232,68 +232,4 @@ export default function LimitTags({ selectedTags, onTagsChange }) {
   );
 }
 
-const provinces = [
-  { name: "An Giang" },
-  { name: "Bac Giang" },
-  { name: "Bac Kan" },
-  { name: "Bac Lieu" },
-  { name: "Bac Ninh" },
-  { name: "Ba Ria - Vung Tau" },
-  { name: "Ben Tre" },
-  { name: "Binh Dinh" },
-  { name: "Binh Duong" },
-  { name: "Binh Phuoc" },
-  { name: "Binh Thuan" },
-  { name: "Ca Mau" },
-  { name: "Can Tho" },
-  { name: "Cao Bang" },
-  { name: "Da Nang" },
-  { name: "Dak Lak" },
-  { name: "Dak Nong" },
-  { name: "Dien Bien" },
-  { name: "Dong Nai" },
-  { name: "Dong Thap" },
-  { name: "Gia Lai" },
-  { name: "Ha Giang" },
-  { name: "Hai Duong" },
-  { name: "Hai Phong" },
-  { name: "Ho Chi Minh" },
-  { name: "Ha Noi" },
-  { name: "Ha Nam" },
-  { name: "Ha Tinh" },
-  { name: "Hau Giang" },
-  { name: "Hoa Binh" },
-  { name: "Hung Yen" },
-  { name: "Khanh Hoa" },
-  { name: "Kien Giang" },
-  { name: "Kon Tum" },
-  { name: "Lai Chau" },
-  { name: "Lam Dong" },
-  { name: "Lang Son" },
-  { name: "Lao Cai" },
-  { name: "Long An" },
-  { name: "Nam Dinh" },
-  { name: "Nghe An" },
-  { name: "Ninh Binh" },
-  { name: "Ninh Thuan" },
-  { name: "Phu Tho" },
-  { name: "Phu Yen" },
-  { name: "Quang Binh" },
-  { name: "Quang Nam" },
-  { name: "Quang Ngai" },
-  { name: "Quang Ninh" },
-  { name: "Quang Tri" },
-  { name: "Soc Trang" },
-  { name: "Son La" },
-  { name: "Tay Ninh" },
-  { name: "Thai Binh" },
-  { name: "Thai Nguyen" },
-  { name: "Thanh Hoa" },
-  { name: "Thua Thien Hue" },
-  { name: "Tien Giang" },
-  { name: "Tra Vinh" },
-  { name: "Tuyen Quang" },
-  { name: "Vinh Long" },
-  { name: "Vinh Phuc" },
-  { name: "Yen Bai" },
-];
+const provinces = ["Ho Chi Minh", "Ha Noi", "Quy Nhon", "Da Nang", "Can Tho"];

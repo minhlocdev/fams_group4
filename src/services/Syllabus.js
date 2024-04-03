@@ -1,4 +1,12 @@
+import { paramsToString } from "../utils/paramsToString";
 import apiClient from "./apiClient";
+
+export const getSyllabusOutline = async (id) => {
+    return await apiClient({
+        method: 'get',
+        url: `syllabuses/outline/${id}`,
+    });
+}
 export const getLearningObjective = async () => {
     return await apiClient({
         method: 'get',
@@ -18,12 +26,21 @@ export const searchSyllabus = async (page, search) => {
         url: `https://65e14c98d3db23f7624ab97a.mockapi.io/Syllabus?p=${page + 1}&search=${search}`,
     });
 };
-export const getSyllabus = async (page, limit, orderBy, order) => {
+export const getSyllabus = async (page, limit, orderBy, order, debouncedSearchTerm, filter) => {
+    const { outputStandardStrings, createdDateBegin, createdDateEnd } = filter;
+    const params = {
+        PageNumber: page + 1,
+        PageSize: limit,
+        ...(order && orderBy && { sortBy: orderBy, order }),
+        ...(debouncedSearchTerm && { searchString: debouncedSearchTerm }),
+        ...(outputStandardStrings && { outputStandardStrings }),
+        ...(createdDateBegin && { createdDateBegin }),
+        ...(createdDateEnd && { createdDateEnd }),
+    };
+    const queryString = paramsToString(params)
     return await apiClient({
         method: 'get',
-        // url: `/Syllabus?page=1&pageSize=10`,
-        url: `https://65e14c98d3db23f7624ab97a.mockapi.io/Syllabus?p=${page + 1}&l=${limit}
-        ${order && orderBy ? `&orderby=${orderBy}&order=${order}` : ""}`,
+        url: `/syllabuses?${queryString}`,
     });
 };
 export const getSyllabusByID = async (id) => {

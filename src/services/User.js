@@ -1,62 +1,54 @@
+import { paramsToString } from "../utils/paramsToString";
 import apiClient from "./apiClient";
 
-export const getAllUser = async () => {
+export const getUser = async (page, limit, orderBy, order, debouncedSearchTerm, filter) => {
+    const { roleName, gender, dobFro, dobTo } = filter;
+    const params = {
+        pageNumber: page + 1,
+        pageSize: limit,
+        ...(order && orderBy && { sortBy: orderBy, order }),
+        ...(debouncedSearchTerm && { searchInput: debouncedSearchTerm }),
+        ...(roleName && { roleName }),
+        ...(gender && { gender }),
+        ...(dobFro && { dobFro }),
+        ...(dobTo && { dobTo }),
+    };
+    const queryString = paramsToString(params)
     return await apiClient({
         method: 'get',
-        url: `https://65de1e0bdccfcd562f5650fe.mockapi.io/users`,
-    });
-};
-export const searchUser = async (page, search) => {
-    return await apiClient({
-        method: 'get',
-        url: `https://65de1e0bdccfcd562f5650fe.mockapi.io/users?p=${page + 1}&search=${search}`,
-    });
-};
-
-export const getUser = async (page, limit, orderBy, order) => {
-    return await apiClient({
-        method: 'get',
-        // url: `/users?page=1&pageSize=10`,
-        url: `https://65de1e0bdccfcd562f5650fe.mockapi.io/users?p=${page + 1}&l=${limit}
-        ${order && orderBy ? `&orderby=${orderBy}&order=${order}` : ""}`,
-        // url: `/users?page=1&pageSize=10`,
-        url: `https://65de1e0bdccfcd562f5650fe.mockapi.io/users?p=${page + 1}&l=${limit}
-        ${order && orderBy ? `&orderby=${orderBy}&order=${order}` : ""}`,
+        url: `/users?${queryString}`,
     });
 };
 export const getUserByID = async (id) => {
     return await apiClient({
         method: 'get',
-        url: `https://65de1e0bdccfcd562f5650fe.mockapi.io/users/${id}`,
+        url: `/users/${id}`,
     });
 };
 
-export const postUser = async ({ name, email, dateOfBirth, phone, gender, status, permissionId }) => {
+export const postUser = async ({ name, email, dateOfBirth, phone, gender, status, rolename }) => {
     return await apiClient({
         method: 'post',
-        // url: `/user`,
-        url: `https://65de1e0bdccfcd562f5650fe.mockapi.io/users`,
+        url: `/users`,
         data: {
-            name, email, dateOfBirth, phone, gender, status, permissionId
+            name, email, dateOfBirth, phone, gender, status, rolename
         },
     });
 };
-export const putUser = async ({ id, name, email, dateOfBirth, phone, gender, status, permissionId }) => {
-    console.log(id, name, email, dateOfBirth, phone, gender, status, permissionId)
+export const putUser = async ({ id, name, email, dateOfBirth, phone, gender, status, rolename }) => {
     return await apiClient({
         method: 'put',
-        // url: `/user`,
-        url: `https://65de1e0bdccfcd562f5650fe.mockapi.io/users/${id}`,
+        url: `/users`,
         data: {
-            name, email, dateOfBirth, phone, gender, status, permissionId
+            id, name, email, dateOfBirth, phone, gender, status, rolename
         },
     });
 };
-export const deleteUser = async (id) => {
+export const getLoginUser = async (token) => {
     return await apiClient({
-        method: 'delete',
-        url: `https://65de1e0bdccfcd562f5650fe.mockapi.io/users/${id}`,
-    });
+        method: 'get',
+        url: `/login/user?token=${token}`,
+    })
 };
 export const postLoginUser = async ({ email, password }) => {
     return await apiClient({
@@ -75,5 +67,15 @@ export const putUserPermission = async (permissionData) => {
         method: 'put',
         url: `/user-permissions/update`,
         data: permissionData
+    });
+};
+export const putUserAvatar = async ({ id, link }) => {
+    return await apiClient({
+        headers: {
+            "Content-Type": "application/json"
+        },
+        method: 'put',
+        url: `/users/change-avater/${id}`,
+        data: `${link}`
     });
 };

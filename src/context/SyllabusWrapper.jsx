@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { SyllabusContext } from "./SyllabusContext";
+import useTable from "../utils/hooks/useTable";
 
 export default function SyllabusWrapper(probs) {
   const [general, setGeneral] = useState({});
   const [outline, setOutline] = useState([]);
-  console.log(outline);
   const [other, setOther] = useState({});
   const [timeAllocation, setTimeAllocation] = useState(Array(5).fill(0));
   const [error, setError] = useState({
@@ -21,6 +21,13 @@ export default function SyllabusWrapper(probs) {
     gpa: true,
   });
   // console.log(timeAllocation);
+  const [checked, setChecked] = useState({
+    outputStandardStrings:"",
+    createdDateBegin: "",
+    createdDateEnd: "",
+  });
+  const tableState = useTable();
+
   const [save, isSave] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   //State for Syllabus detail--------------------------------
@@ -175,7 +182,7 @@ export default function SyllabusWrapper(probs) {
       [dayIndex]: !prevOpenState[dayIndex],
     }));
   };
-
+  
   const handleUnitClick = (dayIndex, unitIndex, dayID) => {
     setSelectedDay(dayID);
     setOpenState((prevOpenState) => ({
@@ -227,6 +234,9 @@ export default function SyllabusWrapper(probs) {
         handlePress,
         handleUnitClick,
         handleClose,
+        checked,
+        setChecked,
+        ...tableState
       }}
     >
       {probs.children}

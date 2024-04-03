@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import ModalContainer from "../shared/ModalContainer";
 import {
   TextField,
@@ -30,19 +30,22 @@ import {
   textCanlender,
   datePickerStyle,
 } from "./UserModal.style";
-import useValidateForm from "../../utils/useValidateForm";
+import useValidateForm from "../../utils/hooks/useValidateForm";
 import ToastEmitter from "../shared/lib/ToastEmitter";
+import AuthContext from "../../utils/authUtil";
 const FormContent = ({ handleClose }) => {
   //False = Active, Truth = Unactive
+  const { loginUser } = useContext(AuthContext);
   const [isactive, setActive] = useState(false);
   const [formData, setFormData] = useState({
-    permissionId: "",
+    rolename: "",
     name: "",
     email: "",
     phone: "",
     dateOfBirth: null,
     gender: "male",
-    status: 0,
+    status: true,
+    createdBy: loginUser.name,
   });
 
   const { errors, validateForm } = useValidateForm();
@@ -50,12 +53,14 @@ const FormContent = ({ handleClose }) => {
   const handleSubmit = (e) => {
     if (!validateForm(formData)) {
       e.preventDefault();
-      console.log("form sai");
     } else {
       e.preventDefault();
       postNewUser(formData, {
         onSuccess: () => {
           queryClient.resetQueries({ queryKey: [QUERY_USER_KEY] });
+        },
+        onError: () => {
+          ToastEmitter.error("Add user failed!!");
         },
       });
     }
@@ -161,7 +166,7 @@ const FormContent = ({ handleClose }) => {
                   onChange={(date) =>
                     handleChange(
                       "dateOfBirth",
-                      dayjs(date).format("YYYY-MM-DD")
+                      dayjs(date).format("MM/DD/YYYY")
                     )
                   }
                   showDaysOutsideCurrentMonth

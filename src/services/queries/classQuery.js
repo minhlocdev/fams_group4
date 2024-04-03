@@ -1,18 +1,14 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { deleteClass, getAllClass, getClass, getClassByID, postClass, putClass, duplicateClass } from '../Class';
+import { deleteClass, getClass, getClassByID, postClass, putClass, duplicateClass } from '../Class';
 import { QUERY_CLASS_KEY } from '../../constants/query';
 
-export const useGetAllClassQuery = () =>
+export const useGetClassQuery = (page, limit, orderby, order, debouncedSearchTerm,
+    filter) =>
     useQuery({
-        queryKey: [QUERY_CLASS_KEY],
-        queryFn: () => getAllClass().then((res) => res.data),
-        staleTime: 20000,
-    },
-    );
-export const useGetClassQuery = (page, limit, orderby, order) =>
-    useQuery({
-        queryKey: [QUERY_CLASS_KEY, page, limit, orderby, order],
-        queryFn: () => getClass(page, limit, orderby, order).then((res) => res.data),
+        queryKey: [QUERY_CLASS_KEY, page, limit, orderby, order, debouncedSearchTerm,
+            filter],
+        queryFn: () => getClass(page, limit, orderby, order, debouncedSearchTerm,
+            filter).then((res) => res.data),
         staleTime: 20000,
         placeholderData: keepPreviousData
     },

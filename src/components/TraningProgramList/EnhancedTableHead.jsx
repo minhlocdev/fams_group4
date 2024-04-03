@@ -6,12 +6,16 @@ import SortIcon from "@mui/icons-material/Sort";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { Settings } from "@mui/icons-material";
+import { InfoTooltip } from "../shared/lib/CustomMUI";
+import { useNavigate } from "react-router";
 
 const StyledSortIcon = styled(SortIcon)({
   color: "#FFFFFF",
 });
 
 function EnhancedTableHead(props) {
+  const navigate = useNavigate();
   const { handleSortChange } = props;
   const [sortDir, setSortDir] = useState("asc"); // State for sort direction
 
@@ -42,20 +46,19 @@ function EnhancedTableHead(props) {
           </TableCell>
         ))}
         <TableCell
+          sx={{ backgroundColor: "#2D3748", cursor: "pointer" }}
           align="right"
-          sx={{ backgroundColor: "#2D3748" }}
-        ></TableCell>
+          onClick={() => {
+            navigate("/training-programs");
+          }}
+        >
+          <InfoTooltip title={"Reset sort"}>
+            <Settings sx={{ color: "#fff", marginRight: "8px" }} />
+          </InfoTooltip>
+        </TableCell>
       </TableRow>
     </TableHead>
   );
 }
-
-EnhancedTableHead.propTypes = {
-  onRequestSort: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-  headCells: PropTypes.array.isRequired,
-};
 
 export default EnhancedTableHead;

@@ -25,24 +25,24 @@ import {
   textBox,
   textCanlender,
 } from "./UserModal.style";
-import useValidateForm from "../../utils/useValidateForm";
 import dayjs from "dayjs";
 import { usePutUserMutation } from "../../services/queries/userQuery";
 import queryClient from "../../services/queries/queryClient";
 import { QUERY_USER_KEY } from "../../constants/query";
 import ToastEmitter from "../shared/lib/ToastEmitter";
+import useValidateForm from "../../utils/hooks/useValidateForm";
 
 const UpdateContent = ({ handleClose, item }) => {
   //False = Active, Truth = Unactive
   const [isactive, setActive] = useState(false);
   const [formData, setFormData] = useState({
     id: item.id,
-    permissionId: item.permissionId,
+    rolename: item.roleName,
     name: item.name,
     email: item.email,
     phone: item.phone,
-    dateOfBirth: dayjs(item.dateOfBirth),
-    gender: item.gender,
+    dateOfBirth: item.dateOfBirth,
+    gender: String(item.gender).toLowerCase(),
     status: item.status,
   });
   const { mutate: updateUser, isSuccess } = usePutUserMutation();
@@ -55,7 +55,11 @@ const UpdateContent = ({ handleClose, item }) => {
     } else {
       updateUser(formData, {
         onSuccess: () => {
-          queryClient.resetQueries({ queryKey: [QUERY_USER_KEY] });
+          ToastEmitter.success("Update user successfully!!");
+          queryClient.invalidateQueries({ queryKey: [QUERY_USER_KEY] });
+        },
+        onError: () => {
+          ToastEmitter.error("Update user failed!!");
         },
       });
     }
@@ -83,7 +87,7 @@ const UpdateContent = ({ handleClose, item }) => {
           handleChange={handleChange}
           formData={formData}
           errors={errors}
-          defaultValue={formData.permissionId}
+          defaultValue={formData.rolename}
         />
         <FormControlLabel
           sx={textBox}
@@ -181,8 +185,13 @@ const UpdateContent = ({ handleClose, item }) => {
                     },
                   }}
                   sx={textCanlender}
-                  value={formData.dateOfBirth}
-                  onChange={(date) => handleChange("dateOfBirth", date)}
+                  value={dayjs(formData.dateOfBirth)}
+                  onChange={(date) =>
+                    handleChange(
+                      "dateOfBirth",
+                      dayjs(date).format("MM/DD/YYYY")
+                    )
+                  }
                   showDaysOutsideCurrentMonth
                   className="customDatePickerDay"
                 />
@@ -211,12 +220,12 @@ const UpdateContent = ({ handleClose, item }) => {
                 }}
               >
                 <FormControlLabel
-                  value="Male"
+                  value="male"
                   control={<Radio color="default" />}
                   label="Male"
                 />
                 <FormControlLabel
-                  value="Female"
+                  value="female"
                   control={<Radio color="default" />}
                   label="Female"
                 />

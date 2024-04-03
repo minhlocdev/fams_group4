@@ -18,9 +18,8 @@ apiClient.interceptors.request.use((request) => {
   const { method, url } = request;
 
   if (jwtToken) {
-    request.headers["Authorization"] = `Token ${jwtToken}`;
+    request.headers["Authorization"] = `Bearer ${jwtToken}`;
   }
-
   logOnDev(`🚀 [${method?.toUpperCase()}] ${url} | Request`, request);
 
   return request;
@@ -30,7 +29,6 @@ apiClient.interceptors.response.use(
   (response) => {
     const { method, url } = response.config;
     const { status } = response;
-
     logOnDev(
       `✨ [${method?.toUpperCase()}] ${url} | Response ${status}`,
       response,

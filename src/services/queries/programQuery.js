@@ -9,10 +9,10 @@ export const useGetAllProgramQuery = () =>
         staleTime: 20000,
     },
     );
-export const useGetProgramQuery = (page, limit, orderby, order) =>
+export const useGetProgramQuery = (page, limit, orderby, order, debouncedSearchTerm, filter) =>
     useQuery({
-        queryKey: [QUERY_PROGRAM_KEY, page, limit, orderby, order],
-        queryFn: () => getProgram(page, limit, orderby, order).then((res) => res.data),
+        queryKey: [QUERY_PROGRAM_KEY, page, limit, orderby, order, debouncedSearchTerm, filter],
+        queryFn: () => getProgram(page, limit, orderby, order, debouncedSearchTerm, filter).then((res) => res.data),
         staleTime: 20000,
         placeholderData: keepPreviousData
     },

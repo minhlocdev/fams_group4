@@ -64,12 +64,12 @@ export default function DropDown({
                 "0px 1px 3px 0px rgba(0, 0, 0, 0.30), 0px 4px 8px 3px rgba(0, 0, 0, 0.15)",
             }}
             labelId="select-one-label"
-            value={formData.permissionId}
+            value={formData.rolename}
             onChange={(e) => {
               setHideLabel(e.target.value !== "");
-              handleChange("permissionId", e.target.value);
+              handleChange("rolename", e.target.value);
             }}
-            error={Boolean(errors.permissionId)}
+            error={Boolean(errors.rolename)}
             defaultValue={defaultValue ? defaultValue : ""}
           >
             {Type.map((value, index) => (
@@ -79,7 +79,7 @@ export default function DropDown({
             ))}
           </Select>
           <FormHelperText sx={{ color: "#db2f2f" }}>
-            {errors.permissionId}
+            {errors.rolename}
           </FormHelperText>
         </FormControl>
       }

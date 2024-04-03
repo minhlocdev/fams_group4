@@ -1,6 +1,15 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { QUERY_LEARNING_KEY, QUERY_SYLLABUS_KEY } from '../../constants/query';
-import { deleteSyllabus, duplicateSyllabus, getAllSyllabus, getLearningObjective, getSyllabus, getSyllabusByID, getSyllabusByOutputStandard, postSyllabus, putSyllabus } from '../Syllabus';
+import { deleteSyllabus, duplicateSyllabus, getAllSyllabus, getLearningObjective, getSyllabus, getSyllabusByID, getSyllabusByOutputStandard, getSyllabusOutline, postSyllabus, putSyllabus } from '../Syllabus';
+
+export const useGetSyllabusOutlineQuery = (id) =>
+    useQuery({
+        queryKey: [QUERY_SYLLABUS_KEY, "id:" + id],
+        queryFn: () => getSyllabusOutline(id).then((res) => res.data),
+        staleTime: 20000,
+        enabled: !!id
+    });
+
 
 export const useGetObjectiveQuery = () =>
     useQuery({
@@ -17,10 +26,10 @@ export const useGetAllSyllabusQuery = () =>
         staleTime: 20000,
     },
     );
-export const useGetSyllabusQuery = (page, limit, orderby, order) =>
+export const useGetSyllabusQuery = (page, limit, orderby, order, debouncedSearchTerm, filter) =>
     useQuery({
-        queryKey: [QUERY_SYLLABUS_KEY, page, limit, orderby, order],
-        queryFn: () => getSyllabus(page, limit, orderby, order).then((res) => res.data),
+        queryKey: [QUERY_SYLLABUS_KEY, page, limit, orderby, order, debouncedSearchTerm, filter],
+        queryFn: () => getSyllabus(page, limit, orderby, order, debouncedSearchTerm, filter).then((res) => res.data),
         staleTime: 20000,
         placeholderData: keepPreviousData
     },

@@ -1,11 +1,14 @@
-import React from "react";
+import React, { memo, useContext } from "react";
 import { Header } from "./header";
 import Sidebar from "./Sidebar";
 import { AppBar, Container, Grid } from "@mui/material";
 import { Footer } from "./footer";
+import { Outlet } from "react-router-dom";
+import AuthContext from "../../../utils/authUtil";
 
-export default function AppContainer({ children }) {
-  const [open, setOpen] = React.useState(false);
+function AppContainer() {
+  const [open, setOpen] = React.useState(true);
+  const { loginUser } = useContext(AuthContext);
   return (
     <>
       <AppBar>
@@ -19,27 +22,33 @@ export default function AppContainer({ children }) {
           transition: "all 0.4s ease",
         }}
       >
-        <Grid item xs={12} lg={open ? 10 : 12}>
+        <Grid item xs={12} lg={loginUser ? (open ? 10 : 12) : 12}>
           <Container
             sx={{
               marginTop: "60px",
-              marginLeft: { xs: "0", lg: open ? "270px" : "60px" },
+              marginLeft: {
+                xs: "0",
+                lg: loginUser ? (open ? "270px" : "60px") : "0",
+              },
               minHeight: "100dvh",
               transition: "all 0.4s ease",
               maxWidth: {
                 xs: `100%`,
-                lg: `calc(100% - ${open ? "270px" : "60px"})`,
+                lg: loginUser
+                  ? `calc(100% - ${open ? "270px" : "60px"})`
+                  : "100%",
               },
             }}
           >
-            {children}
+            <Outlet />
           </Container>
         </Grid>
         <Grid item lg={2}>
-          <Sidebar open={open} setOpen={setOpen} />
+          {loginUser && <Sidebar open={open} setOpen={setOpen} />}
         </Grid>
       </Grid>
       <Footer />
     </>
   );
 }
+export default memo(AppContainer);

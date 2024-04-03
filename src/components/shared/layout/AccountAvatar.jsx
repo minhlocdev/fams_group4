@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 
 import AuthContext from "../../../utils/authUtil";
 function AccountAvatar() {
-  const { logout } = useContext(AuthContext);
+  const { logout, loginUser } = useContext(AuthContext);
   return (
     <Box
       sx={{
@@ -12,14 +12,18 @@ function AccountAvatar() {
         justifyContent: "space-between",
       }}
     >
-      <Avatar sx={{ marginRight: 1 }} alt="Username" src="/img/logo.png" />
+      <Avatar
+        sx={{ marginRight: 1 }}
+        alt="Username"
+        src={loginUser.avatarUrl}
+      />
       <Box sx={{ justifyContent: "space-between" }}>
         <Typography
           sx={{ color: "white", fontSize: 10, height: 15 }}
           variant="overline"
           display="block"
         >
-          User Name
+          {loginUser.name}
         </Typography>
         <Link
           sx={{

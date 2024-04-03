@@ -49,15 +49,15 @@ const menus = [
     icon: <Biotech />,
     // select view program -> traningProgramList
     to: "",
-    title: "Tranning Program",
+    title: "Training Program",
     submenu: [
       {
-        to: "/tranning/list",
+        to: "/training/list",
         id: "1",
         title: "View Program",
       },
       {
-        to: "/tranning/create",
+        to: "/training/create",
         id: "2",
         title: "Create Program",
       },
@@ -212,30 +212,30 @@ export default function MobileSidebar() {
                       overflow: "hidden",
                     }}
                   >
-                    <ListItemButton
+                    <Link
+                      href={item.to}
                       sx={{
-                        minHeight: 30,
-                        px: 2.5,
+                        textDecoration: "none",
+                        color: "#000",
                       }}
                     >
-                      <ListItemText
+                      <ListItemButton
                         sx={{
-                          opacity: 1,
-                          textAlign: "left",
-                          marginLeft: "60px",
+                          minHeight: 30,
+                          px: 2.5,
                         }}
                       >
-                        <Link
-                          href={item.to}
+                        <ListItemText
                           sx={{
-                            textDecoration: "none",
-                            color: "#000",
+                            opacity: 1,
+                            textAlign: "left",
+                            marginLeft: "60px",
                           }}
                         >
                           {item.title}
-                        </Link>
-                      </ListItemText>
-                    </ListItemButton>
+                        </ListItemText>
+                      </ListItemButton>
+                    </Link>
                   </ListItem>
                 ))}
               </List>

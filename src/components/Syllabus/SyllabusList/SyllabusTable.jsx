@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import EnhancedTableHead from "./EnhancedTableHead ";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
@@ -12,23 +12,23 @@ import {
   TableContainer,
   Chip,
   TableRow,
+  Typography,
 } from "@mui/material";
 import Popup from "./Popup";
 import {
-  useGetAllSyllabusQuery,
   useGetSyllabusQuery,
 } from "../../../services/queries/syllabusQuery";
-import { useSearchParams } from "react-router-dom";
 import TableLoader from "../../shared/loader/TableLoader";
+import { SyllabusContext } from "../../../context/SyllabusContext";
 
 const headCells = [
   { id: "syllabusName", label: "Syllabus" },
-  { id: "code", label: "Code" },
-  { id: "createdOn", label: "Created on" },
+  { id: "syllabusCode", label: "Code" },
+  { id: "createdDate", label: "Created on" },
   { id: "createdBy", label: "Created by" },
-  { id: "duration", label: "Duration" },
-  { id: "outputStandard", label: "Output Standard" },
-  { id: "status", label: "Status" },
+  { id: "durationByDay", label: "Duration" },
+  { id: "outputStandards", label: "Output Standard" },
+  { id: "publishStatus", label: "Status" },
 ];
 const statusColors = {
   active: "#2D3748",
@@ -37,47 +37,28 @@ const statusColors = {
 };
 
 export default function SyllabusTable() {
-  let [searchParams, setSearchParams] = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const [page, setPage] = useState(Number(searchParams.get("p")) || 0);
-  const [rowsPerPage, setRowsPerPage] = useState(
-    Number(searchParams.get("l")) || 10
-  );
-  const handleSortChange = (sort) => {
-    params.set("orderby", sort.item);
-    params.set("order", sort.dir);
-    setSearchParams(params.toString());
-  };
-  const orderBy = searchParams.get("orderby");
-  const order = searchParams.get("order");
+  const {
+    checked,
+    page,
+    rowsPerPage,
+    debouncedSearchTerm,
+    order,
+    orderBy,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleSortChange,
+  } = useContext(SyllabusContext);
   const { data, isLoading } = useGetSyllabusQuery(
     page,
     rowsPerPage,
     orderBy,
-    order
+    order,
+    debouncedSearchTerm,
+    checked
   );
-
-  const allSyllabus = useGetAllSyllabusQuery();
-  const totalPages = Math.ceil(allSyllabus?.data?.length / rowsPerPage);
-
-  const handleChangePage = (event, newPage) => {
-    event.preventDefault();
-    setPage(newPage);
-    params.set("p", newPage);
-    setSearchParams(params.toString());
-  };
   if (isLoading) {
     return <TableLoader column={7} />;
   }
-
-  const handleChangeRowsPerPage = (event) => {
-    event.preventDefault();
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-    params.set("p", 0);
-    params.set("l", event.target.value);
-    setSearchParams(params.toString());
-  };
 
   return (
     <Box sx={{ width: "100%", overflowX: "auto", marginTop: "20px" }}>
@@ -99,7 +80,7 @@ export default function SyllabusTable() {
               handleSortChange={handleSortChange}
             />
             <TableBody>
-              {data?.map((row, index) => {
+              {data?.list?.map((row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -113,19 +94,18 @@ export default function SyllabusTable() {
                     >
                       {row.syllabusName}
                     </TableCell>
-                    <TableCell align="left">{row.code}</TableCell>
-                    <TableCell align="left">{row.createdOn}</TableCell>
+                    <TableCell align="left">{row.syllabusCode}</TableCell>
+                    <TableCell align="left">{row.createdDate}</TableCell>
                     <TableCell align="left">{row.createdBy}</TableCell>
                     <TableCell align="left">
-                      {row.duration >= 2
-                        ? row.duration + " days"
-                        : row.duration + " day"}
+                      {row.durationByDay >= 2
+                        ? row.durationByDay + " days"
+                        : row.durationByDay + " day"}
                     </TableCell>
 
                     <TableCell sx={{ width: "20%", p: 0.5 }} align="left">
                       <Box sx={{ display: "flex" }}>
-                        {row.outputStandard
-                          .split(",")
+                        {row.outputStandards
                           .map((standard, index) => (
                             <Box sx={{ paddingRight: "5px" }}>
                               <Chip
@@ -144,9 +124,9 @@ export default function SyllabusTable() {
                     </TableCell>
                     <TableCell align="left">
                       <Chip
-                        label={row.status}
+                        label={row.publishStatus}
                         style={{
-                          backgroundColor: statusColors[row.status],
+                          backgroundColor: statusColors[row.publishStatus],
                           color: "#FFFFFF",
                         }}
                       />
@@ -157,6 +137,14 @@ export default function SyllabusTable() {
                   </TableRow>
                 );
               })}
+              {typeof data === "string" ||
+                (data.list.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={headCells.length} align="center">
+                      <Typography variant="body1">No data available</Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -182,7 +170,7 @@ export default function SyllabusTable() {
               ".MuiPaginationItem-firstLast.Mui-disabled": { display: "none" },
               ".MuiPaginationItem-text": { fontWeight: "bold" },
             }}
-            count={totalPages}
+            count={data ? data?.totalPage : 0}
             page={page + 1}
             onChange={(event, value) => handleChangePage(event, value - 1)}
             showFirstButton
@@ -196,6 +184,7 @@ export default function SyllabusTable() {
               "& .MuiTablePagination-displayedRows": { display: "none" },
               "& .MuiTablePagination-actions": { display: "none" },
             }}
+            count={data ? data?.totalPage * data?.pageSize : 0}
             component="div"
             page={page}
             onPageChange={handleChangePage}

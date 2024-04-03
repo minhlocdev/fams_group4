@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import AppContainer from "../components/shared/layout/AppContainer";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import theme from "../assets/theme";
 import UserPermissionTable from "../components/UserManagement/UserPermissionTable";
@@ -47,7 +46,7 @@ export default function UserPermission() {
   };
 
   return (
-    <AppContainer>
+    <>
       {isSave && <AcceptUpdate onSave={handleSave} onCancel={handleCancel} />}
       <Typography
         variant={"h4"}
@@ -119,6 +118,6 @@ export default function UserPermission() {
           </Button>
         </Stack>
       )}
-    </AppContainer>
+    </>
   );
 }

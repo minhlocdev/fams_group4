@@ -90,7 +90,7 @@ export default function Switch({
         style={isactive ? sliderStyles2 : sliderStyles}
         onClick={() => {
           setActive(!isactive);
-          handleChange("status", !isactive ? 0 : 1);
+          handleChange("status", !isactive ? false : true);
         }}
       >
         {isactive ? (
@@ -108,7 +108,7 @@ export default function Switch({
           }
           onClick={() => {
             setActive(!isactive);
-            handleChange("status", !isactive ? 0 : 1);
+            handleChange("status", !isactive ? false : true);
           }}
         ></div>
       </div>

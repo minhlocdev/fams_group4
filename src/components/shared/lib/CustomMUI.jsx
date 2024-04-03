@@ -49,6 +49,8 @@ const NumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
           children: <RemoveIcon fontSize="small" />,
         },
       }}
+      min={0}
+      max={99}
       {...props}
       ref={ref}
     />
@@ -148,8 +150,8 @@ const StyledButton = styled("button")(
   border-color: ${grey[200]};
   background: ${grey[50]};
   color: ${grey[900]};
-  width: 32px;
-  height: 32px;
+  width: 20px;
+  height: 20px;
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;

@@ -1,9 +1,11 @@
 import { lazy } from "react";
-import Dashboard from "../components/Dashboard";
-import LoginPage from "../components/LoginPage";
 import SyllabusCreate from "../pages/SyllabusCreate";
 import CreateTranningProgramList from "../pages/CreateTrainingProgram";
 import ClassCreate from "../pages/ClassCreate";
+import Dashboard from "../pages/Dashboard";
+import LoginPage from "../pages/LoginPage";
+import NotFoundPage from "../pages/NotFoundPage";
+
 const ClassDetail = lazy(() => import("../pages/ClassDetail"));
 const ClassListing = lazy(() => import("../pages/ClassListing"));
 const UserPermission = lazy(() => import("../pages/UserPermission"));
@@ -12,24 +14,19 @@ const SyllabusListing = lazy(() => import("../pages/SyllabusListing"));
 const SyllabusDetail = lazy(() => import("../pages/SyllabusDetail"));
 const TrainingProgramList = lazy(() => import("../pages/TrainingProgramList"));
 const TrainingCalendar = lazy(() => import("../pages/TrainingCalendar"));
-const TrainingProgramDetail = lazy(
-  () => import("../pages/TrainingProgramDetail"),
-);
-
-export const privateRoute = [{}];
-
-export const publicRoute = [
+const TrainingProgramDetail = lazy(() => import("../pages/TrainingProgramDetail"));
+const UserDetail = lazy(() => import("../pages/UserDetail"));
+export const privateRoute = [
   {
     path: "/",
     element: <Dashboard />,
   },
   {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
     path: "/user",
     element: <UserManagement />,
+  }, {
+    path: "/user/detail/:code",
+    element: <UserDetail />,
   },
   {
     path: "/user/permission",
@@ -48,15 +45,19 @@ export const publicRoute = [
     element: <SyllabusCreate />,
   },
   {
-    path: "/tranning/list",
+    path: "/syllabus/edit/:code",
+    element: <SyllabusCreate />,
+  },
+  {
+    path: "/training/list",
     element: <TrainingProgramList />,
   },
   {
-    path: "/tranning/detail/:code",
+    path: "/training/detail/:code",
     element: <TrainingProgramDetail />,
   },
   {
-    path: "/tranning/create",
+    path: "/training/create",
     element: <CreateTranningProgramList />,
   },
   {
@@ -72,7 +73,22 @@ export const publicRoute = [
     element: <ClassDetail />,
   },
   {
+    path: "/class/edit/:code",
+    element: <ClassCreate />,
+  },
+  {
     path: "/class/create",
     element: <ClassCreate />,
+  },
+];
+
+export const publicRoute = [
+  {
+    path: "*",
+    element: <NotFoundPage />,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
   },
 ];

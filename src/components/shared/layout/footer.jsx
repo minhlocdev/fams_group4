@@ -17,6 +17,7 @@ export function Footer() {
         style={{
           color: "white",
           padding: "10px 0",
+          textAlign: "center",
         }}
       >
         Copyright @2022 BA Warrior. All right reserved

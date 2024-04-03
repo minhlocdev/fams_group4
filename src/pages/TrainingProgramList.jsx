@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import AppContainer from "../components/shared/layout/AppContainer";
 import { Button, Stack, Typography } from "@mui/material";
 import { InputBoxSearch } from "../components/shared/InputBox/InputBox";
 import { BasicFilterProgrambtn } from "../components/TraningProgramList/FilterButtonProgram";
@@ -8,6 +7,8 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ImportTrainingProgram from "../components/TraningProgramList/ImportTrainingProgram";
 import TrainningProgramTable from "../components/TraningProgramList/TrainningProgramTable";
 import { Link } from "react-router-dom";
+import { TrainingProgramProvider } from "../context/TrainingProgramContext";
+import SearchProgram from "../components/TraningProgramList/SearchProgram";
 
 export default function TrainingProgramList() {
   const [importFormOpen, setimportFormOpen] = useState(false);
@@ -19,7 +20,7 @@ export default function TrainingProgramList() {
   };
 
   return (
-    <AppContainer>
+    <TrainingProgramProvider>
       <Typography
         variant="h4"
         sx={{
@@ -49,7 +50,7 @@ export default function TrainingProgramList() {
           display="flex"
           flexWrap="wrap"
         >
-          <InputBoxSearch />
+          <SearchProgram />
           <BasicFilterProgrambtn />
         </Stack>
 
@@ -93,6 +94,6 @@ export default function TrainingProgramList() {
 
       {/* traning program table */}
       <TrainningProgramTable />
-    </AppContainer>
+    </TrainingProgramProvider>
   );
 }

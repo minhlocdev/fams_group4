@@ -1,24 +1,14 @@
 import React, { useState } from "react";
-import AppContainer from "../components/shared/layout/AppContainer";
 import { Button, Stack, Typography } from "@mui/material";
 import theme from "../assets/theme";
-import { InputBoxSearch } from "../components/shared/InputBox/InputBox";
-import { BasicFilterbtn } from "../components/shared/filterButton";
 import { AddCircleOutline } from "@mui/icons-material";
 import UserListing from "../components/UserManagement/UserList/UserListing";
 import AddUser from "../components/UserManagement/AddUser";
+import SearchUser from "../components/UserManagement/UserList/SearchUser";
+import FilterUserButton from "../components/UserManagement/UserList/FilterUserButton";
+import { UserProvider } from "../context/UserContext";
 
 export default function UserManagement() {
-  const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
-
-  const [anchorEl, setAnchorEl] = useState({});
-  const handleFilterClick = (event) => {
-    setIsFilterPopupOpen(!isFilterPopupOpen);
-    setAnchorEl({
-      x: event.currentTarget.offsetTop,
-      y: event.currentTarget.offsetLeft,
-    });
-  };
   const [importFormOpen, setimportFormOpen] = useState(false);
   const handleOpenImportForm = () => {
     setimportFormOpen(true);
@@ -27,7 +17,7 @@ export default function UserManagement() {
     setimportFormOpen(false);
   };
   return (
-    <AppContainer>
+    <UserProvider>
       <Typography
         variant={"h4"}
         sx={{
@@ -50,8 +40,8 @@ export default function UserManagement() {
           display="flex"
           flexWrap="wrap"
         >
-          <InputBoxSearch />
-          <BasicFilterbtn onClick={handleFilterClick} />
+          <SearchUser />
+          <FilterUserButton />
         </Stack>
         <Button
           sx={{
@@ -78,6 +68,6 @@ export default function UserManagement() {
       <Stack gap={5} sx={{ marginTop: "20px" }}>
         <UserListing />
       </Stack>
-    </AppContainer>
+    </UserProvider>
   );
 }

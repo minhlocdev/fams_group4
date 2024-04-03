@@ -8,10 +8,11 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import SyllabusTable from "../components/Syllabus/SyllabusList/SyllabusTable";
 import { Link } from "react-router-dom";
 import { SyllabusFilter } from "../components/Syllabus/SyllabusList/SyllabusFilter";
+import SyllabusWrapper from "../context/SyllabusWrapper";
+import SearchSyllabus from "../components/Syllabus/SyllabusList/SearchSyllabus";
 
 export default function SyllabusListing() {
   const [importFormOpen, setimportFormOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState({});
   const handleOpenImportForm = () => {
     setimportFormOpen(true);
   };
@@ -20,7 +21,7 @@ export default function SyllabusListing() {
   };
 
   return (
-    <AppContainer>
+    <SyllabusWrapper>
       <Typography sx={{ color: "#2D3748" }} variant="h4">
         Syllabus
       </Typography>
@@ -38,7 +39,7 @@ export default function SyllabusListing() {
           display="flex"
           flexWrap="wrap"
         >
-          <InputBoxSearch />
+          <SearchSyllabus />
           <SyllabusFilter />
         </Stack>
         <Stack
@@ -87,6 +88,6 @@ export default function SyllabusListing() {
         </Stack>
       </Stack>
       <SyllabusTable />
-    </AppContainer>
+    </SyllabusWrapper>
   );
 }

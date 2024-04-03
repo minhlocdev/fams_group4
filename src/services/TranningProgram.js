@@ -1,26 +1,24 @@
+import { paramsToString } from "../utils/paramsToString";
 import axios from "axios";
 import apiClient from "./apiClient";
 const BASE_URL = "https://659d4948633f9aee79091768.mockapi.io/api/v1"
 
 export const getAllTrainningProgram = async () => {
-  try {
-    const program = await axios.get(BASE_URL + `/tranning_program`);
-    return program;
-  } catch (e) {
-    const msg = e?.response?.error.message ?? e?.message ?? "Unknown Error";
-    console.error(msg);
-    return false;
-  }
+  const params = {
+    pageNumber: 1,
+    pageSize: 100,
+  };
+  const queryString = paramsToString(params)
+  return await apiClient({
+    method: 'get',
+    url: `/training-programs?${queryString}`,
+  });
 };
-export const getTrainningProgram = async (id) => {
-  try {
-    const program = await axios.get(BASE_URL + `/tranning_program?id=${id}`);
-    return program;
-  } catch (e) {
-    const msg = e?.response?.error.message ?? e?.message ?? "Unknown Error";
-    console.error(msg);
-    return false;
-  }
+export const getTrainningProgramById = async (id) => {
+  return await apiClient({
+    method: 'get',
+    url: `/training-programs/${id}`,
+  });
 };
 
 export const getAllTrainers = async () => {
@@ -33,24 +31,34 @@ export const getAllTrainers = async () => {
     return false;
   }
 };
+
 export const getAllProgram = async () => {
   return await apiClient({
     method: 'get',
-    url: `https://65d8432ec96fbb24c1bb11b2.mockapi.io/TrainingProgramList`,
+    url: `/training-programs`,
   });
 };
-export const getProgram = async (page, limit, orderBy, order) => {
+
+export const getProgram = async (page, limit, orderBy, order, debouncedSearchTerm, filter) => {
+  const { startDateBegin, startDateEnd } = filter;
+  const params = {
+    pageNumber: page + 1,
+    pageSize: limit,
+    ...(order && orderBy && { sortBy: orderBy, order }),
+    ...(debouncedSearchTerm && { searchString: debouncedSearchTerm }),
+    ...(startDateBegin && { startDateBegin }),
+    ...(startDateEnd && { startDateEnd }),
+  };
+  const queryString = paramsToString(params)
   return await apiClient({
     method: 'get',
-    // url: `/program?page=1&pageSize=10`,
-    url: `https://65d8432ec96fbb24c1bb11b2.mockapi.io/TrainingProgramList?p=${page + 1}&l=${limit}
-        ${order && orderBy ? `&orderby=${orderBy}&order=${order}` : ""}`,
+    url: `/training-programs?${queryString}`,
   });
 };
 export const getProgramByID = async (id) => {
   return await apiClient({
     method: 'get',
-    url: `https://65d8432ec96fbb24c1bb11b2.mockapi.io/TrainingProgramList/${id}`,
+    url: `/training-programs/${id}`,
   });
 };
 
@@ -58,7 +66,7 @@ export const postProgram = async ({ programName, createdOn, createdBy, duration,
   return await apiClient({
     method: 'post',
     // url: `/program`,
-    url: `https://65d8432ec96fbb24c1bb11b2.mockapi.io/TrainingProgramList`,
+    url: `/training-programs`,
     data: {
       programName, createdOn, createdBy, duration, status
     },
@@ -69,7 +77,7 @@ export const putProgram = async ({ id, programName, createdOn, createdBy, durati
   return await apiClient({
     method: 'put',
     // url: `/program`,
-    url: `https://65d8432ec96fbb24c1bb11b2.mockapi.io/TrainingProgramList/${id}`,
+    url: `/training-programs`,
     data: {
       programName, createdOn, createdBy, duration, status
     },
@@ -78,7 +86,7 @@ export const putProgram = async ({ id, programName, createdOn, createdBy, durati
 export const deleteProgram = async (id) => {
   return await apiClient({
     method: 'delete',
-    url: `https://65d8432ec96fbb24c1bb11b2.mockapi.io/TrainingProgramList/${id}`,
+    url: `/training-programs/${id}`,
   });
 };
 

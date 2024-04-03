@@ -1,14 +1,10 @@
 import * as React from "react";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Button, Menu, Stack } from "@mui/material";
 import { DayPicker } from "react-day-picker";
 
 import { isSameDay } from "date-fns";
-export default function DateRangePicker() {
-  const [range, setRange] = React.useState();
-
+export default function DateRangePicker(props) {
+  const { range, handleChange } = props;
   let footer = "Please pick a day.";
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -56,9 +52,12 @@ export default function DateRangePicker() {
       >
         <DayPicker
           mode="range"
-          onSelect={setRange}
+          onSelect={handleChange}
           selected={range}
           showOutsideDays
+          captionLayout="dropdown-buttons"
+          fromYear={1900}
+          toYear={2024}
         />
       </Menu>
     </Stack>

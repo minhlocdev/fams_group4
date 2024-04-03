@@ -1,27 +1,16 @@
 import React, { useState } from "react";
-import AppContainer from "../components/shared/layout/AppContainer";
 import { Button, Stack, Typography } from "@mui/material";
 import theme from "../assets/theme";
-import { InputBoxSearch } from "../components/shared/InputBox/InputBox";
-import { BasicFilterClassListbtn } from "../components/ClassList/filterButtonClassList";
+import { BasicFilterClassListbtn } from "../components/Class/ClassList/filterButtonClassList";
 import { AddCircleOutline } from "@mui/icons-material";
-import ListofClass from "../components/ClassList/ListofClass";
+import ListofClass from "../components/Class/ClassList/ListofClass";
 import { Link } from "react-router-dom";
+import SearchClass from "../components/Class/ClassList/SearchClass";
+import ClassWrapper from "../context/ClassWrapper";
 
 export default function ClassListing() {
-  const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState({});
-  const handleFilterClick = (event) => {
-    setIsFilterPopupOpen(!isFilterPopupOpen);
-    setAnchorEl({
-      x: event.currentTarget.offsetTop,
-      y: event.currentTarget.offsetLeft,
-    });
-  };
-
-  const handleAddUser = () => {};
   return (
-    <AppContainer>
+    <ClassWrapper>
       <Typography
         variant={"h4"}
         sx={{
@@ -47,8 +36,8 @@ export default function ClassListing() {
           display="flex"
           flexWrap="wrap"
         >
-          <InputBoxSearch />
-          <BasicFilterClassListbtn onClick={handleFilterClick} />
+          <SearchClass />
+          <BasicFilterClassListbtn />
         </Stack>
 
         <Button
@@ -63,7 +52,6 @@ export default function ClassListing() {
           variant="contained"
           size="small"
           startIcon={<AddCircleOutline />}
-          onClick={handleAddUser}
         >
           {" "}
           <Link to="/class/create" style={{ color: "white" }}>
@@ -74,6 +62,6 @@ export default function ClassListing() {
       <Stack gap={5} sx={{ marginTop: "20px" }}>
         <ListofClass />
       </Stack>
-    </AppContainer>
+    </ClassWrapper>
   );
 }

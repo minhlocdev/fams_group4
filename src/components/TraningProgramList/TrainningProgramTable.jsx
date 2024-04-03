@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,21 +12,18 @@ import TablePagination from "@mui/material/TablePagination";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import ManageProgram from "./ManageProgram";
-import {
-  useGetAllProgramQuery,
-  useGetProgramQuery,
-} from "../../services/queries/programQuery";
-import dayjs from "dayjs";
+import { useGetProgramQuery } from "../../services/queries/programQuery";
 import theme from "../../assets/theme";
 import TableLoader from "../shared/loader/TableLoader";
-import { useSearchParams } from "react-router-dom";
+import { TrainingProgramContext } from "../../context/TrainingProgramContext";
+import { Typography } from "@mui/material";
 
 const headCells = [
-  { id: "id", label: "ID" },
-  { id: "programName", label: "Program name" },
-  { id: "createdOn", label: "Created on" },
+  { id: "trainingProgramCode", label: "Code" },
+  { id: "name", label: "Program Name" },
+  { id: "createdDate", label: "created Date" },
   { id: "createdBy", label: "Created by" },
-  { id: "duration", label: "Duration" },
+  { id: "durationByDay", label: "Duration" },
   { id: "status", label: "Status" },
 ];
 const statusColors = {
@@ -36,47 +33,29 @@ const statusColors = {
 };
 
 export default function TrainingProgramTable() {
-  let [searchParams, setSearchParams] = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const [page, setPage] = useState(Number(searchParams.get("p")) || 0);
-  const [rowsPerPage, setRowsPerPage] = useState(
-    Number(searchParams.get("l")) || 10
-  );
+  const {
+    checked,
+    page,
+    rowsPerPage,
+    debouncedSearchTerm,
+    order,
+    orderBy,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleSortChange,
+  } = useContext(TrainingProgramContext);
 
-  const handleSortChange = (sort) => {
-    params.set("orderby", sort.item);
-    params.set("order", sort.dir);
-    setSearchParams(params.toString());
-  };
-  const orderBy = searchParams.get("orderby");
-  const order = searchParams.get("order");
   const { data, isLoading } = useGetProgramQuery(
     page,
     rowsPerPage,
     orderBy,
-    order
+    order,
+    debouncedSearchTerm,
+    checked
   );
-
-  const allPrograms = useGetAllProgramQuery();
-  const totalPages = Math.ceil(allPrograms?.data?.length / rowsPerPage);
-  const handleChangePage = (event, newPage) => {
-    event.preventDefault();
-    setPage(newPage);
-    params.set("p", newPage);
-    setSearchParams(params.toString());
-  };
   if (isLoading) {
     return <TableLoader column={6} />;
   }
-
-  const handleChangeRowsPerPage = (event) => {
-    event.preventDefault();
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-    params.set("p", 0);
-    params.set("l", event.target.value);
-    setSearchParams(params.toString());
-  };
 
   return (
     <Box sx={{ width: "100%", marginTop: 4, marginX: "auto" }}>
@@ -98,29 +77,26 @@ export default function TrainingProgramTable() {
               handleSortChange={handleSortChange}
             />
             <TableBody>
-              {data?.map((row, index) => {
+              {data?.list?.map((row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
-                  <TableRow hover tabIndex={-1} key={row.id}>
+                  <TableRow hover tabIndex={-1} key={row.trainingProgramCode}>
                     <TableCell
                       component="th"
-                      id={labelId}
                       scope="row"
                       padding="none"
                       style={{ padding: "10px 20px" }}
                     >
-                      {row.id}
+                      {row.trainingProgramCode}
                     </TableCell>
-                    <TableCell align="left">{row.programName}</TableCell>
-                    <TableCell align="left">
-                      {dayjs(row.createdOn).format("DD/MM/YYYY")}
-                    </TableCell>
+                    <TableCell align="left">{row.name}</TableCell>
+                    <TableCell align="left">{row.createdDate}</TableCell>
                     <TableCell align="left">{row.createdBy}</TableCell>
                     <TableCell align="left">
-                      {row.duration >= 2
-                        ? row.duration + " days"
-                        : row.duration + " day"}
+                      {row.durationByDay >= 2
+                        ? row.durationByDay + " days"
+                        : row.durationByDay + " day"}
                     </TableCell>
                     <TableCell align="left">
                       <Chip
@@ -137,6 +113,14 @@ export default function TrainingProgramTable() {
                   </TableRow>
                 );
               })}
+              {typeof data === "string" ||
+                (data.list.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={headCells.length} align="center">
+                      <Typography variant="body1">No data available</Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -158,7 +142,7 @@ export default function TrainingProgramTable() {
               ".MuiPaginationItem-firstLast.Mui-disabled": { display: "none" },
               ".MuiPaginationItem-text": { fontWeight: "bold" },
             }}
-            count={totalPages}
+            count={data ? data?.totalPage : 0}
             page={page + 1}
             onChange={(event, value) => handleChangePage(event, value - 1)}
             showFirstButton
@@ -172,6 +156,7 @@ export default function TrainingProgramTable() {
               "& .MuiTablePagination-displayedRows": { display: "none" },
               "& .MuiTablePagination-actions": { display: "none" },
             }}
+            count={data ? data?.totalPage * data?.pageSize : 0}
             component="div"
             page={page}
             onPageChange={handleChangePage}

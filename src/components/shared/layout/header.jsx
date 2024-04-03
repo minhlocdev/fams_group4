@@ -1,10 +1,12 @@
 import { Box, Chip, Stack } from "@mui/material";
 
-import React from "react";
+import React, { useContext } from "react";
 import MobileSidebar from "./MobileSidebar";
 import AccountAvatar from "./AccountAvatar";
+import AuthContext from "../../../utils/authUtil";
 
 export function Header() {
+  const { loginUser } = useContext(AuthContext);
   return (
     <Box
       sx={{
@@ -20,7 +22,7 @@ export function Header() {
       }}
     >
       <Stack direction="row" sx={{ display: "flex", alignItems: "center" }}>
-        <MobileSidebar />
+        {loginUser && <MobileSidebar />}
         <Box
           sx={{
             display: { xs: "none", lg: "block" },
@@ -54,8 +56,7 @@ export function Header() {
           label={"uniGate"}
         />
         {/* user account */}
-
-        <AccountAvatar />
+        {loginUser && <AccountAvatar />}
       </Stack>
     </Box>
   );
