@@ -50,24 +50,55 @@ export default function Popup({ item }) {
   };
   const deleteClass = useDeleteClassMutation();
   const handleDeleteClass = () => {
-    // deleteClass.mutate(item.id, {
-    //   onSuccess: () => {
-    //     ToastEmitter.success("Delete class successfully!!!");
-    //     queryClient.invalidateQueries({ queryKey: [QUERY_CLASS_KEY] });
-    //   },
-    // });
+    deleteClass.mutate(item.id, {
+      onSuccess: () => {
+        ToastEmitter.update(
+          "Delete class successfully!!",
+          "loading",
+          "success"
+        );
+        queryClient.invalidateQueries({ queryKey: [QUERY_CLASS_KEY] });
+        handleCloseModal();
+        handleClose();
+      },
+      onError: (e) => {
+        ToastEmitter.update(
+          "Delete class failed!! " + e.response.data,
+          "loading",
+          "error"
+        );
+        handleCloseModal();
+        handleClose();
+      },
+    });
   };
+  if (deleteClass.isPending) {
+    ToastEmitter.loading("...Loading", "loading");
+  }
 
   const duplicateClass = useDuplicateClassMutation();
   const handleDuplicateClass = () => {
     duplicateClass.mutate(item.id, {
       onSuccess: () => {
-        ToastEmitter.success("Duplicate Class successfully!!!");
+        ToastEmitter.update(
+          "Duplicate Class successfully!!!",
+          "loading",
+          "success"
+        );
         queryClient.invalidateQueries({ queryKey: [QUERY_CLASS_KEY] });
+      },
+      onError: (e) => {
+        ToastEmitter.update(
+          "Duplicate Class failed!! " + e.response.data,
+          "loading",
+          "error"
+        );
       },
     });
   };
-
+  if (duplicateClass.isPending) {
+    ToastEmitter.loading("...Loading", "loading");
+  }
   return (
     <div>
       <IconButton
@@ -92,8 +123,8 @@ export default function Popup({ item }) {
           <Typography variant="inherit">Edit class</Typography>
         </MenuItem>
 
-        <MenuItem>
-          <ListItemIcon onClick={handleDuplicateClass}>
+        <MenuItem onClick={() => handleDuplicateClass()}>
+          <ListItemIcon>
             <ContentCopyOutlinedIcon fontSize="small" />
           </ListItemIcon>
           <Typography variant="inherit">Duplicate class</Typography>

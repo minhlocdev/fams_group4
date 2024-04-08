@@ -1,34 +1,72 @@
-import React, { useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { SyllabusContext } from "./SyllabusContext";
 import useTable from "../utils/hooks/useTable";
+import { useParams } from "react-router-dom";
+import {
+  useGetSyllabusByIdQuery,
+  usePostSyllabusMutation,
+  usePutSyllabusMutation,
+} from "../services/queries/syllabusQuery";
+import ToastEmitter from "../components/shared/lib/ToastEmitter";
+import AuthContext from "../utils/authUtil";
 
 export default function SyllabusWrapper(probs) {
-  const [general, setGeneral] = useState({});
+  const { loginUser } = useContext(AuthContext);
+  const [general, setGeneral] = useState({
+    createdBy: loginUser.name,
+    userId: loginUser.id,
+    outputStandards: ["LO01", "LO02", "LO03"],
+    syllabusName: "",
+    level: "",
+    trainingAudience: 0,
+    technicalRequirement: "",
+    courseObjective: "",
+    syllabusCode: "NLP",
+  });
   const [outline, setOutline] = useState([]);
-  const [other, setOther] = useState({});
+  const [other, setOther] = useState({
+    quiz: 0,
+    assignment: 0,
+    final: 0,
+    finalTheory: 0,
+    finalPractice: 0,
+    passing: 0,
+    trainingPrinciple: "",
+  });
+
   const [timeAllocation, setTimeAllocation] = useState(Array(5).fill(0));
   const [error, setError] = useState({
-    level: true,
-    message: true,
-    attendee: true,
-    richtext: true,
-    title: true,
-    quiz: true,
-    assignment: true,
-    final: true,
-    finalTheory: true,
-    finalPractice: true,
-    gpa: true,
+    syllabusName: false,
+    level: false,
+    technicalRequirement: false,
+    trainingAudience: false,
+    courseObjective: false,
+    quiz: false,
+    assignment: false,
+    final: false,
+    finalTheory: false,
+    finalPractice: false,
+    passing: false,
+    syllabusCode: false,
+    unitTitle: false,
+    day: false,
   });
-  // console.log(timeAllocation);
+  // console.log("error", error);
+  const { code } = useParams();
   const [checked, setChecked] = useState({
-    outputStandardStrings:"",
+    outputStandardStrings: "",
     createdDateBegin: "",
     createdDateEnd: "",
   });
   const tableState = useTable();
 
-  const [save, isSave] = useState(false);
+  const { data, isLoading } = useGetSyllabusByIdQuery(code);
   const [activeTab, setActiveTab] = useState(0);
   //State for Syllabus detail--------------------------------
   const [openState, setOpenState] = useState({});
@@ -38,62 +76,267 @@ export default function SyllabusWrapper(probs) {
   const [unitId, setUnitId] = useState(null);
   const [syllabusID, setSyllabusID] = useState(null);
   const [buttonData, setButtonData] = useState([]); //State for the origin data
+  const postParams = useMemo(() => {
+    const newOutline = outline.map((item) => ({
+      dayNumber: item.dayNumber,
+      trainingUnits: item.trainingUnits.map((unit) => ({
+        unitName: unit.unitName,
+        trainingContents: unit.trainingContents.map((dataUnit) => ({
+          contentName: dataUnit.contentName,
+          learningObjectiveCode: dataUnit.learningObjectiveCode,
+          deliveryType: dataUnit.deliveryType,
+          duration: dataUnit.duration,
+          trainingFormat: dataUnit.trainingFormat,
+          note: "no information",
+          materials: (dataUnit.materials || []).map((material) => ({
+            title: material.title,
+            createdOn: material.createdOn,
+            createdBy: material.createdBy,
+            url: material.url,
+          })),
+        })),
+      })),
+    }));
+    return {
+      generalTab: { ...general },
+      dayUnits: newOutline,
+      otherScreen: { ...other },
+    };
+  }, [general, outline, other]);
+  const putParams = useMemo(() => {
+    const newOutline = outline.map((item) => ({
+      dayNumber: item.dayNumber,
+      trainingUnits: item.trainingUnits.map((unit) => ({
+        unitCode: null,
+        unitName: unit.unitName,
+        trainingContents: unit.trainingContents.map((dataUnit) => ({
+          id: 0,
+          contentName: dataUnit.contentName,
+          learningObjectiveCode: dataUnit.learningObjectiveCode,
+          deliveryType: dataUnit.deliveryType,
+          duration: dataUnit.duration,
+          trainingFormat: dataUnit.trainingFormat,
+          note: "no information",
+          materials: (dataUnit.materials || []).map((material) => ({
+            id: material.id,
+            contentId: 0,
+            title: material.title,
+            createdDate: material.createdOn,
+            createdBy: material.createdBy,
+            url: material.url,
+          })),
+        })),
+      })),
+    }));
+    const newOther = {
+      quiz: other.quiz,
+      assignment: other.assignment,
+      final: other.final,
+      finalTheory: other.finalTheory,
+      finalPractice: other.finalPractice,
+      passing: other.passing,
+    };
+
+    return {
+      id: Number(code),
+      syllabusName: general.syllabusName,
+      technicalRequirement: general.technicalRequirement,
+      attendeeNumber: general.trainingAudience,
+      courseObjective: general.courseObjective,
+      trainingPrinciples: other.trainingPrinciple,
+      level: general.level,
+      modifiedBy: loginUser.name,
+      outline: newOutline,
+      schema: newOther,
+    };
+  }, [code, general, outline, other, loginUser]);
+  useEffect(() => {
+    if (data && !isLoading) {
+      setOutline(data.outline);
+      setGeneral((prev) => ({
+        ...prev,
+        level: data.level,
+        syllabusCode: data.syllabusCode,
+        syllabusName: data.syllabusName,
+        trainingAudience: data.trainingAudience,
+        technicalRequirement: data.technicalRequirement,
+        courseObjective: data.courseObjective,
+        createdBy: data.createdBy,
+      }));
+      setOther(() => ({
+        ...data.assessmentScheme,
+        trainingPrinciple: data.trainingPrinciples,
+      }));
+      updateTimeAllocation(data.outline);
+    }
+  }, [data, isLoading]);
+
   const handleTabChange = (newValue) => {
     setActiveTab(newValue);
   };
-  const handleTimeAllocation = (value) => {
-    switch (value) {
-      case "Assignment/Lab":
-        setTimeAllocation((prev) => {
-          const newArray = [...prev];
-          newArray[0] += 1;
-          return newArray;
-        });
-        break;
-      case "Concept/Lecture":
-        setTimeAllocation((prev) => {
-          const newArray = [...prev];
-          newArray[1] += 1;
-          return newArray;
-        });
+  const updateTimeAllocation = (trainingSchedule) => {
+    // Khởi tạo một mảng tạm thời để tính tổng thời gian
+    const tempTimeAllocation = [0, 0, 0, 0, 0];
 
-        break;
-      case "Guide/Review":
-        setTimeAllocation((prev) => {
-          const newArray = [...prev];
-          newArray[2] += 1;
-          return newArray;
+    trainingSchedule.forEach((day) => {
+      day.trainingUnits.forEach((unit) => {
+        unit.trainingContents.forEach((content) => {
+          const duration = content.duration;
+          const deliveryType = content.deliveryType;
+          tempTimeAllocation[deliveryType - 1] += duration;
         });
+      });
+    });
+    setTimeAllocation(tempTimeAllocation);
+  };
+  const handleTimeAllocation = (value, action, time) => {
+    switch (action) {
+      case "add":
+        switch (value) {
+          case 1:
+            setTimeAllocation((prev) => {
+              const newArray = [...prev];
+              newArray[0] += parseInt(time, 10);
+              return newArray;
+            });
+            break;
+          case 2:
+            setTimeAllocation((prev) => {
+              const newArray = [...prev];
+              newArray[1] += parseInt(time, 10);
+              return newArray;
+            });
+            break;
+          case 3:
+            setTimeAllocation((prev) => {
+              const newArray = [...prev];
+              newArray[2] += parseInt(time, 10);
+              return newArray;
+            });
 
-        break;
-      case "Test/Quiz":
-        setTimeAllocation((prev) => {
-          const newArray = [...prev];
-          newArray[3] += 1;
-          return newArray;
-        });
+            break;
+          case 4:
+            setTimeAllocation((prev) => {
+              const newArray = [...prev];
+              newArray[3] += parseInt(time, 10);
+              return newArray;
+            });
 
+            break;
+          case 5:
+            setTimeAllocation((prev) => {
+              const newArray = [...prev];
+              newArray[4] += parseInt(time, 10);
+              return newArray;
+            });
+            break;
+          case 6:
+            break;
+          default:
+            break;
+          // Increment the corresponding index based on the value
+        }
         break;
-      case "Exam":
-        setTimeAllocation((prev) => {
-          const newArray = [...prev];
-          newArray[4] += 1;
-          return newArray;
-        });
-        break;
-      case "Seminar/Workshop":
+      case "remove":
+        switch (value) {
+          case 1:
+            setTimeAllocation((prev) => {
+              const newArray = [...prev];
+              newArray[0] -= parseInt(time, 10);
+              return newArray;
+            });
+            break;
+          case 2:
+            setTimeAllocation((prev) => {
+              const newArray = [...prev];
+              newArray[1] -= parseInt(time, 10);
+              return newArray;
+            });
+
+            break;
+          case 3:
+            setTimeAllocation((prev) => {
+              const newArray = [...prev];
+              newArray[2] -= parseInt(time, 10);
+              return newArray;
+            });
+
+            break;
+          case 4:
+            setTimeAllocation((prev) => {
+              const newArray = [...prev];
+              newArray[3] -= parseInt(time, 10);
+              return newArray;
+            });
+
+            break;
+          case 5:
+            setTimeAllocation((prev) => {
+              const newArray = [...prev];
+              newArray[4] -= parseInt(time, 10);
+              return newArray;
+            });
+            break;
+          case 6:
+            break;
+          default:
+            break;
+          // Decrement the corresponding index based on the value
+        }
         break;
       default:
         break;
     }
-  };
-  const handleSave = () => {
-    if (Object.values(error).every((value) => value === false)) {
-      isSave(true);
-    } else {
-      handleTabChange(0);
+    switch (value) {
     }
   };
+  const postSyllabus = usePostSyllabusMutation();
+  const putSyllabus = usePutSyllabusMutation();
+
+  const handleCreate = useCallback(() => {
+    // console.log("create", postParams);
+    postSyllabus.mutate(postParams, {
+      onSuccess: () => {
+        ToastEmitter.update(
+          "Create syllabus successfully!!!",
+          "loading",
+          "success"
+        );
+      },
+      onError: (error) => {
+        ToastEmitter.update(error.response?.data, "loading", "error");
+      },
+    });
+  }, [postParams, postSyllabus]);
+  const handleUpdate = useCallback(() => {
+    putSyllabus.mutate(putParams, {
+      onSuccess: () => {
+        ToastEmitter.update(
+          "Update syllabus successfully!!!",
+          "loading",
+          "success"
+        );
+      },
+      onError: (error) => {
+        ToastEmitter.update(error.response?.data, "loading", "error");
+      },
+    });
+    // console.log("put data", putParams);
+  }, [putParams, putSyllabus]);
+  if (postSyllabus.isPending || putSyllabus.isPending) {
+    ToastEmitter.loading("...Loading", "loading");
+  }
+  const handleSave = useCallback(() => {
+    validateForm();
+    if (Object.values(error).every((value) => value === false)) {
+      code ? handleUpdate() : handleCreate();
+    } else {
+      ToastEmitter.error("You didnt fill enough information");
+      handleTabChange(0);
+    }
+    // eslint-disable-next-line
+  }, [postParams, putParams]);
+
   const handleFieldValidation = (fieldName, value) => {
     if (value !== "") {
       setError((prevError) => ({
@@ -106,6 +349,22 @@ export default function SyllabusWrapper(probs) {
         [fieldName]: true,
       }));
     }
+  };
+  const validateForm = () => {
+    const unrequireFields = ["syllabusCode", "trainingPrinciple"];
+    // general :
+    Object.entries(general).forEach(([key, value]) => {
+      if (!unrequireFields.includes(key) && (value === "" || value === 0)) {
+        error[key] = true;
+      }
+    });
+    // other
+    Object.entries(other).forEach(([key, value]) => {
+      if (!unrequireFields.includes(key) && (value === "" || value === 0)) {
+        error[key] = true;
+      }
+    });
+    return error;
   };
   //Syllabus Detail function here
   const updateButtonData = (dayIndex, unitID, newFile, syllabusID) => {
@@ -182,7 +441,7 @@ export default function SyllabusWrapper(probs) {
       [dayIndex]: !prevOpenState[dayIndex],
     }));
   };
-  
+
   const handleUnitClick = (dayIndex, unitIndex, dayID) => {
     setSelectedDay(dayID);
     setOpenState((prevOpenState) => ({
@@ -207,7 +466,6 @@ export default function SyllabusWrapper(probs) {
         setOther,
         error,
         handleFieldValidation,
-        save,
         handleSave,
         activeTab,
         handleTabChange,
@@ -236,7 +494,8 @@ export default function SyllabusWrapper(probs) {
         handleClose,
         checked,
         setChecked,
-        ...tableState
+        ...tableState,
+        isLoading,
       }}
     >
       {probs.children}

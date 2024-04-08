@@ -1,11 +1,5 @@
 import React, { useContext, useState } from "react";
-import {
-  Box,
-  Button,
-  IconButton,
-  TextField,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, Button, IconButton, TextField } from "@mui/material";
 import { ArrowDownCircle } from "../../../assets/scss/icon";
 import CreateIcon from "@mui/icons-material/Create";
 import { SyllabusContext } from "../../../context/SyllabusContext";
@@ -33,210 +27,251 @@ const hoursStyle = {
   fontSize: "12px",
   fontStyle: "italic",
 };
-export default function Unit({ day, dayIndex, openState, setOpenState }) {
-  const { outline, setOutline, error, handleFieldValidation } =
-    useContext(SyllabusContext);
-  const [title, setTitle] = useState({});
+export default function Unit({
+  day,
+  dayIndex,
+  unitIndex,
+  openState,
+  setOpenState,
+  setDeletedUnitIds,
+  unit,
+}) {
+  const {
+    outline,
+    setOutline,
+    error,
+    handleFieldValidation,
+    handleTimeAllocation,
+  } = useContext(SyllabusContext);
   const [renamingUnit, setRenamingUnit] = useState(null);
+  const [title, setTitle] = useState("");
 
-  const handleCreateTitle = (e, dayIndex, unitIndex) => {
+  const handleCreateTitle = (e, unitIndex, unitid) => {
+    e.preventDefault();
     const tempArray = [...outline];
-    let tempContent = tempArray[dayIndex].content;
-    handleFieldValidation(`title${unitIndex}`, title[unitIndex]);
-    if (error[`title${unitIndex}`]) {
-      e.preventDefault();
-    } else {
-      tempContent[unitIndex].title = title[unitIndex];
+    let tempContent = tempArray[dayIndex].trainingUnits;
+    handleFieldValidation(`unitTitle`, title);
+    if (title !== "") {
+      tempContent[unitIndex].unitName = title;
       setOutline(tempArray);
     }
-  };
-  const handleTitle = (e, unitIndex) => {
-    setTitle((prev) => ({
-      ...prev,
-      [unitIndex]: e.target.value,
-    }));
-    handleFieldValidation(`title${unitIndex}`, e.target.value);
   };
   const handleRenameTitle = (e, dayIndex, unitIndex) => {
     e.preventDefault();
     const tempArray = [...outline];
-    tempArray[dayIndex].content[unitIndex].title = e.target.value;
+    tempArray[dayIndex].trainingUnits[unitIndex].unitName = e.target.value;
+    handleFieldValidation("unitTitle", unit.unitName);
     setOutline(tempArray);
   };
-
+  const checkKeyDownRename = (e) => {
+    if (e.key === "Enter") {
+      setRenamingUnit(
+        renamingUnit === unitIndex && !error[`unitTitle`] ? -1 : unitIndex
+      );
+      e.preventDefault();
+    }
+  };
   const handleUnitClick = (dayIndex, unitIndex) => {
-    setOpenState((prevOpenState) => ({
-      ...prevOpenState,
-      [dayIndex]: {
-        ...(prevOpenState[dayIndex] || {}),
-        [unitIndex]: !prevOpenState[dayIndex][unitIndex],
-      },
-    }));
+    const dataUnitsExist =
+      outline[dayIndex]?.trainingUnits[unitIndex]?.trainingContents?.length > 0;
+    if (dataUnitsExist) {
+      setOpenState((prevOpenState) => ({
+        ...prevOpenState,
+        [dayIndex]: {
+          ...(prevOpenState[dayIndex] || {}),
+          [unitIndex]: !prevOpenState[dayIndex][unitIndex],
+        },
+      }));
+    } else {
+      setOpenState((prevOpenState) => ({
+        ...prevOpenState,
+        [dayIndex]: {
+          ...(prevOpenState[dayIndex] || {}),
+          [unitIndex]: true,
+        },
+      }));
+    }
   };
   function CountTotalTime(dataUnit) {
     let totalTime = 0;
     for (let index = 0; index < dataUnit.length; index++) {
-      totalTime += parseInt(dataUnit[index].TrainingTime, 10);
+      totalTime += parseInt(dataUnit[index].duration, 10);
     }
     return totalTime;
   }
-
   const handleDeleteUnit = (e, unit) => {
     e.preventDefault();
     const tempArray = [...outline];
-    let tempContent = tempArray[dayIndex].content;
-    let deletedUnit = tempContent.filter((content) => content.id !== unit.id);
-    tempContent = deletedUnit;
-    tempArray[dayIndex].content = tempContent;
+    let tempContent = tempArray[dayIndex].trainingUnits;
+    const deletedUnits = tempContent.find(
+      (item) => item.unitCode === unit.unitCode
+    );
+    deletedUnits.trainingContents.forEach((dataUnit) => {
+      handleTimeAllocation(dataUnit.deliveryType, "remove", dataUnit.duration);
+    });
+    let newUnit = tempContent.filter(
+      (content) => content.unitCode !== unit.unitCode
+    );
+    setDeletedUnitIds((deletedUnitIds) => [
+      ...deletedUnitIds,
+      deletedUnits.unitCode,
+    ]);
+    tempArray[dayIndex].trainingUnits = newUnit;
     setOutline(tempArray);
   };
 
   return (
     <>
-      {outline[dayIndex]?.content?.map((unit, unitIndex) => (
+      <Box
+        key={unitIndex}
+        sx={{
+          display: "flex",
+          padding: "10px 16px",
+          gap: "10px",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          borderBottom: "1px solid",
+          flexDirection: "column",
+        }}
+        onClick={() => handleUnitClick(dayIndex, unitIndex)}
+      >
         <Box
-          key={unitIndex}
           sx={{
             display: "flex",
-            padding: "10px 16px",
-            gap: "10px",
-            alignItems: "flex-start",
+            flexDirection: "row",
+            gap: "34px",
+            alignItems: "baseline",
+            width: "100%",
             justifyContent: "space-between",
-            borderBottom: "1px solid",
-            flexDirection: "column",
           }}
         >
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
-              gap: "34px",
-              alignItems: "baseline",
+              alignItems: unit.unitName === null ? "center" : "flex-start",
+              gap: "5px",
               width: "100%",
-              justifyContent: "space-between",
+              justifyContent: {
+                xs: "flex-start",
+                sm: "flex-start",
+                md: "flex-start",
+                lg: "flex-start",
+              },
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: unit.title === null ? "center" : "flex-start",
-                gap: "5px",
-                width: "100%",
-                justifyContent: {
-                  xs: "space-between",
-                  sm: "space-between",
-                  md: "space-around",
-                  lg: "flex-start",
-                },
-              }}
-            >
-              <Box sx={{ minWidth: "50px" }}>Unit {unit.id + 1}</Box>
-              {unit.title === null ? (
-                <>
-                  <TextField
-                    required
-                    error={error[`title${unitIndex}`]}
-                    sx={textField}
-                    value={title[unitIndex]}
-                    onChange={(e) => handleTitle(e, unitIndex)}
-                    name="title"
-                    helperText={
-                      error[`title${unitIndex}`] ? "This field is required" : ""
-                    }
-                  ></TextField>
-                  <Button
-                    type="submit"
-                    sx={button}
-                    onClick={(e) => handleCreateTitle(e, dayIndex, unitIndex)}
-                  >
-                    Create
-                  </Button>
-                </>
-              ) : (
-                <>
+            <Box sx={{ minWidth: "60px", justifyItems: "flex-start" }}>
+              Unit {unit.unitCode}
+            </Box>
+            {unit.unitName === null ? (
+              <>
+                <TextField
+                  required
+                  error={error["unitTitle"]}
+                  sx={textField}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value.trim())}
+                  name="unitName"
+                />
+                <Button
+                  type="submit"
+                  sx={button}
+                  onClick={(e) =>
+                    handleCreateTitle(e, unitIndex, unit.unitCode)
+                  }
+                >
+                  Create
+                </Button>
+              </>
+            ) : (
+              <>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: { xs: "74%", lg: "100%" },
+                    flexDirection: "column",
+                    gap: "10px",
+                  }}
+                >
                   <Box
                     sx={{
                       display: "flex",
-                      width: { xs: "74%", lg: "100%" },
-                      flexDirection: "column",
                       gap: "10px",
+                      alignItems: "center",
                     }}
                   >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: "10px",
-                        alignItems: "center",
+                    {renamingUnit === unitIndex ? (
+                      <>
+                        <TextField
+                          sx={textField}
+                          error={error[`unitName${unitIndex}`]}
+                          onKeyDown={(e) => checkKeyDownRename(e)}
+                          value={unit.unitName}
+                          onChange={(e) =>
+                            handleRenameTitle(e, dayIndex, unitIndex)
+                          }
+                          name="unitName"
+                        />
+                      </>
+                    ) : (
+                      <Box>{unit.unitName}</Box>
+                    )}
+                    <IconButton
+                      size="small"
+                      onClick={(e) => {
+                        setRenamingUnit(
+                          renamingUnit === unitIndex && !error[`unitTitle`]
+                            ? -1
+                            : unitIndex
+                        );
+                        e.stopPropagation();
+                      }}
+                      sx={{ padding: 0 }}
+                    >
+                      <CreateIcon />
+                    </IconButton>
+
+                    <IconButton
+                      size="small"
+                      sx={{ padding: 0 }}
+                      onClick={(e) => {
+                        handleDeleteUnit(e, unit);
+                        e.stopPropagation();
                       }}
                     >
-                      {renamingUnit === unitIndex ? (
-                        <>
-                          <TextField
-                            sx={textField}
-                            value={unit.title}
-                            onChange={(e) =>
-                              handleRenameTitle(e, dayIndex, unitIndex)
-                            }
-                            // inputRef={titleRef}
-                            name="title"
-                          />
-                        </>
-                      ) : (
-                        <Box>{unit.title}</Box>
-                      )}
-                      <IconButton
-                        size="small"
-                        onClick={(e) =>
-                          setRenamingUnit(
-                            renamingUnit === unitIndex ? -1 : unitIndex
-                          )
-                        }
-                        sx={{ padding: 0 }}
-                      >
-                        <CreateIcon />
-                      </IconButton>
-
-                      <IconButton
-                        size="small"
-                        sx={{ padding: 0 }}
-                        onClick={(e) => handleDeleteUnit(e, unit)}
-                      >
-                        <DeleteOutline />
-                      </IconButton>
-                    </Box>
-                    {/* //dataUnit */}
-                    <Box sx={hoursStyle}>{`${(
-                      CountTotalTime(unit.dataUnit) / 60
-                    ).toFixed(1)}hrs`}</Box>
+                      <DeleteOutline />
+                    </IconButton>
                   </Box>
-                  <IconButton
-                    onClick={() => handleUnitClick(dayIndex, unitIndex)}
-                  >
-                    <ArrowDownCircle />
-                  </IconButton>
-                </>
-              )}
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              gap: "5px",
-            }}
-          >
-            <DataUnit
-              unit={unit}
-              day={day}
-              dayIndex={dayIndex}
-              unitIndex={unitIndex}
-              openState={openState}
-              setOpenState={setOpenState}
-            />
+                  {/* //dataUnit */}
+                  <Box sx={hoursStyle}>{`${(
+                    CountTotalTime(unit.trainingContents) / 60
+                  ).toFixed(1)}hrs`}</Box>
+                </Box>
+                <IconButton>
+                  <ArrowDownCircle />
+                </IconButton>
+              </>
+            )}
           </Box>
         </Box>
-      ))}
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <DataUnit
+            unit={unit}
+            day={day}
+            dayIndex={dayIndex}
+            unitIndex={unitIndex}
+            openState={openState}
+            setOpenState={setOpenState}
+          />
+        </Box>
+      </Box>
     </>
   );
 }

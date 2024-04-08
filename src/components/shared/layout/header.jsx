@@ -35,7 +35,7 @@ export function Header() {
               width: 70,
               height: 40,
             }}
-            src="/img/Logo.png"
+            src="/img/logo.png"
             alt="logo fpt"
           />
         </Box>

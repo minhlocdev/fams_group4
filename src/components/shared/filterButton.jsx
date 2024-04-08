@@ -4,8 +4,7 @@ import React from "react";
 
 import Menu from "@mui/material/Menu";
 import FilterBox from "./FilterBox";
-export function BasicFilterbtn() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+export function BasicFilterbtn(anchorEl, setAnchorEl) {
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {

@@ -1,22 +1,22 @@
 export const calendarTime = [
   {
     id: "1",
-    time: "8:00",
+    time: "08:00",
     type: "morning",
   },
   {
     id: "2",
-    time: "8:30",
+    time: "08:30",
     type: "morning",
   },
   {
     id: "3",
-    time: "9:00",
+    time: "09:00",
     type: "morning",
   },
   {
     id: "4",
-    time: "9:30",
+    time: "09:30",
     type: "morning",
   },
   {

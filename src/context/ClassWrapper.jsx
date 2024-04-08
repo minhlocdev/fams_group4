@@ -21,7 +21,7 @@ import ToastEmitter from "../components/shared/lib/ToastEmitter";
 import queryClient from "../services/queries/queryClient";
 import { QUERY_CLASS_KEY } from "../constants/query";
 import { differenceInMinutes } from "date-fns";
-import { PulishStatusEnum } from "../constants/PublishStatusEnum";
+import { PublishStatusEnum } from "../constants/PublishStatusEnum";
 
 export default function ClassWrapper(props) {
   const locate = useLocation();
@@ -143,7 +143,7 @@ export default function ClassWrapper(props) {
       classCode: classCode,
       attendee: attendee.type,
       duration: initialDays?.length + 1,
-      status: PulishStatusEnum[status],
+      status: PublishStatusEnum[status],
       location: location,
       fsu: fsu + "-" + contact,
       startDate: startDate,
@@ -188,7 +188,7 @@ export default function ClassWrapper(props) {
       classCode: classCode,
       attendee: attendee.type,
       duration: initialDays?.length + 1,
-      status: PulishStatusEnum[status],
+      status: PublishStatusEnum[status],
       location: location,
       fsu: fsu + "-" + contact,
       startDate: startDate,

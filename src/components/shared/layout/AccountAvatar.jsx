@@ -23,7 +23,7 @@ function AccountAvatar() {
           variant="overline"
           display="block"
         >
-          {loginUser.name}
+          {loginUser?.name}
         </Typography>
         <Link
           sx={{

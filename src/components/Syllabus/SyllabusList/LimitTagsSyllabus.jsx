@@ -1,14 +1,18 @@
-import { Autocomplete, CircularProgress, TextField } from '@mui/material';
-import React from 'react'
-import { useGetObjectiveQuery } from '../../../services/queries/syllabusQuery';
+import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import React from "react";
 
-export default function LimitTagsSyllabus({data, selectedTags, onTagsChange,loading}) {
+export default function LimitTagsSyllabus({
+  data,
+  selectedTags,
+  onTagsChange,
+  loading,
+}) {
   const [open, setOpen] = React.useState(false);
-    const handleAutocompleteChange = (event, value) => {
-      onTagsChange(value);
-    };
-    return (
-      <Autocomplete
+  const handleAutocompleteChange = (event, value) => {
+    onTagsChange(value);
+  };
+  return (
+    <Autocomplete
       open={open}
       onOpen={() => {
         setOpen(true);
@@ -16,16 +20,18 @@ export default function LimitTagsSyllabus({data, selectedTags, onTagsChange,load
       onClose={() => {
         setOpen(false);
       }}
-        multiple
-        limitTags={2}
-        id="size-small-outlined-multi"
-        options={data}
-        loading={loading}
-        getOptionLabel={(option) => option}
-        value={selectedTags}
-        onChange={handleAutocompleteChange}
-        renderInput={(params) => (
-          <TextField {...params} placeholder="Output Standard ..."
+      multiple
+      limitTags={2}
+      id="size-small-outlined-multi"
+      options={data}
+      loading={loading}
+      getOptionLabel={(option) => option}
+      value={selectedTags}
+      onChange={handleAutocompleteChange}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          placeholder="Output Standard ..."
           InputProps={{
             ...params.InputProps,
             endAdornment: (
@@ -37,16 +43,15 @@ export default function LimitTagsSyllabus({data, selectedTags, onTagsChange,load
               </React.Fragment>
             ),
           }}
-          />
-        )}
-        sx={{
-          width: "450px",
-          marginTop: "5px",
-          "& .MuiInputBase-root": {
-            paddingY: "5px",
-          },
-        }}
-      />
-    );
-  }
-  
+        />
+      )}
+      sx={{
+        width: "450px",
+        marginTop: "5px",
+        "& .MuiInputBase-root": {
+          paddingY: "5px",
+        },
+      }}
+    />
+  );
+}

@@ -34,7 +34,7 @@ import useValidateForm from "../../utils/hooks/useValidateForm";
 
 const UpdateContent = ({ handleClose, item }) => {
   //False = Active, Truth = Unactive
-  const [isactive, setActive] = useState(false);
+  const [isactive, setActive] = useState(item.status);
   const [formData, setFormData] = useState({
     id: item.id,
     rolename: item.roleName,

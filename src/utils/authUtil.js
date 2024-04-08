@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import Token from "./token";
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    navigate("/login");
+    navigate("/login", { replace: '/' });
     setUserToken(null); setLoginUser(null)
     clearAllCookies()
   };
@@ -91,3 +91,7 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthContext;
+
+export const useAuth = () => {
+  return useContext(AuthContext)
+}

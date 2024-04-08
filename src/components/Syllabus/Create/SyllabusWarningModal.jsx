@@ -83,7 +83,6 @@ export function SyllabusDeleteWarningModal({
   ConfirmDelete,
   id,
 }) {
-  const [open, setOpen] = React.useState(isConfirm);
   const handleClose = () => setConfirm(false);
   return (
     <div>

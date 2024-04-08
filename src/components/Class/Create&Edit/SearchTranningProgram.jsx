@@ -12,6 +12,8 @@ export default function SearchTranningProgram(probs) {
   const [open, setOpen] = React.useState(false);
 
   return (
+    <>
+    {program && (
     <Autocomplete
       id="asynchronous-demo"
       sx={{ width: 400, marginTop: 2, marginLeft: 4, marginRight: 4 }}
@@ -88,5 +90,7 @@ export default function SearchTranningProgram(probs) {
         );
       }}
     />
+    )}
+  </>
   );
 }

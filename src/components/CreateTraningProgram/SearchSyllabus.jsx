@@ -6,21 +6,23 @@ import { Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import dayjs from "dayjs";
 import { SearchOutlined } from "@mui/icons-material";
+import { useGetSyllabusByIdQuery } from "../../services/queries/syllabusQuery";
 export default function SearchSyllabus(probs) {
   const { program, loading, handleSearch } = probs;
+  const { data } = useGetSyllabusByIdQuery(program.id);
+
   const [open, setOpen] = React.useState(false);
   return (
     <Autocomplete
       id="asynchronous-demo"
       sx={{
-        display: "flex",
-        alignItems: "center",
-        width: 350,
-        "& .MuiOutlinedInput-root": {
-          padding: "0px",
-          paddingLeft: 1,
+        display: 'flex', alignItems: 'center', width: { xs: '80%', lg: '350px' },
+        '& .MuiOutlinedInput-root': {
+          padding: '0px',
+          paddingLeft: 1
         },
       }}
+
       freeSolo
       options={program}
       loading={loading}
@@ -31,20 +33,19 @@ export default function SearchSyllabus(probs) {
       onClose={() => {
         setOpen(false);
       }}
-      isOptionEqualToValue={(option, value) => option.name === value.name}
+      isOptionEqualToValue={(option, value) =>
+        option.syllabusName === value.syllabusName
+      }
       onChange={(event, newValue) => {
-        if (
-          newValue !== null &&
-          program.some((option) => option.name === newValue.name)
-        ) {
+        if (newValue !== null && program.some(option => option.syllabusName === newValue.syllabusName)) {
           handleSearch(newValue);
         }
+
       }}
-      getOptionLabel={(option) =>
-        option.name !== undefined ? option.name : option
-      }
+      getOptionLabel={(option) => option.syllabusName !== undefined ? option.syllabusName : option}
       renderInput={(params) => (
         <TextField
+
           {...params}
           sx={{
             width: "400px",
@@ -78,7 +79,7 @@ export default function SearchSyllabus(probs) {
             }}
           >
             <Typography variant="p" sx={{}} fontWeight={600}>
-              {option.name}
+              {option.syllabusName}
             </Typography>
             <Stack
               direction={"row"}
@@ -90,11 +91,11 @@ export default function SearchSyllabus(probs) {
               }}
             >
               <Typography variant="span" sx={{}}>
-                {option.duration}
+                {option.durationByDay} day
               </Typography>
               <Typography variant="span" sx={{}}>
-                {dayjs(option.modifiedDate).format("DD/MM/YYYY")} by{" "}
-                {option.modifiedBy}
+                {option.createdDate ? option.createdDate : option.modifiedDate} by{" "}
+                {option.createdBy ? option.createdBy : option.modifiedBy}
               </Typography>
             </Stack>
           </div>

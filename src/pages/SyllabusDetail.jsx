@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import SyllabusTab from "../components/Syllabus/syllabusTab";
-import OutlineTabContent from "../components/Syllabus/OutlineTabContent";
+import React from "react";
 import {
   Box,
   Typography,
@@ -15,16 +13,78 @@ import { ThreeDotIcon, CreateIcon } from "../assets/icon";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import General from "../components/Syllabus/General";
-import Other from "../components/Syllabus/Other";
 import SyllabusWrapper from "../context/SyllabusWrapper";
-import SyllabusDetailContent from "../components/Syllabus/SyllabusDetailContent";
+import SyllabusDetailContent from "../components/Syllabus/Detail/SyllabusDetailContent";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  useDeleteSyllabusMutation,
+  useDuplicateSyllabusMutation,
+  useGetSyllabusByIdQuery,
+  usePutSyllabusStatus,
+} from "../services/queries/syllabusQuery";
+import { QUERY_SYLLABUS_KEY } from "../constants/query";
+import ToastEmitter from "../components/shared/lib/ToastEmitter";
+import queryClient from "../services/queries/queryClient";
 export default function SyllabusDetail() {
-  const [status, setStatus] = useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const { code } = useParams();
+  const { data } = useGetSyllabusByIdQuery(code);
+  const changeSyllabusStatus = usePutSyllabusStatus(Number(code));
+  const navigate = useNavigate();
+  const duplicateSyllabus = useDuplicateSyllabusMutation();
+  const handleDuplicateSyllabus = () => {
+    duplicateSyllabus.mutate(code, {
+      onSuccess: () => {
+        ToastEmitter.success("Duplicate Syllabus successfully!!!");
+        queryClient.invalidateQueries({ queryKey: [QUERY_SYLLABUS_KEY] });
+      },
+    });
+  };
+  const deleteSyllabus = useDeleteSyllabusMutation();
+  const handleDeleteSyllabus = () => {
+    deleteSyllabus.mutate(code, {
+      onSuccess: () => {
+        ToastEmitter.success("Delete Syllabus successfully!!!");
+        queryClient.invalidateQueries({ queryKey: [QUERY_SYLLABUS_KEY] });
+        navigate("/syllabus");
+      },
+    });
+  };
   const open = Boolean(anchorEl);
   const handleStatus = () => {
-    setStatus(!status);
+    console.log("change");
+    if (data?.publishStatus === 1) {
+      changeSyllabusStatus.mutate(
+        { id: code, status: 0 },
+        {
+          onSuccess: () => {
+            queryClient.resetQueries({
+              queryKey: [QUERY_SYLLABUS_KEY, "id:" + code],
+            });
+            ToastEmitter.success("Change status successfully!!!");
+          },
+          onError: () => {
+            ToastEmitter.error("Change Status failed!!");
+          },
+        }
+      );
+    }
+    if (data?.publishStatus === 0) {
+      changeSyllabusStatus.mutate(
+        { id: code, status: 1 },
+        {
+          onSuccess: () => {
+            ToastEmitter.success("Change status successfully!!!");
+            queryClient.resetQueries({
+              queryKey: [QUERY_SYLLABUS_KEY, "id:" + code],
+            });
+          },
+          onError: () => {
+            ToastEmitter.error("Change Status failed!!");
+          },
+        }
+      );
+    }
   };
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,7 +92,6 @@ export default function SyllabusDetail() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   return (
     <SyllabusWrapper>
       <Box>
@@ -59,9 +118,9 @@ export default function SyllabusDetail() {
                 fontSize: { xs: "40px", lg: "48px" },
               }}
             >
-              C# Programing Language{" "}
+              {data?.syllabusName}{" "}
               <Chip
-                label={status ? "Active" : "Inactive"}
+                label={data?.publishStatus === 1 ? "Active" : "Inactive"}
                 sx={{
                   backgroundColor: "#2D3748",
                   color: "whitesmoke",
@@ -92,7 +151,7 @@ export default function SyllabusDetail() {
                 </ListItemIcon>
                 <ListItemText>Edit Syllabus</ListItemText>
               </MenuItem>
-              <MenuItem>
+              <MenuItem onClick={() => handleDuplicateSyllabus()}>
                 <ListItemIcon>
                   <ContentCopyIcon sx={{ color: "#2D3748" }} />
                 </ListItemIcon>
@@ -104,7 +163,10 @@ export default function SyllabusDetail() {
                 </ListItemIcon>
                 <ListItemText>De-activate Syllabus</ListItemText>
               </MenuItem>
-              <MenuItem sx={{ color: "grey" }}>
+              <MenuItem
+                sx={{ color: "grey" }}
+                onClick={() => handleDeleteSyllabus()}
+              >
                 <ListItemIcon>
                   <DeleteForeverIcon sx={{ color: "grey" }} />
                 </ListItemIcon>
@@ -112,19 +174,18 @@ export default function SyllabusDetail() {
               </MenuItem>
             </Menu>
           </Box>
-          <Typography variant="h6" sx={{ color: "#2D3748" }}>
-            NPL v4.0
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#2D3748",
+              fontSize: { xs: "10px", sm: "12px", md: "15px", lg: "20px" },
+            }}
+          >
+            {data?.syllabusCode} Version {data?.version}
           </Typography>
         </Box>
         <Divider sx={{ borderWidth: "2px", borderColor: "#2D3748" }} />
-        <Box sx={{ paddingLeft: "10px" }}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ display: "flex", alignItems: "center", gap: "5px" }}
-          >
-            <Box sx={{ fontSize: "2.125rem" }}> 8 </Box> days (68 hours)
-          </Typography>
+        <Box sx={{ paddingLeft: "10px", paddingTop: "10px" }}>
           <Box
             sx={{
               display: "flex",
@@ -134,13 +195,9 @@ export default function SyllabusDetail() {
               fontSize: { xs: "10px", sm: "12px", md: "15px", lg: "20px" },
             }}
           >
-            Modified on 14/02/2024 by{" "}
-            <Typography sx={{ fontWeight: "bolder" }}>
-              {" "}
-              Warrior Tran{" "}
-            </Typography>
+            Modified on {data?.modifiedDate} by {data?.modifiedBy}{" "}
           </Box>
-          <SyllabusDetailContent />
+          <SyllabusDetailContent SyllabusID={code} data={data} />
         </Box>
       </Box>
     </SyllabusWrapper>

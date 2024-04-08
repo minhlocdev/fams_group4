@@ -23,7 +23,6 @@ export default function SyllabusCardOfClass() {
       }
       return accumulator;
     }, []);
-    console.log(unique);
     return unique;
   };
   const { trainingProgram, infoTrainers } = classData;

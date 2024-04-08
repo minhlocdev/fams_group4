@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import {
   Checkbox,
   Grid,
@@ -33,19 +33,9 @@ const checkboxData = [
     ],
   },
 ];
-const TrainerData = [
-  { name: "John Doe", code: "JD" },
-  { name: "Jane Smith", code: "JS" },
-  { name: "Bob Johnson", code: "BJ" },
-  { name: "Alice Williams", code: "AW" },
-  { name: "Michael Brown", code: "MB" },
-  { name: "Emily Davis", code: "ED" },
-  { name: "David Miller", code: "DM" },
-  { name: "Olivia Wilson", code: "OW" },
-  { name: "Daniel Taylor", code: "DT" },
-];
 export default function FilterBoxClassList() {
-  const { checked, setChecked, handleChangePage } = useContext(ClassContext);
+  const { checked, setChecked, handleChangePage, trainerData } =
+    useContext(ClassContext);
   const [selected, setSelected] = React.useState({
     locations: checked.locations !== "" ? checked.locations.split(", ") : [],
     dateRange: !(checked.startDate === "" || checked.endDate === "") && {
@@ -131,14 +121,14 @@ export default function FilterBoxClassList() {
   return (
     <>
       <Grid container spacing={3}>
-        <Grid item xs={7}>
+        <Grid item xs={12} md={7}>
           <Typography variant="h8">Class Location</Typography>
           <LimitTags
             selectedTags={selected.locations}
             onTagsChange={handleLocation}
           />
         </Grid>
-        <Grid item xs={5} ml={"auto"}>
+        <Grid item xs={12} md={5} ml={"auto"}>
           <Typography variant="h8">Class time frame</Typography>
           <DateRangePicker
             range={selected.dateRange}
@@ -148,7 +138,7 @@ export default function FilterBoxClassList() {
       </Grid>
       <Grid container sx={{ marginTop: "30px" }}>
         {checkboxData.map((category, index) => (
-          <Grid item xs={4} key={index}>
+          <Grid item xs={12} sm={4} key={index}>
             {Object.entries(category).map(([categoryName, options]) => (
               <Stack key={categoryName} direction="row" spacing={2}>
                 <Typography variant="h8" py={1}>
@@ -160,7 +150,13 @@ export default function FilterBoxClassList() {
                   }}
                 >
                   {options.map((option) => (
-                    <ListItem key={option} disablePadding>
+                    <ListItem
+                      key={option}
+                      disablePadding
+                      sx={{
+                        display: { xs: "inline", md: "block" },
+                      }}
+                    >
                       <ListItemButton
                         role={undefined}
                         sx={{ paddingTop: 0, paddingBottom: 0 }}
@@ -191,8 +187,13 @@ export default function FilterBoxClassList() {
         ))}
       </Grid>
 
-      <Stack direction="row" my={3}>
-        <Stack direction="row" spacing={2} alignItems={"center"}>
+      <Stack my={3} sx={{ flexDirection: { xs: "column", md: "row" } }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems={"center"}
+          justifyContent={"space-around"}
+        >
           <Typography variant="h8">FSU</Typography>
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth size="small">
@@ -215,12 +216,11 @@ export default function FilterBoxClassList() {
                     boxShadow: "2px 1px 3px rgba(0,0,0,0.3)",
                   },
                 }}
+                MenuProps={{ sx: { maxHeight: "300px" } }}
               >
-                {TrainerData.map((item) => (
-                  <MenuItem key={item.code} value={item.name}>
-                    {item.code} - {item.name}
-                  </MenuItem>
-                ))}
+                <MenuItem value={"FHU"}>FHU</MenuItem>
+                <MenuItem value={"FHM"}>FHM</MenuItem>
+                <MenuItem value={"FHT"}>FHT</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -228,8 +228,8 @@ export default function FilterBoxClassList() {
         <Stack
           direction="row"
           spacing={2}
-          sx={{ marginLeft: "auto" }}
           alignItems={"center"}
+          justifyContent={"space-around"}
         >
           <Typography variant="h8">Trainer</Typography>
           <Box sx={{ minWidth: 120 }}>
@@ -253,10 +253,11 @@ export default function FilterBoxClassList() {
                     boxShadow: "2px 1px 3px rgba(0,0,0,0.3)",
                   },
                 }}
+                MenuProps={{ sx: { maxHeight: "300px" } }}
               >
-                {TrainerData.map((item) => (
-                  <MenuItem key={item.code} value={item.name}>
-                    {item.code} - {item.name}
+                {trainerData?.list?.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name}
                   </MenuItem>
                 ))}
               </Select>

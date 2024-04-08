@@ -13,13 +13,13 @@ import {
   Chip,
   TableRow,
   Typography,
+  Link,
 } from "@mui/material";
 import Popup from "./Popup";
-import {
-  useGetSyllabusQuery,
-} from "../../../services/queries/syllabusQuery";
+import { useGetSyllabusQuery } from "../../../services/queries/syllabusQuery";
 import TableLoader from "../../shared/loader/TableLoader";
 import { SyllabusContext } from "../../../context/SyllabusContext";
+import { PublishStatus } from "../../../constants/PublishStatusEnum";
 
 const headCells = [
   { id: "syllabusName", label: "Syllabus" },
@@ -31,7 +31,7 @@ const headCells = [
   { id: "publishStatus", label: "Status" },
 ];
 const statusColors = {
-  active: "#2D3748",
+  Active: "#2D3748",
   Inactive: "#B9B9B9",
   Draft: "#285D9A",
 };
@@ -92,7 +92,12 @@ export default function SyllabusTable() {
                       padding="none"
                       style={{ padding: "10px 20px" }}
                     >
-                      {row.syllabusName}
+                      <Link
+                        href={`/syllabus/detail/${row.id}`}
+                        underline="hover"
+                      >
+                        {row.syllabusName}
+                      </Link>
                     </TableCell>
                     <TableCell align="left">{row.syllabusCode}</TableCell>
                     <TableCell align="left">{row.createdDate}</TableCell>
@@ -105,28 +110,28 @@ export default function SyllabusTable() {
 
                     <TableCell sx={{ width: "20%", p: 0.5 }} align="left">
                       <Box sx={{ display: "flex" }}>
-                        {row.outputStandards
-                          .map((standard, index) => (
-                            <Box sx={{ paddingRight: "5px" }}>
-                              <Chip
-                                key={index}
-                                sx={{
-                                  background: "#2D3748",
-                                  color: "white",
-                                  width: "75px",
-                                  height: "28px",
-                                }}
-                                label={standard.trim()}
-                              />
-                            </Box>
-                          ))}
+                        {row.outputStandards.map((standard, index) => (
+                          <Box sx={{ paddingRight: "5px" }}>
+                            <Chip
+                              key={index}
+                              sx={{
+                                background: "#2D3748",
+                                color: "white",
+                                width: "75px",
+                                height: "28px",
+                              }}
+                              label={standard.trim()}
+                            />
+                          </Box>
+                        ))}
                       </Box>
                     </TableCell>
                     <TableCell align="left">
                       <Chip
-                        label={row.publishStatus}
+                        label={PublishStatus[row.publishStatus]}
                         style={{
-                          backgroundColor: statusColors[row.publishStatus],
+                          backgroundColor:
+                            statusColors[PublishStatus[row.publishStatus]],
                           color: "#FFFFFF",
                         }}
                       />

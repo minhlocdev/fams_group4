@@ -5,10 +5,7 @@ import {
   Button,
   Divider,
   FormControl,
-  FormControlLabel,
   FormLabel,
-  Radio,
-  RadioGroup,
   Stack,
   TextField,
 } from "@mui/material";
@@ -25,11 +22,8 @@ export default function EditAvatarModal({
   letters,
 }) {
   const { code } = useParams();
-  const [value, setValue] = React.useState("Letters");
   const [link, setLink] = React.useState(avatar);
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
+
   const { mutate, isPending } = usePutUserAvatarMutation();
   const handleSave = () => {
     mutate(
@@ -62,53 +56,21 @@ export default function EditAvatarModal({
       handleClose={handleClose}
       key={isOpen?.toString()}
     >
-      {value === "Image" && (
-        <Avatar src={link} sx={{ width: 80, height: 80 }} />
-      )}
-      {value === "Letters" && (
-        <Avatar
-          sx={{
-            width: 80,
-            height: 80,
-            fontSize: "14px",
-            wordWrap: "break-word",
-            wordBreak: "break-word",
-            textAlign: "center",
-          }}
-        >
-          {letters}
-        </Avatar>
-      )}
+      <Avatar src={link} sx={{ width: 80, height: 80 }} />
       <Divider></Divider>
       <FormControl
         sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}
       >
-        <FormLabel id="demo-controlled-radio-buttons-group">
-          Avatar Type
-        </FormLabel>
-        {value === "Image" && (
-          <TextField
-            id="standard-basic"
-            variant="standard"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
-            placeholder="Link to the Image"
-            sx={{ width: "80%" }}
-          />
-        )}
-        <RadioGroup
-          aria-labelledby="demo-controlled-radio-buttons-group"
-          name="controlled-radio-buttons-group"
-          value={value}
-          onChange={handleChange}
-        >
-          <FormControlLabel
-            value="Letters"
-            control={<Radio />}
-            label="Letter"
-          />
-          <FormControlLabel value="Image" control={<Radio />} label="Image" />
-        </RadioGroup>
+        <FormLabel id="demo-controlled-radio-buttons-group">Avatar</FormLabel>
+        <TextField
+          id="standard-basic"
+          variant="standard"
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
+          placeholder="Link to the Image"
+          sx={{ width: "80%", marginBottom: "10px" }}
+        />
+
         <Stack direction={"row"} spacing={2}>
           <Button variant="outlined" color="primary" onClick={handleSave}>
             Save

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import {
   Box,
   Grid,
@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import RichText from "../RichText";
+import RichText from "../Detail/RichText";
 import { KeyboardArrowDown } from "@mui/icons-material";
 import FormHelperText from "@mui/material/FormHelperText";
 import TimeAllocation from "../../shared/TimeAllocation";
@@ -32,14 +32,18 @@ export default function SyllabusGeneral() {
     useContext(SyllabusContext);
   const theme = useTheme();
   const isDownLg = useMediaQuery(theme.breakpoints.down("lg"));
-
   // const {level, message, attendee, error} = props
-  const handleGeneral = (event) => {
+  const handleGeneral = (event, field) => {
     const copy = { ...general };
-    copy[event.target.name] = event.target.value;
+    if (field === "trainingAudience") {
+      copy.trainingAudience = Number(event.target.value);
+    } else {
+      copy[event.target.name] = event.target.value;
+    }
     handleFieldValidation(event.target.name, event.target.value);
     setGeneral(copy);
   };
+
   function isQuillEmpty(value) {
     if (
       value.replace(/<(.|\n)*?>/g, "").trim().length === 0 &&
@@ -49,15 +53,24 @@ export default function SyllabusGeneral() {
     }
     return "false";
   }
-  const handleRichText = (content) => {
-    const copy = { ...general };
-    copy.richtext = content;
-    handleFieldValidation("richtext", isQuillEmpty(content));
-    setGeneral(copy);
+  const handleTechs = (content) => {
+    setGeneral(() => ({
+      ...general,
+      technicalRequirement: content,
+    }));
+    handleFieldValidation("technicalRequirement", isQuillEmpty(content));
+  };
+  const handleCours = (content) => {
+    setGeneral(() => ({
+      ...general,
+      courseObjective: content,
+    }));
+    handleFieldValidation("courseObjective", isQuillEmpty(content));
   };
   return (
     <>
       <Grid
+        item
         container
         direction="row"
         spacing={2}
@@ -123,7 +136,7 @@ export default function SyllabusGeneral() {
               </Typography>
               <TextField
                 required
-                helperText={error?.attendee ? "required" : ""}
+                helperText={error?.trainingAudience ? "required" : ""}
                 type="number"
                 sx={{
                   borderRadius: "6px",
@@ -139,40 +152,44 @@ export default function SyllabusGeneral() {
                 inputProps={{
                   maxlength: 2,
                 }}
-                name="attendee"
-                error={error?.attendee}
-                value={general?.attendee ? general.attendee : ""}
+                name="trainingAudience"
+                error={error?.trainingAudience}
+                value={
+                  general?.trainingAudience ? general.trainingAudience : ""
+                }
                 variant="outlined"
-                onChange={handleGeneral}
+                onChange={(e) => handleGeneral(e, "trainingAudience")}
               />
             </Box>
             <Box>
               <Typography fontWeight="bold" variant={"h6"}>
                 Technical Requirement(s)
               </Typography>
-              <TextField
-                sx={{
-                  width: "100%",
-                }}
-                helperText={error?.message ? "required" : ""}
-                error={error?.message}
-                value={general.message ? general.message : ""}
-                name="message"
-                multiline
-                rows={4}
-                onChange={handleGeneral}
-                placeholder="Content goes here..."
-              />
+              <Box>
+                <RichText
+                  techs
+                  error={error?.technicalRequirement}
+                  value={general?.technicalRequirement}
+                  onChange={handleTechs}
+                />
+                {error?.technicalRequirement ? (
+                  <FormHelperText error sx={{ fontSize: "0.75rem" }}>
+                    required
+                  </FormHelperText>
+                ) : (
+                  ""
+                )}
+              </Box>
               <Typography fontWeight="bold" variant={"h6"}>
                 Course Objectives
               </Typography>
               <Box sx={{}}>
                 <RichText
-                  error={error?.richtext}
-                  value={general.richtext ? general.richtext : ""}
-                  onChange={handleRichText}
+                  error={error?.courseObjective}
+                  value={general?.courseObjective}
+                  onChange={handleCours}
                 />
-                {error?.richtext ? (
+                {error?.courseObjective ? (
                   <FormHelperText error sx={{ fontSize: "0.75rem" }}>
                     required
                   </FormHelperText>

@@ -18,7 +18,6 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import DropDown from "./DropDown/DropDown";
 import Switch from "./Switch/Switch";
 import { usePostUserMutation } from "../../services/queries/userQuery";
-import queryClient from "../../services/queries/queryClient";
 import { QUERY_USER_KEY } from "../../constants/query";
 import dayjs from "dayjs";
 import {
@@ -33,6 +32,7 @@ import {
 import useValidateForm from "../../utils/hooks/useValidateForm";
 import ToastEmitter from "../shared/lib/ToastEmitter";
 import AuthContext from "../../utils/authUtil";
+import { useQueryClient } from "@tanstack/react-query";
 const FormContent = ({ handleClose }) => {
   //False = Active, Truth = Unactive
   const { loginUser } = useContext(AuthContext);
@@ -50,6 +50,7 @@ const FormContent = ({ handleClose }) => {
 
   const { errors, validateForm } = useValidateForm();
   const { mutate: postNewUser, isSuccess } = usePostUserMutation();
+  const queryClient = useQueryClient();
   const handleSubmit = (e) => {
     if (!validateForm(formData)) {
       e.preventDefault();

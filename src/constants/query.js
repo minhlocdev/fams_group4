@@ -6,3 +6,5 @@ export const QUERY_SYLLABUS_KEY = "syllabus";
 export const QUERY_LEARNING_KEY = "learningObjective";
 export const QUERY_PROGRAM_KEY = "trainingProgram";
 export const QUERY_TRAINER_KEY = "trainer";
+export const QUERY_TIMEALLOCATION_KEY = "timeAllocation";
+export const QUERY_CALENDAR_KEY = "calendar";

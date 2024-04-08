@@ -1,7 +1,7 @@
 
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { getUser, getUserByID, getUserPermission, postUser, putUser, putUserAvatar, putUserPermission } from '../User';
-import { QUERY_LOGIN_USER_KEY, QUERY_PERMISSISON_KEY, QUERY_USER_KEY } from '../../constants/query';
+import { QUERY_PERMISSISON_KEY, QUERY_USER_KEY } from '../../constants/query';
 
 export const useGetUserQuery = (page, limit, orderby, order, debouncedSearchTerm, filter) =>
     useQuery({
@@ -26,14 +26,6 @@ export const useGetUserPermission = () =>
         staleTime: 20000,
     }
     );
-// export const useGetLoginUser = (token) =>
-//     useQuery({
-//         queryKey: [QUERY_LOGIN_USER_KEY],
-//         queryFn: () => getLoginUser(token).then((res) => res.data),
-//         staleTime: 20000,
-//         enabled: !!token
-//     }
-//     );
 export const usePostUserMutation = () => useMutation({
     mutationFn: postUser
 })

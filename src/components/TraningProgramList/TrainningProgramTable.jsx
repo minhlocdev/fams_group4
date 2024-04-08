@@ -17,6 +17,8 @@ import theme from "../../assets/theme";
 import TableLoader from "../shared/loader/TableLoader";
 import { TrainingProgramContext } from "../../context/TrainingProgramContext";
 import { Typography } from "@mui/material";
+import { PublishStatus } from "../../constants/PublishStatusEnum";
+import { Link } from "react-router-dom";
 
 const headCells = [
   { id: "trainingProgramCode", label: "Code" },
@@ -90,7 +92,11 @@ export default function TrainingProgramTable() {
                     >
                       {row.trainingProgramCode}
                     </TableCell>
-                    <TableCell align="left">{row.name}</TableCell>
+                    <TableCell align="left">
+                      <Link to={`/training/detail/${row.trainingProgramCode} `}>
+                        {row.name}
+                      </Link>
+                    </TableCell>
                     <TableCell align="left">{row.createdDate}</TableCell>
                     <TableCell align="left">{row.createdBy}</TableCell>
                     <TableCell align="left">
@@ -100,9 +106,10 @@ export default function TrainingProgramTable() {
                     </TableCell>
                     <TableCell align="left">
                       <Chip
-                        label={row.status}
+                        label={PublishStatus[row.status]}
                         style={{
-                          backgroundColor: statusColors[row.status],
+                          backgroundColor:
+                            statusColors[PublishStatus[row.status]],
                           color: "#FFFFFF",
                         }}
                       />

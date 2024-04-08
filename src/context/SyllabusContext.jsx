@@ -35,8 +35,10 @@ export const SyllabusContext = React.createContext({
   handleClose: () => {},
   timeAllocation: null,
   setTimeAllocation: () => {},
+  handleValueOutlineTime: () => {},
   handleTimeAllocation: () => {},
-  checked:{},
-  setChecked:()=>{},
-  tableState:{}
+  checked: {},
+  setChecked: () => {},
+  tableState: {},
+  isLoading: false,
 });

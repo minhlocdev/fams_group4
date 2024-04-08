@@ -23,7 +23,8 @@ import {
   SchoolIcon,
   SettingIcon,
 } from "../../../assets/icon";
-import { Collapse, Link } from "@mui/material";
+import { Collapse } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 256;
 const menus = [
@@ -36,7 +37,7 @@ const menus = [
   {
     id: "2",
     icon: <BookIcon />,
-    to: "",
+    to: "#",
     title: "Syllabus",
     submenu: [
       {
@@ -55,7 +56,7 @@ const menus = [
     id: "3",
     icon: <Biotech />,
     // select view program -> traningProgramList
-    to: "",
+    to: "#",
     title: "Training Program",
     submenu: [
       {
@@ -73,7 +74,7 @@ const menus = [
   {
     id: "4",
     icon: <SchoolIcon />,
-    to: "",
+    to: "#",
     title: "Class",
     submenu: [
       {
@@ -98,6 +99,7 @@ const menus = [
     id: "6",
     icon: <GroupIcon />,
     title: "User Management",
+    to: "#",
     submenu: [
       {
         to: "/user",
@@ -246,8 +248,8 @@ export default function Sidebar({ open, setOpen }) {
               onClick={() => handleOpenSubmenu(index)}
             >
               <Link
-                href={menu.to === "" ? "#" : menu.to}
-                sx={{
+                to={menu.to === "" ? "#" : menu.to}
+                style={{
                   textDecoration: "none",
                   color: "#000",
                 }}
@@ -311,8 +313,8 @@ export default function Sidebar({ open, setOpen }) {
                       }}
                     >
                       <Link
-                        href={item.to}
-                        sx={{
+                        to={item.to}
+                        style={{
                           textDecoration: "none",
                           color: "#000",
                         }}
@@ -327,6 +329,8 @@ export default function Sidebar({ open, setOpen }) {
                             sx={{
                               opacity: 1,
                               textAlign: "left",
+                              color: "#000",
+                              textDecoration: "none",
                               marginLeft: "60px",
                             }}
                           >

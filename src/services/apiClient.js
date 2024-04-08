@@ -48,7 +48,7 @@ apiClient.interceptors.response.use(
         `🚨 [${method?.toUpperCase()}] ${url} | Error ${status} ${data?.message || ""} | ${message}`,
         error,
       );
-      ToastEmitter.error(`${data?.title + " || " || ""} ${data?.message || ""} ${message}`);
+      process.env.NODE_ENV === "development" && ToastEmitter.error(`${data?.title + " || " || ""} ${data?.message || ""} ${message}`);
     }
 
     return Promise.reject(error);

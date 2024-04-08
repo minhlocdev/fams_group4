@@ -4,6 +4,7 @@ import {
   Button,
   Chip,
   Divider,
+  Grid,
   IconButton,
   InputBase,
   ListItemIcon,
@@ -22,10 +23,21 @@ import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
-import SyllabusCard from "../Syllabus/SyllabusCards";
+import SyllabusCard from "../Syllabus/Detail/SyllabusCards";
 import SearchSyllabus from "./SearchSyllabus";
 import { getAllSyllabus } from "../../services/Syllabus";
 import ClassContext from "../../context/ClassContext";
+import dayjs from "dayjs";
+import {
+  useGetAllSyllabusQuery,
+  useGetSyllabusByIdQuery,
+} from "../../services/queries/syllabusQuery";
+import AuthContext from "../../utils/authUtil";
+import { usePostTrainingMutation } from "../../services/queries/trainingQuery";
+import { QUERY_PROGRAM_KEY } from "../../constants/query";
+import ToastEmitter from "../shared/lib/ToastEmitter";
+import queryClient from "../../services/queries/queryClient";
+import { useNavigate } from "react-router-dom";
 
 export default function AddSyllabus({ TraningProgramName, onClickBack }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -39,83 +51,118 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
     setAnchorEl(null);
   };
   // fake data
-  const day = 0;
-  const hours = 0;
-  const onDay = "23/7/2022";
+  const { loginUser } = useContext(AuthContext);
   const AccountName = "Warrior Tran";
-  const data = {
-    id: 121,
-    programName: { TraningProgramName },
-    createdOn: "21/07/2019",
-    createdBy: "Warrior Tran",
-    duration: "7",
-    status: "Inactive",
+  const [newTrainingProgram, setNewTrainingProgram] = useState({
+    name: TraningProgramName,
+    userId: loginUser.id,
+    userId: loginUser.id,
+    startTime: new Date().toISOString(),
+    duration: 0, //là durationByDay
+    topicCode: "string",
+    status: 0,
+    createdBy: loginUser.name,
+    classIds: [],
+    syllabusDTOs: [],
+  });
+  const handleChange = (field, value) => {
+    setNewTrainingProgram({ ...newTrainingProgram, [field]: value });
   };
-
+  const handleCancle = () => {
+    setNewTrainingProgram({
+      name: TraningProgramName,
+      userId: loginUser.id,
+      startTime: new Date().toISOString(),
+      duration: 0, //là durationByDay
+      topicCode: "string",
+      status: 0,
+      createdBy: loginUser.name,
+      classIds: [],
+      syllabusDTOs: [],
+    });
+    setSelectedListSyllabus([]);
+    const updatedData = data.list.filter(
+      (item) => item.publishStatus !== 0 && item.publishStatus !== -1
+    );
+    setProgram(updatedData);
+  };
   const [program, setProgram] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const getAllProgram = async () => {
-    const response = await getAllSyllabus();
-    console.log("the response", response);
-    setLoading(false);
-    if (!response) return;
-    if (response) {
-      setProgram(response);
-      console.log("the program", program);
-    }
-  };
-  useEffect(() => {
-    getAllProgram();
-  }, []);
   const [SelectedListSyllabus, setSelectedListSyllabus] = useState([]);
+  const { data, isLoading, isSuccess } = useGetAllSyllabusQuery();
+  useEffect(() => {
+    if (isSuccess) {
+      const updatedData = data.list.filter(
+        (item) => item.publishStatus !== 0 && item.publishStatus !== -1
+      );
+      setProgram(updatedData);
+    }
+  }, [data, isSuccess]);
+
+  const [syllabusDTOs, setSyllabusDTOs] = useState([]);
+
+  useEffect(() => {
+    handleChange("syllabusDTOs", syllabusDTOs);
+  }, [syllabusDTOs]);
+
   const handleSearch = (syl) => {
     setSelectedListSyllabus((prevSelectedListSyllabus) => [
       ...prevSelectedListSyllabus,
       syl,
     ]);
+    setSyllabusDTOs((preSyllabusDTOs) => [
+      ...preSyllabusDTOs,
+      { syllabusId: syl.id, sequence: preSyllabusDTOs.length + 1 },
+    ]);
     const updatedList = program.filter((item) => item.id !== syl.id);
     setProgram(updatedList);
+    handleChange("duration", newTrainingProgram.duration + syl.durationByDay); //tính tổng ngày
   };
 
-  const [ListSyllabus, setListSyllabus] = useState([
-    {
-      id: 1,
-      title: "Linux",
-      status: "Active",
-      version: "LIN v2.0",
-      duration: "4 day (12 hours)",
-      modifiedDate: "23/07/2022",
-      modifiedBy: "johny Deep",
-    },
-    {
-      id: 2,
-      title: "AWS basic",
-      status: "Active",
-      version: "AWB v1.0",
-      duration: "7 day (21hours)",
-      modifiedDate: "23/07/2022",
-      modifiedBy: "johny Deep",
-    },
-    {
-      id: 3,
-      title: "Linux",
-      status: "Active",
-      version: "LIN v2.0",
-      duration: "4 day (12 hours)",
-      modifiedDate: "23/07/2022",
-      modifiedBy: "johny Deep",
-    },
-  ]);
-
   const handleDeleteSyllabus = (id) => {
+    const updatedSyllabusDTOs = syllabusDTOs.map((syllabus) => {
+      if (syllabus.syllabusId === id) {
+        const index = syllabusDTOs.findIndex((s) => s.syllabusId === id);
+        syllabus.sequence -= 1;
+        for (let i = index + 1; i < syllabusDTOs.length; i++) {
+          syllabusDTOs[i].sequence -= 1;
+        }
+      }
+      return syllabus;
+    });
+
+    const filteredSyllabusDTOs = updatedSyllabusDTOs.filter(
+      (item) => item.syllabusId !== id
+    );
+    setSyllabusDTOs(filteredSyllabusDTOs);
+
     const updatedList = SelectedListSyllabus.filter((item) => item.id !== id);
     setSelectedListSyllabus(updatedList);
+
     const deletedSyllabus = SelectedListSyllabus.find((item) => item.id === id);
     setProgram((prevProgram) => [...prevProgram, deletedSyllabus]);
+    handleChange(
+      "duration",
+      newTrainingProgram.duration - deletedSyllabus.durationByDay
+    ); //tính tổng ngày
+  };
+  const navigate = useNavigate();
+  const { mutate: postProgram, isSuccess: isSuccessPost } =
+    usePostTrainingMutation();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    postProgram(newTrainingProgram, {
+      onSuccess: (res) => {
+        console.log("res", res.data);
+        navigate(`/training/detail/${res.data.trainingProgramCode}`);
+      },
+      onError: () => {
+        ToastEmitter.error("Add failed!!");
+      },
+    });
   };
 
   return (
-    <>
+    <Box>
       <Box
         sx={{
           width: "calc(100% + 21px)",
@@ -136,40 +183,39 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
         >
           <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
             <Typography sx={{ color: "white", pt: 1, pb: 1 }} variant="h4">
-              {TraningProgramName}
+              {newTrainingProgram.name}
             </Typography>
-
-            {data.status === "Active" ? (
+            {newTrainingProgram?.status === 1 ? (
               <Chip
                 sx={{
                   background: "#2D3748",
                   color: "white",
                   borderColor: "white",
                 }}
-                label={data.status}
+                label="Active"
                 variant="outlined"
               />
-            ) : data.status === "Inactive" ? (
+            ) : newTrainingProgram?.status === 0 ? (
               <Chip
                 sx={{
                   background: "#B9B9B9",
                   color: "white",
                   borderColor: "white",
                 }}
-                label={data.status}
+                label="Inactive"
                 variant="outlined"
               />
-            ) : data.status === "Draft" ? (
+            ) : (
               <Chip
                 sx={{
                   background: "#285D9A",
                   color: "white",
                   borderColor: "white",
                 }}
-                label={data.status}
+                label="Draft"
                 variant="outlined"
               />
-            ) : null}
+            )}
           </Stack>
           <Stack direction="row" spacing={2} sx={{ mr: 2 }}>
             <Button
@@ -183,13 +229,14 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
               <MoreHorizIcon></MoreHorizIcon>
             </Button>
             <Menu
-              id="basic-menu"
+              sx={{
+                "& .MuiMenu-paper": {
+                  borderRadius: "10px",
+                },
+              }}
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
             >
               <Typography
                 sx={{
@@ -206,7 +253,6 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
                 variant="middle"
                 component="li"
               />
-
               <MenuItem sx={{ color: "#2C5282" }} onClick={handleClose}>
                 <ListItemIcon>
                   <SnippetFolderOutlinedIcon sx={{ color: "#285D9A" }} />
@@ -252,24 +298,25 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
         }}
       >
         <Typography variant="subtitle1" gutterBottom>
-          {day === 0 ? "..." : `${day}`} day ({hours === 0 ? "..." : `${hours}`}{" "}
-          <Typography
-            component="span"
-            variant="subtitle1"
-            sx={{ fontStyle: "italic" }}
-          >
+          {newTrainingProgram?.duration === 0
+            ? "..."
+            : `${newTrainingProgram?.duration}`}{" "}
+          day
+          {/* ({totalHours === 0 ? '...' : `${totalHours}`}{' '}
+          <Typography component="span" variant="subtitle1" sx={{ fontStyle: 'italic' }}>
             hours
           </Typography>
-          )
+          ) */}
         </Typography>
         <Typography variant="subtitle2" gutterBottom>
-          Modified on {onDay} by{" "}
+          Modified on {dayjs(newTrainingProgram.startTime).format("DD/MM/YYYY")}{" "}
+          by{" "}
           <Typography
             component="span"
             variant="subtitle1"
             sx={{ fontWeight: "bold" }}
           >
-            {AccountName}{" "}
+            {newTrainingProgram.createdBy}{" "}
           </Typography>
         </Typography>
       </Box>
@@ -291,33 +338,35 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
         >
           Content
         </Typography>
-        <Box sx={{ pt: 1, pb: 2 }}>
+        <Box sx={{ pt: 1, pb: 2, ml: -2 }}>
           {SelectedListSyllabus?.map((Syllabus) => (
             <SyllabusCard
-              key={Syllabus.id}
-              data={Syllabus}
+              key={Syllabus.syllabusCode}
+              SyllabusID={Syllabus.id}
+              SyllabusName={Syllabus.name}
+              SyllabusCode={Syllabus.syllabusCode}
               onDelete={handleDeleteSyllabus}
             />
           ))}
         </Box>
-        <Stack
-          direction="row"
-          spacing={2}
-          sx={{ height: "32px", alignItems: "center" }}
-        >
-          <Typography
-            sx={{ fontWeight: "bold" }}
-            variant="subtitle2"
-            gutterBottom
-          >
-            Select syllabus
-          </Typography>
-          <SearchSyllabus
-            program={program}
-            loading={loading}
-            handleSearch={handleSearch}
-          />
-        </Stack>
+        <Grid container sx={{ height: "32px", alignItems: "center" }}>
+          <Grid item xs={12} xl={1.2}>
+            <Typography
+              sx={{ fontWeight: "bold" }}
+              variant="subtitle2"
+              gutterBottom
+            >
+              Select syllabus
+            </Typography>
+          </Grid>
+          <Grid item xs={12} xl={10}>
+            <SearchSyllabus
+              program={program}
+              loading={isLoading}
+              handleSearch={handleSearch}
+            />
+          </Grid>
+        </Grid>
       </Box>
 
       <Stack
@@ -342,7 +391,7 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
         <Stack
           direction="row"
           spacing={2}
-          sx={{ justifyContent: "flex-end", marginRight: 5 }}
+          sx={{ justifyContent: "flex-end", marginRight: 2.5 }}
         >
           <Button
             variant="text"
@@ -351,17 +400,19 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
               textDecoration: "underline",
               maxHeight: 27,
             }}
+            onClick={handleCancle}
           >
             Cancel
           </Button>
           <Button
             variant="contained"
             sx={{ maxHeight: 27, background: "#2D3748" }}
+            onClick={handleSubmit}
           >
             Save
           </Button>
         </Stack>
       </Stack>
-    </>
+    </Box>
   );
 }

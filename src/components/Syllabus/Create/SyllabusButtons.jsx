@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Link } from "@mui/material";
+import { Button, Grid, Link } from "@mui/material";
 import React, { useContext } from "react";
 import { SyllabusContext } from "../../../context/SyllabusContext";
 

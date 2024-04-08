@@ -3,6 +3,7 @@ import axios from "axios";
 import apiClient from "./apiClient";
 const BASE_URL = "https://659d4948633f9aee79091768.mockapi.io/api/v1"
 
+
 export const getAllTrainningProgram = async () => {
   const params = {
     pageNumber: 1,
@@ -15,6 +16,13 @@ export const getAllTrainningProgram = async () => {
   });
 };
 export const getTrainningProgramById = async (id) => {
+  return await apiClient({
+    method: 'get',
+    url: `/training-programs/${id}`,
+  });
+};
+
+export const getTrainningProgramByID = async (id) => {
   return await apiClient({
     method: 'get',
     url: `/training-programs/${id}`,
@@ -55,6 +63,7 @@ export const getProgram = async (page, limit, orderBy, order, debouncedSearchTer
     url: `/training-programs?${queryString}`,
   });
 };
+
 export const getProgramByID = async (id) => {
   return await apiClient({
     method: 'get',
@@ -62,27 +71,32 @@ export const getProgramByID = async (id) => {
   });
 };
 
-export const postProgram = async ({ programName, createdOn, createdBy, duration, status }) => {
+export const postProgram = async ({ name, userId, startTime, duration, topicCode, status, createdBy, classIds, syllabusDTOs }) => {
   return await apiClient({
     method: 'post',
-    // url: `/program`,
     url: `/training-programs`,
     data: {
-      programName, createdOn, createdBy, duration, status
+      name, userId, startTime, duration, topicCode, status, createdBy, classIds, syllabusDTOs
     },
   });
 };
-export const putProgram = async ({ id, programName, createdOn, createdBy, duration, status }) => {
-  console.log(id, programName, createdOn, createdBy, duration, status)
+export const putProgram = async ({ trainingProgramCode, name, userId, startTime, duration, topicCode, status, trainingProgramSyllabus }) => {
   return await apiClient({
     method: 'put',
-    // url: `/program`,
     url: `/training-programs`,
     data: {
-      programName, createdOn, createdBy, duration, status
+      trainingProgramCode, name, userId, startTime, duration, topicCode, status, trainingProgramSyllabus
     },
   });
 };
+export const putProgramStatus = async ({ id, status }) => {
+  return await apiClient({
+    method: 'put',
+    url: `/training-programs/${id}/change-status?status=${status}`,
+  });
+};
+
+
 export const deleteProgram = async (id) => {
   return await apiClient({
     method: 'delete',
@@ -90,20 +104,29 @@ export const deleteProgram = async (id) => {
   });
 };
 
-let duplicateCounter = 1;
-
 export const duplicateProgram = async (id) => {
-  try {
-    const Programdup = await getProgramByID(id);
-    const currentDate = new Date().toISOString();
-    const programNameWithoutDuplicate = Programdup.data.programName.replace(/\(\d+\)/, '');
-    const duplicatedProgram = { ...Programdup.data, programName: `${programNameWithoutDuplicate} (${duplicateCounter++})`, createdOn: currentDate };
+  return await apiClient({
+    method: 'post',
+    url: `/training-programs/${id}/duplicate-training-program`,
+  });
+};
 
-    delete duplicatedProgram.id;
-    const response = await postProgram(duplicatedProgram);
-    return response;
-  } catch (error) {
-    console.error("Error duplicating Program:", error);
-    throw error;
-  }
+export const postImportProgram = async ({ userId, importType, scan, file }) => {
+  const params = {
+    userId: Number(userId),
+    importType: importType,
+    scan: scan
+  };
+
+  const queryString = paramsToString(params);
+
+  const formData = new FormData();
+  formData.append("file", file);
+  return await apiClient({
+    method: 'post',
+    headers: { Accept: "*/*", "Content-Type": "multipart/form-data" },
+    url: `/importExcel?${queryString}`,
+    data: formData,
+    file: formData
+  });
 };

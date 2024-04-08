@@ -1,7 +1,20 @@
 import { Box, IconButton } from "@mui/material";
-import React, { useContext, useState } from "react";
-import { CreateIcon, DeleteForeverIcon } from "../../../assets/icon";
+import React, { useContext, useState, useEffect, useRef } from "react";
+import { toast } from "react-toastify";
+import { DeleteForeverIcon } from "../../../assets/icon";
 import { SyllabusContext } from "../../../context/SyllabusContext";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+  listAll,
+  getMetadata,
+} from "firebase/storage";
+import { fileDB } from "../../../utils/FireBase";
+import ToastEmitter from "../../shared/lib/ToastEmitter";
+import dayjs from "dayjs";
+import AuthContext from "../../../utils/authUtil";
 
 const buttonStyle = {
   backgroundColor: "#2d3748",
@@ -10,89 +23,102 @@ const buttonStyle = {
   padding: "5px 15px",
   cursor: "pointer",
 };
+
 const inputStyle = {
   display: "none",
 };
+
 export default function TrainingMaterialModalContent({
-  handleOnChange,
+  dataUnitId,
   dayIndex,
   unitIndex,
   dataUnitIndex,
 }) {
   const { outline, setOutline } = useContext(SyllabusContext);
-  const [formData, setFormData] = useState({
-    title: "",
-    author: "Warrior Tran",
-    data: "",
-  });
-  const fileInputRef = React.useRef(null);
-  const [UploadFile, setUploadFile] = React.useState(null);
+  const { loginUser } = useContext(AuthContext);
+  const fileInputRef = useRef(null);
+  const [firebaseFiles, setFirebaseFiles] = useState([]);
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
-  const handleDelete = (dataUnitIndex) => {
-    const newArray = [...outline];
-    setOutline(() => {
-      const newContent = newArray[dayIndex].content;
-      const newDataUnit = newContent[unitIndex].dataUnit;
-      newDataUnit.splice(dataUnitIndex, 1);
-      return newDataUnit;
-    });
-  };
 
-  const dataTraining =
-    outline[dayIndex].content[unitIndex].dataUnit[dataUnitIndex]
-      .TrainingMaterial;
-  const titleUnit =
-    outline[dayIndex].content[unitIndex].dataUnit[dataUnitIndex].Name;
-
-  const handleFileChange = (event) => {
-    if (event && event.target && event.target.files && event.target.files[0]) {
-      const validFileFormats = [
-        "image/*",
-        "application/pdf",
-        "application/vnd.ms-powerpoint",
-        "video/*",
-        "application/vnd.ms-excel",
-      ];
-      const file = event.target.files[0];
-      if (file) {
-        if (
-          validFileFormats.some((format) =>
-            file.type.includes(format.split("/")[0])
-          )
-        ) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const today = new Date();
-            const formattedDate = `${today
-              .getDate()
-              .toString()
-              .padStart(2, "0")}/${(today.getMonth() + 1)
-              .toString()
-              .padStart(2, "0")}/${today.getFullYear()}`;
-
-            const newfile = {
-              title: file.name,
-              author: "someone",
-              date: formattedDate,
-            };
-            setUploadFile(newfile);
-            const updatedFormData = {
-              ...formData,
-              title: newfile.title,
-              data: newfile.date,
-            };
-            handleOnChange(updatedFormData);
-          };
-          reader.readAsDataURL(file);
-        } else {
-          // Handle invalid file format
-          alert("Invalid file format. Please select a valid file.");
+  const handleFileChange = async (event) => {
+    if (event && event.target && event.target.files) {
+      const files = event.target.files;
+      if (files) {
+        for (const file of files) {
+          await uploadFileToStorage(file);
         }
       }
     }
   };
+
+  const uploadFileToStorage = async (file) => {
+    const storageRef = ref(
+      fileDB,
+      `training-content-materials/${dataUnitId}/${file.name}`
+    );
+    setFirebaseFiles((prevFirebaseFiles) => [...prevFirebaseFiles, storageRef]);
+    await uploadBytes(storageRef, file)
+      .then(() => {
+        getDownloadURL(storageRef).then((url) => {
+          updateDataAfterUpload(file, url);
+        });
+      })
+      .catch(() => {
+        ToastEmitter.error("Error uploading file");
+      });
+  };
+
+  const updateDataAfterUpload = (file, url) => {
+    const newFileData = {
+      createdBy: loginUser.name,
+      createdOn: dayjs(),
+      title: file.name,
+      url: url,
+    };
+    const newOutline = [...outline];
+    newOutline[dayIndex].trainingUnits[unitIndex].trainingContents[
+      dataUnitIndex
+    ].materials.push(newFileData);
+    setOutline(newOutline);
+  };
+
+  const handleDeleteInFirebase = async (index) => {
+    const fileName = firebaseFiles[index].name;
+    const storageRef = ref(
+      fileDB,
+      `training-content-materials/${dataUnitId}/${fileName}`
+    );
+    try {
+      await deleteObject(storageRef);
+      setFirebaseFiles((prevFiles) =>
+        prevFiles.filter((file, idx) => idx !== index)
+      );
+      toast.success(`Deleted ${fileName} successfully`);
+    } catch (error) {
+      console.error(`Error deleting ${fileName}:`, error);
+      toast.error(`Error deleting ${fileName}`);
+    }
+  };
+
+  useEffect(() => {
+    const storageRef = ref(fileDB, `training-content-materials/${dataUnitId}`);
+    listAll(storageRef).then((res) => {
+      res.items.forEach(async (item) => {
+        const url = await getDownloadURL(item);
+        const metadata = await getMetadata(item);
+        const uploadDate = metadata.timeCreated
+          ? new Date(metadata.timeCreated).toLocaleDateString()
+          : "Unknown";
+
+        setFirebaseFiles((prevFiles) => [
+          ...prevFiles,
+          { name: item.name, url, uploadDate },
+        ]);
+      });
+    });
+  }, [dataUnitId]);
 
   return (
     <>
@@ -106,9 +132,11 @@ export default function TrainingMaterialModalContent({
           gap: "15px",
         }}
       >
-        <Box sx={{ display: "flex", gap: "40px" }}>
-          <Box>{`Unit ${outline[dayIndex].content[unitIndex].id + 1} `}</Box>
-          <Box>{outline[dayIndex].content[unitIndex].title}</Box>
+        <Box sx={{ display: "flex", gap: "20px" }}>
+          <Box
+            sx={{ minWidth: "60px" }}
+          >{`Unit ${outline[dayIndex].trainingUnits[unitIndex].unitCode} `}</Box>
+          <Box>{outline[dayIndex].trainingUnits[unitIndex].unitName}</Box>
         </Box>
         <Box
           sx={{
@@ -120,70 +148,56 @@ export default function TrainingMaterialModalContent({
             gap: "10px",
           }}
         >
-          <Box>{titleUnit}</Box>
-          {Array.isArray(dataTraining) &&
-            dataTraining.length !== 0 &&
-            dataTraining.map((item, index) => (
+          {firebaseFiles.map((item, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                flexDirection: {
+                  xs: "column",
+                  sm: "row",
+                  md: "row",
+                  lg: "row",
+                },
+              }}
+            >
               <Box
-                key={index}
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  flexDirection: {
-                    xs: "column",
-                    sm: "row",
-                    md: "row",
-                    lg: "row",
-                  },
+                  color: "#0C4DA2",
+                  textDecoration: "underline",
+                  width: { xs: "100%" },
                 }}
               >
-                <Box
-                  sx={{
-                    color: "#0C4DA2",
-                    textDecoration: "underline",
-                    width: { xs: "100%", sm: "50%" },
-                    whiteSpace: "normal",
-                    wordWrap: "break-word",
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={item.name}
+                  style={{
+                    maxWidth: "100%",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
                   }}
                 >
-                  {item.title}
-                </Box>
-                <Box sx={{ display: "flex", gap: "2px" }}>
-                  <Box
-                    sx={{
-                      fontStyle: "italic",
-                      fontSize: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    by {item.author} on {item.date}
-                  </Box>
-                  <Box
-                    sx={{
-                      fontStyle: "italic",
-                      fontSize: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <CreateIcon />
-                  </Box>
-                  <Box
-                    sx={{
-                      fontStyle: "italic",
-                      fontSize: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <IconButton onClick={() => handleDelete(index)}>
-                      <DeleteForeverIcon />
-                    </IconButton>
-                  </Box>
-                </Box>
+                  {item.name}
+                </a>
               </Box>
-            ))}
+              <Box
+                sx={{
+                  fontStyle: "italic",
+                  fontSize: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  marginLeft: "auto",
+                }}
+              >
+                <IconButton onClick={() => handleDeleteInFirebase(index)}>
+                  <DeleteForeverIcon />
+                </IconButton>
+              </Box>
+            </Box>
+          ))}
         </Box>
         <Box
           sx={{
@@ -198,8 +212,8 @@ export default function TrainingMaterialModalContent({
             style={inputStyle}
             ref={fileInputRef}
             onChange={(e) => handleFileChange(e)}
+            multiple
           />
-          {/* ))} */}
           <button type="button" style={buttonStyle} onClick={handleButtonClick}>
             Upload New
           </button>

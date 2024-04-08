@@ -17,7 +17,7 @@ export const getLearningObjective = async () => {
 export const getAllSyllabus = async () => {
     return await apiClient({
         method: 'get',
-        url: `https://65e14c98d3db23f7624ab97a.mockapi.io/Syllabus`,
+        url: `/syllabuses`,
     });
 };
 export const searchSyllabus = async (page, search) => {
@@ -46,59 +46,103 @@ export const getSyllabus = async (page, limit, orderBy, order, debouncedSearchTe
 export const getSyllabusByID = async (id) => {
     return await apiClient({
         method: 'get',
-        url: `https://65e14c98d3db23f7624ab97a.mockapi.io/Syllabus/${id}`,
+        url: `/syllabuses/${id}`,
     });
 };
 
-export const postSyllabus = async ({ syllabusName, code, createdOn, createdBy, duration, outputStandard, status }) => {
+export const postSyllabus = async ({ generalTab, dayUnits, otherScreen }) => {
     return await apiClient({
         method: 'post',
         // url: `/Syllabus`,
-        url: `https://65e14c98d3db23f7624ab97a.mockapi.io/Syllabus`,
+        url: `/syllabus/create-syllabus`,
         data: {
-            syllabusName, code, createdOn, createdBy, duration, outputStandard, status
+            generalTab, dayUnits, otherScreen
         },
     });
 };
-export const putSyllabus = async ({ id, syllabusName, code, createdOn, createdBy, duration, outputStandard, status }) => {
-    console.log(id, syllabusName, code, createdOn, createdBy, duration, outputStandard, status)
+export const putSyllabus = async ({ id,
+    syllabusName,
+    technicalRequirement,
+    attendeeNumber,
+    courseObjective,
+    trainingPrinciples,
+    level,
+    modifiedBy,
+    outputStandards,
+    schema,
+    outline }) => {
     return await apiClient({
         method: 'put',
-        // url: `/Syllabus`,
-        url: `https://65e14c98d3db23f7624ab97a.mockapi.io/Syllabus/${id}`,
-        data: {
-            syllabusName, code, createdOn, createdBy, duration, outputStandard, status
-        },
+        url: `/syllabus`,
+        data:
+        {
+            id,
+            syllabusName,
+            technicalRequirement,
+            attendeeNumber,
+            courseObjective,
+            trainingPrinciples,
+            level,
+            modifiedBy,
+            outputStandards,
+            schema,
+            outline
+        }
+        ,
     });
 };
+export const ChangeSyllabusStausByID = async ({ id, status }) => {
+    return await apiClient({
+        method: 'put',
+        url: `/syllabuses/${id}/change-status?status=${status}`,
+    })
+}
 export const deleteSyllabus = async (id) => {
     return await apiClient({
         method: 'delete',
-        url: `https://65e14c98d3db23f7624ab97a.mockapi.io/Syllabus/${id}`,
+        url: `/syllabuses/${id}`,
     });
 };
 
-let duplicateCounter = 1;
+
 
 export const duplicateSyllabus = async (id) => {
-    try {
-        const syllabus = await getSyllabusByID(id);
-        const currentDate = new Date().toISOString();
-        const codeWithoutDuplicate = syllabus.data.code.replace(/\(\d+\)/, '');
-        const duplicatedSyllabus = { ...syllabus.data, code: `${codeWithoutDuplicate} (${duplicateCounter++})`, createdOn: currentDate };
-
-        delete duplicatedSyllabus.id;
-        const response = await postSyllabus(duplicatedSyllabus);
-        return response;
-    } catch (error) {
-        console.error("Error duplicating syllabus:", error);
-        throw error;
-    }
+    return await apiClient({
+      method: 'post',
+      url: `/syllabuses/duplicate-syllabus/${id}`  
+    })
 };
 
 export const getSyllabusByOutputStandard = async (outputStandard) => {
     return await apiClient({
         method: 'get',
         url: `https://65e14c98d3db23f7624ab97a.mockapi.io/Syllabus/${outputStandard}`,
+    });
+};
+
+export const getTimeAllocationByID = async (id) => {
+    return await apiClient({
+        method: 'get',
+        url: `/syllabuses/time-allocation/${id}`,
+    });
+};
+
+export const postImportSyllabus = async ({ userId, importType, scan, file }) => {
+    const params = {
+        userId: Number(userId),
+        importType: importType,
+        scan: scan
+    };
+
+    const queryString = paramsToString(params);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    return await apiClient({
+        method: 'post',
+        headers: { Accept: "*/*", "Content-Type": "multipart/form-data" },
+        url: `/syllabuses/import-excel?${queryString}`,
+        data: formData,
+        file: formData
     });
 };

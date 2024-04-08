@@ -1,10 +1,11 @@
 import { lazy } from "react";
 import SyllabusCreate from "../pages/SyllabusCreate";
-import CreateTranningProgramList from "../pages/CreateTrainingProgram";
+import CreateTrainingProgramList from "../pages/CreateTrainingProgram";
 import ClassCreate from "../pages/ClassCreate";
 import Dashboard from "../pages/Dashboard";
 import LoginPage from "../pages/LoginPage";
 import NotFoundPage from "../pages/NotFoundPage";
+import EditTrainingProgram from "../pages/EditTrainingProgram";
 
 const ClassDetail = lazy(() => import("../pages/ClassDetail"));
 const ClassListing = lazy(() => import("../pages/ClassListing"));
@@ -54,11 +55,18 @@ export const privateRoute = [
   },
   {
     path: "/training/detail/:code",
-    element: <TrainingProgramDetail />,
+    element: <TrainingProgramDetail />
+
   },
   {
     path: "/training/create",
-    element: <CreateTranningProgramList />,
+    element: <CreateTrainingProgramList />
+
+  },
+  {
+    path: "/training/edit/:code",
+    element: <EditTrainingProgram />
+
   },
   {
     path: "/calendar",

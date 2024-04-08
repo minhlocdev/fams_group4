@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { deleteProgram, getAllProgram, getProgram, getProgramByID, postProgram, putProgram, duplicateProgram } from '../TranningProgram';
+import { deleteProgram, getAllProgram, getProgram, getProgramByID, postProgram, putProgram, duplicateProgram, postImportProgram } from '../TranningProgram';
 import { QUERY_PROGRAM_KEY } from '../../constants/query';
 
 export const useGetAllProgramQuery = () =>
@@ -38,3 +38,6 @@ export const useDeleteProgramMutation = () => useMutation({
 export const useDuplicateProgramMutation = () => useMutation({
     mutationFn: duplicateProgram
 });
+export const usePostImportProgramMutation = () => useMutation({
+    mutationFn: postImportProgram
+})

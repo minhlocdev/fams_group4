@@ -2,7 +2,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import ClassContext from "../../../../context/ClassContext";
 import theme from "../../../../assets/theme";
-import { PulishStatusEnum } from "../../../../constants/PublishStatusEnum";
+import { PublishStatusEnum } from "../../../../constants/PublishStatusEnum";
 import SyllabusCardItem from "../../Others/SyllabusCardItem";
 export default function AddTrainer() {
   const { classTitle, search, initialDays, trainingProgramDetail } =
@@ -47,7 +47,7 @@ export default function AddTrainer() {
             marginLeft: "5px",
           }}
         >
-          {PulishStatusEnum[1]}
+          {PublishStatusEnum[1]}
         </Typography>
       </Stack>
       <div

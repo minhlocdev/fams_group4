@@ -46,6 +46,9 @@ export default function Popup({ item }) {
         ToastEmitter.success("Delete Syllabus successfully!!!");
         queryClient.invalidateQueries({ queryKey: [QUERY_SYLLABUS_KEY] });
       },
+      onError: (error) => {
+        ToastEmitter.error(error.response.data);
+      },
     });
   };
 

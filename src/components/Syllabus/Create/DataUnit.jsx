@@ -11,66 +11,41 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import { PanToolOutlined } from "@mui/icons-material";
 import { SyllabusContext } from "../../../context/SyllabusContext";
-
-export default function DataUnit({
-  unit,
-  day,
-  dayIndex,
-  unitIndex,
-  openState,
-}) {
-  const {
-    outline,
-    setOutline,
-    error,
-    handleFieldValidation,
-    handleTimeAllocation,
-  } = useContext(SyllabusContext);
-  const [openTraining, setOpenTraining] = useState(false);
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+export default function DataUnit({ unit, dayIndex, unitIndex, openState }) {
+  const { outline, setOutline, handleTimeAllocation } =
+    useContext(SyllabusContext);
+  const [openTraining, setOpenTraining] = useState(null);
   const [openModal, setOpenModal] = React.useState(false);
 
   const AddDataUnit = (obj, dayIndex, unitIndex) => {
     const tempData = [...outline];
-    const tempContent = tempData[dayIndex].content;
-    const tempUnit = tempContent[unitIndex].dataUnit;
+    const tempContent = tempData[dayIndex].trainingUnits;
+    const tempUnit = tempContent[unitIndex].trainingContents;
     tempUnit.push(obj);
-    handleTimeAllocation(obj.DeliveryType);
+    handleTimeAllocation(obj.deliveryType, "add", obj.duration);
     setOutline(tempData);
   };
-  const updateTraining = (
-    newTrainingArray,
-    dayIndex,
-    unitIndex,
-    dataUnitIndex
-  ) => {
-    const updatedButtonData = [...outline];
-    const tempContent = updatedButtonData[dayIndex].content;
-    const tempUnit = tempContent[unitIndex].dataUnit;
-    tempUnit[dataUnitIndex].TrainingMaterial = newTrainingArray;
-    setOutline(updatedButtonData);
-
-    // onChange(outline, "outline");
-  };
-
+  // console.log(unit);
   function handleIconDelivery(deliveryData) {
     let IconType;
     switch (deliveryData) {
-      case "Assignment/Lab":
+      case 1:
         IconType = <AssignmentIcon />;
         break;
-      case "Concept/Lecture":
+      case 2:
         IconType = <RecordVoiceOverIcon />;
         break;
-      case "Guide/Review":
+      case 3:
         IconType = <PanToolOutlined />;
         break;
-      case "Test/Quiz":
+      case 4:
         IconType = <FactCheckOutlinedIcon />;
         break;
-      case "Exam":
+      case 5:
         IconType = <SpellcheckOutlinedIcon />;
         break;
-      case "Seminar/Workshop":
+      case 6:
         IconType = <SettingsInputAntennaOutlinedIcon />;
         break;
       default:
@@ -79,13 +54,38 @@ export default function DataUnit({
     return IconType;
   }
 
+  const handleDeleteDataUnit = (e, dataUnitId) => {
+    const tempArray = [...outline];
+    const tempContent = tempArray[dayIndex].trainingUnits;
+    const tempUnit = tempContent[unitIndex];
+
+    // Find the data unit to be deleted
+    const deletedDataUnit = tempUnit.trainingContents.find(
+      (dataUnit) => dataUnit.id === dataUnitId
+    );
+    // console.log(deletedDataUnit);
+    // Calculate time allocation based on the delivery type of the deleted data unit
+    handleTimeAllocation(
+      deletedDataUnit.deliveryType,
+      "remove",
+      deletedDataUnit.duration
+    );
+
+    // Filter out the deleted data unit
+    tempUnit.trainingContents = tempUnit.trainingContents.filter(
+      (item) => item.id !== dataUnitId
+    );
+    tempContent[unitIndex] = tempUnit;
+    tempArray[dayIndex].trainingUnits = tempContent;
+    setOutline(tempArray);
+  };
   return (
     <>
-      {unit.dataUnit.length !== 0 &&
-        unit.dataUnit.map((dataUnit, dataUnitIndex) => (
+      {unit.trainingContents.length !== 0 &&
+        unit.trainingContents.map((dataUnit, dataUnitIndex) => (
           <Collapse
             // in={isShowUnit === unitIndex}
-            in={openState[dayIndex][unitIndex] ? false : true}
+            in={Boolean(openState[dayIndex][unitIndex])}
             timeout="auto"
             unmountOnExit
             key={dataUnitIndex}
@@ -126,13 +126,14 @@ export default function DataUnit({
 
                 // width: "900px",
               }}
+              onClick={(e) => e.stopPropagation()}
             >
               <Box
                 sx={{
                   fontSize: "14px",
                 }}
               >
-                {dataUnit.Name}
+                {dataUnit.contentName}
               </Box>
               <Box
                 sx={{
@@ -147,38 +148,43 @@ export default function DataUnit({
                     color: "white",
                     height: "27px",
                   }}
-                  label={dataUnit.OutputStandard[0]}
+                  label={dataUnit.learningObjectiveCode}
                 ></Chip>
-                {dataUnit.TrainingTime}ms
+                {dataUnit.duration}ms
                 <Chip
-                  label={dataUnit.Method}
+                  label={dataUnit.trainingFormat}
                   sx={{ height: "27px" }}
-                  color={dataUnit.Method === "Online" ? "warning" : "default"}
-                  variant={dataUnit.Method === "Online" ? "outlined" : "filled"}
+                  color={
+                    dataUnit.trainingFormat === "Online" ? "warning" : "default"
+                  }
+                  variant={
+                    dataUnit.trainingFormat === "Online" ? "outlined" : "filled"
+                  }
                 ></Chip>
                 <Box
                   sx={{
-                    width: { sm: "24px" },
+                    // width: { sm: "24px" },
                     height: "32px",
                     display: "flex",
                     alignItems: "center",
                   }}
                 >
-                  {handleIconDelivery(dataUnit.DeliveryType)}
+                  {handleIconDelivery(dataUnit.deliveryType)}
                 </Box>
                 <Box>
-                  <IconButton>
-                    <SnippetFolderIcon
-                      onClick={() =>
-                        setOpenTraining({
-                          openTraining: dataUnitIndex,
-                          dataUnitIndex: dataUnitIndex,
-                        })
-                      }
-                    />
+                  <IconButton
+                    onClick={() =>
+                      setOpenTraining({
+                        openTraining: dataUnitIndex,
+                        dataUnitIndex: dataUnitIndex,
+                      })
+                    }
+                  >
+                    <SnippetFolderIcon />
                   </IconButton>
                   {openTraining !== null && (
                     <TrainingMaterialModalCreate
+                      dataUnitId={dataUnit.id}
                       openTraining={openTraining.openTraining === dataUnitIndex}
                       handleClose={() =>
                         setOpenTraining({
@@ -192,6 +198,11 @@ export default function DataUnit({
                     />
                   )}
                 </Box>
+                <IconButton
+                  onClick={(e) => handleDeleteDataUnit(e, dataUnit.id)}
+                >
+                  <CancelOutlinedIcon color="error" />
+                </IconButton>
               </Box>
             </Box>
           </Collapse>

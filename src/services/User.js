@@ -75,7 +75,7 @@ export const putUserAvatar = async ({ id, link }) => {
             "Content-Type": "application/json"
         },
         method: 'put',
-        url: `/users/change-avater/${id}`,
+        url: `/users/change-avatar/${id}`,
         data: `${link}`
     });
 };

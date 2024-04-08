@@ -16,7 +16,7 @@ const StyledSortIcon = styled(SortIcon)({
 function EnhancedTableHead(props) {
   const navigate = useNavigate();
   const { handleSortChange } = props;
-  const [sortDir, setSortDir] = useState("asc"); 
+  const [sortDir, setSortDir] = useState("asc");
 
   const toggleSortDir = (item) => {
     const newSortDir = sortDir === "asc" ? "desc" : "asc";

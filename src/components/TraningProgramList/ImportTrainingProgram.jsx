@@ -13,17 +13,21 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import dayjs from "dayjs";
-import styled from "@emotion/styled";
-import ModalContainer from "../shared/ModalContainer";
-import * as XLSX from "xlsx";
 import React, { useState } from "react";
-import { CSVLink } from "react-csv";
+import ModalContainer from "../shared/ModalContainer";
+import styled from "@emotion/styled";
+import { TRAINING_TEMPLATE } from "../../constants/FileLink";
+import { useAuth } from "../../utils/authUtil";
+import ToastEmitter from "../shared/lib/ToastEmitter";
+import queryClient from "../../services/queries/queryClient";
+import { QUERY_PROGRAM_KEY } from "../../constants/query";
+import { usePostImportProgramMutation } from "../../services/queries/programQuery";
 const style = {
   py: 0,
   width: "100%",
   borderColor: "divider",
 };
+
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -37,87 +41,67 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 export default function ImportTrainingProgram({ isOpen, handleClose }) {
-  const [users, setUsers] = useState([]);
-  const [checked, setChecked] = useState({});
+  const { loginUser } = useAuth();
   const [duplicateHandle, setDuplicateHandle] = React.useState("Allow");
-  const [error, setError] = React.useState(null);
-  const [codeCheckboxChecked, setCodeCheckboxChecked] = useState(false);
-  const [nameCheckboxChecked, setNameCheckboxChecked] = useState(false);
+  const [scanning, setScanning] = useState([]);
   const [file, setFile] = useState({});
-  const [data, setData] = useState([]);
-  const [cols, setCols] = useState([]);
-  const makeCols = (refstr) => {
-    let o = [],
-      C = XLSX.utils.decode_range(refstr).e.c + 1;
-    for (let i = 0; i < C; ++i)
-      o[i] = { name: XLSX.utils.encode_col(i), key: i };
-    return o;
+  const handleDuplicateHandleChange = (event) => {
+    setDuplicateHandle(event.target.value);
   };
 
   const handleChange = (e) => {
+    e.preventDefault();
     const files = e.target.files;
-    if (files && files[0]) setFile(files[0]);
+    setFile(files);
   };
 
+  const { mutate, isPending } = usePostImportProgramMutation();
   const handleFile = () => {
-    try {
-      const reader = new FileReader();
-      const rABS = !!reader.readAsBinaryString;
-
-      reader.onload = (e) => {
-        const bstr = e.target.result;
-        const wb = XLSX.read(bstr, {
-          type: rABS ? "binary" : "array",
-          bookVBA: true,
-        });
-        const wsname = wb.SheetNames[0];
-        const ws = wb.Sheets[wsname];
-        const parsedData = XLSX.utils.sheet_to_json(ws);
-
-        console.log(parsedData);
-
-        setCols(makeCols(ws["!ref"]));
-        setData(parsedData);
-
-        const userData = parsedData.map((user) => ({
-          id: user.id,
-          syllabusName: user.syllabusName,
-          code: user.code,
-          createdOn: dayjs(user.createdOn).format("DD/MM/YYYY"),
-          createdBy: user.createdBy,
-          duration: user.duration,
-          outputStandard: user.outputStandard,
-          status: user.status,
-        }));
-      };
-
-      if (rABS) {
-        reader.readAsBinaryString(file);
-      } else {
-        reader.readAsArrayBuffer(file);
+    mutate(
+      {
+        userId: loginUser.id,
+        importType: duplicateHandle,
+        scan: scanning.join(","),
+        file: file[0],
+      },
+      {
+        onSuccess: () => {
+          ToastEmitter.update(
+            "Import program successfully!!!",
+            "loading",
+            "success"
+          );
+          handleClose();
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_PROGRAM_KEY],
+          });
+        },
+        onError: () => {
+          ToastEmitter.update(`Import program failed!!`, "loading", "error");
+        },
       }
-    } catch (error) {
-      console.log(error);
+    );
+  };
+  if (isPending) {
+    ToastEmitter.loading("...Loading", "loading");
+  }
+  const handleDownload = () => {
+    window.open(TRAINING_TEMPLATE);
+  };
+  const handleCheck = (e) => {
+    if (e.target.checked) {
+      setScanning((prevScanning) => [...prevScanning, e.target.value]);
+    } else {
+      setScanning((prevScanning) =>
+        prevScanning.filter((v) => v !== e.target.value)
+      );
     }
   };
-  const csvData = [
-    [
-      "id",
-      "programName",
-      //   "code",
-      "createdOn",
-      "createdBy",
-      "duration",
-      //   "outputStandard",
-      "status",
-    ],
-  ];
   return (
     <ModalContainer
-      title={"Import Training Programs"}
+      title={"Import Training Program"}
       isOpen={isOpen}
       handleClose={handleClose}
-      key={isOpen.toString()}
     >
       <Box sx={style}>
         <Grid container sx={{ paddingRight: 4, paddingLeft: 4 }}>
@@ -125,19 +109,18 @@ export default function ImportTrainingProgram({ isOpen, handleClose }) {
             <Typography sx={{ fontWeight: "bold" }}>Import setting</Typography>
           </Grid>
           <Grid item xs={8}>
-            <Stack direction="row" spacing={4} sx={{ alignItems: "center" }}>
-              <Stack spacing={2}>
+            <Stack gap={2}>
+              <Stack
+                justifyContent={"space-between"}
+                direction="row"
+                spacing={2}
+                sx={{ alignItems: "center" }}
+              >
                 <Typography>File (csv)*</Typography>
-                <Typography>Encoding type</Typography>
-                <Typography>Column separator</Typography>
-                <Typography>Import template</Typography>
-              </Stack>
-              <Stack spacing={2}>
                 <Button
                   sx={{
                     background: "#2D3748",
-                    height: 22,
-                    maxWidth: 80,
+                    maxWidth: "100%",
                   }}
                   variant="contained"
                   size="small"
@@ -145,38 +128,22 @@ export default function ImportTrainingProgram({ isOpen, handleClose }) {
                   role={undefined}
                   tabIndex={-1}
                 >
-                  Select
+                  {file[0]?.name || "Select"}
                   <VisuallyHiddenInput
                     type="file"
                     className="form-control"
                     id="file"
-                    accept={[
-                      "xlsx",
-                      "xlsb",
-                      "xlsm",
-                      "xls",
-                      "xml",
-                      "csv",
-                      "txt",
-                      "ods",
-                      "fods",
-                      "uos",
-                      "sylk",
-                      "dif",
-                      "dbf",
-                      "prn",
-                      "qpw",
-                      "123",
-                      "wb*",
-                      "wq*",
-                      "html",
-                      "htm",
-                    ]
-                      .map((x) => "." + x)
-                      .join(",")}
                     onChange={handleChange}
                   />
                 </Button>
+              </Stack>
+              <Stack
+                justifyContent={"space-between"}
+                direction="row"
+                spacing={2}
+                sx={{ alignItems: "center" }}
+              >
+                <Typography>Encoding type</Typography>
                 <Select
                   sx={{
                     height: 22,
@@ -188,14 +155,34 @@ export default function ImportTrainingProgram({ isOpen, handleClose }) {
                   <MenuItem value={"Auto detect"}>Auto detect</MenuItem>
                   <MenuItem value={"UTF-8"}>UTF-8</MenuItem>
                 </Select>
+              </Stack>
+              <Stack
+                justifyContent={"space-between"}
+                direction="row"
+                spacing={2}
+                sx={{ alignItems: "center" }}
+              >
+                <Typography>Column separator</Typography>{" "}
                 <Select sx={{ height: 22 }} defaultValue={"Comma"}>
-                  <MenuItem value={"Comma"}>Comma</MenuItem>
+                  <MenuItem value={"Comma"}>Comma ,</MenuItem>
                   <MenuItem value={"Dot"}>Dot .</MenuItem>
                   <MenuItem value={"Semicolon"}>Semicolon ;</MenuItem>
                 </Select>
-                <CSVLink filename={"trainingProgram.csv"} data={csvData}>
+              </Stack>
+              <Stack
+                justifyContent={"space-between"}
+                direction="row"
+                spacing={2}
+                sx={{ alignItems: "center" }}
+              >
+                <Typography>Import template</Typography>{" "}
+                <Button
+                  onClick={handleDownload}
+                  variant="contained"
+                  color="primary"
+                >
                   Download
-                </CSVLink>
+                </Button>
               </Stack>
             </Stack>
           </Grid>
@@ -216,7 +203,7 @@ export default function ImportTrainingProgram({ isOpen, handleClose }) {
           <Grid item xs={8}>
             <Box>
               <Box>
-                <Typography>Scanning</Typography>
+                <Typography>Scanning program by</Typography>
                 <FormGroup
                   sx={{
                     display: "flex",
@@ -232,10 +219,13 @@ export default function ImportTrainingProgram({ isOpen, handleClose }) {
                             color: "#2D3748",
                           },
                         }}
-                        defaultChecked
+                        // defaultChecked
+                        checked={scanning.find((v) => v === "Code")}
+                        value={"Code"}
+                        onChange={handleCheck}
                       />
                     }
-                    label="Program ID"
+                    label="Code"
                   />
                   <FormControlLabel
                     control={
@@ -245,9 +235,12 @@ export default function ImportTrainingProgram({ isOpen, handleClose }) {
                             color: "#2D3748",
                           },
                         }}
+                        value={"Name"}
+                        checked={scanning.find((v) => v === "Name")}
+                        onChange={handleCheck}
                       />
                     }
-                    label="Program name"
+                    label="Name"
                   />
                 </FormGroup>
               </Box>
@@ -258,7 +251,7 @@ export default function ImportTrainingProgram({ isOpen, handleClose }) {
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
                   value={duplicateHandle}
-                  // onChange={handleDuplicateHandleChange}
+                  onChange={handleDuplicateHandleChange}
                 >
                   <FormControlLabel
                     value="Allow"

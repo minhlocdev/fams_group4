@@ -1,6 +1,6 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { QUERY_PROGRAM_KEY, QUERY_TRAINER_KEY } from "../../constants/query";
-import { getAllTrainers, getAllTrainningProgram, getTrainningProgramById } from "../TranningProgram";
+import { deleteProgram, duplicateProgram, getAllTrainers, getAllTrainningProgram, getTrainningProgramById, postProgram, putProgram, putProgramStatus } from "../TranningProgram";
 
 export const useGetAllTrainingProgramQuery = () =>
     useQuery({
@@ -24,3 +24,22 @@ export const useGetAllTrainerQuery = () =>
         staleTime: 20000,
     },
     );
+export const usePostTrainingMutation = () => useMutation({
+    mutationFn: postProgram,
+    mutationKey: [QUERY_PROGRAM_KEY],
+})
+export const usePutTrainingMutation = () => useMutation({
+    mutationFn: putProgram,
+    mutationKey: [QUERY_PROGRAM_KEY],
+})
+export const usePostDuplicateTrainingMutation = () => useMutation({
+    mutationFn: duplicateProgram,
+    mutationKey: [QUERY_PROGRAM_KEY],
+})
+export const usePutTrainingStatusMutation = (id) => useMutation({
+    mutationFn: putProgramStatus,
+    mutationKey: [QUERY_PROGRAM_KEY, "id:" + id],
+})
+export const useDeleteProgramMutation = () => useMutation({
+    mutationFn: deleteProgram,
+})

@@ -48,24 +48,12 @@ export const putClass = async (data) => {
 export const deleteClass = async (id) => {
     return await apiClient({
         method: 'delete',
-        url: `https://653d1d13f52310ee6a99e3b7.mockapi.io/class/${id}`,
+        url: `/classes/${id}`,
     });
 };
-
-let duplicateCounter = 1;
-// 
 export const duplicateClass = async (id) => {
-    try {
-        const classdup = await getClassByID(id);
-        const currentDate = new Date().toISOString();
-        const classCodeWithoutDuplicate = classdup.data.classCode.replace(/\(\d+\)/, '');
-        const duplicatedClass = { ...classdup.data, classCode: `${classCodeWithoutDuplicate} (${duplicateCounter++})`, createdOn: currentDate };
-
-        delete duplicatedClass.id;
-        const response = await postClass(duplicatedClass);
-        return response;
-    } catch (error) {
-        console.error("Error duplicating class:", error);
-        throw error;
-    }
+    return await apiClient({
+        method: 'post',
+        url: `/class/${id}/duplicate-class`,
+    });
 };

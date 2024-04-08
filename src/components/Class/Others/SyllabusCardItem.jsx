@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { SupervisedUserCircleOutlined } from "@mui/icons-material";
-import { PulishStatusEnum } from "../../../constants/PublishStatusEnum";
+import { PublishStatusEnum } from "../../../constants/PublishStatusEnum";
 import { useGetSyllabusOutlineQuery } from "../../../services/queries/syllabusQuery";
 import SyllabusCardDay from "./SyllabusCardDay";
 import ClassContext from "../../../context/ClassContext";
@@ -138,7 +138,7 @@ export default function SyllabusCardItem({ card, isEdit }) {
                   marginLeft: "5px",
                 }}
               >
-                {PulishStatusEnum[card.publishStatus]}
+                {PublishStatusEnum[card.publishStatus]}
               </Typography>
             </Stack>
             <Stack

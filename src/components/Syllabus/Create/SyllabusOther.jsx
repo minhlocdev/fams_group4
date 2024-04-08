@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext } from "react";
 import {
   Box,
   Grid,
@@ -9,26 +9,24 @@ import {
 } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import RichText from "../../Syllabus/RichText";
+import RichText from "../Detail/RichText";
 import TimeAllocation from "../../shared/TimeAllocation";
 import { SyllabusContext } from "../../../context/SyllabusContext";
+import { useParams } from "react-router-dom";
 
 const Other = {
   scheme1: [
     {
-      id: "quiz",
       title: "Quiz *",
       name: "quiz",
       value: "15",
     },
     {
-      id: "assignment",
       title: "Assignment *",
       name: "assignment",
       value: "15",
     },
     {
-      id: "final",
       title: "Final *",
       name: "final",
       value: "70",
@@ -36,13 +34,11 @@ const Other = {
   ],
   scheme2: [
     {
-      id: "final-theory",
       title: "Final Theory*",
       name: "finalTheory",
       value: "40",
     },
     {
-      id: "final-practice",
       title: "Final Practice*",
       name: "finalPractice",
       value: "60",
@@ -50,8 +46,7 @@ const Other = {
   ],
   gpa: [
     {
-      id: "gpa",
-      name: "gpa",
+      name: "passing",
       title: "GPA *",
       value: "70",
     },
@@ -105,30 +100,19 @@ export default function SyllabusOther() {
     useContext(SyllabusContext);
   const theme = useTheme();
   const isDownLg = useMediaQuery(theme.breakpoints.down("lg"));
-
-  const handleOtherChange = (event) => {
+  const { code } = useParams();
+  const handleOtherChange = (event, value) => {
     const copy = { ...other };
-    copy[event.target.name] = event.target.value;
+    copy[event.target.name] = value;
     setOther(copy);
-    handleFieldValidation(event.target.name, event.target.value);
+    handleFieldValidation(event.target.name, value);
   };
-  function isQuillEmpty(value) {
-    if (
-      value.replace(/<(.|\n)*?>/g, "").trim().length === 0 &&
-      !value.includes("<img")
-    ) {
-      return "";
-    }
-    return "false";
-  }
-
   const handleRichText = (content) => {
-    const copy = { ...other };
-    copy.richtext = content;
-    handleFieldValidation("richtext", isQuillEmpty(content));
-    setOther(copy);
+    setOther(() => ({
+      ...other,
+      trainingPrinciple: content,
+    }));
   };
-
   return (
     <>
       <Grid
@@ -220,10 +204,11 @@ export default function SyllabusOther() {
                       required
                       type="number"
                       pattern
-                      id={item.id}
                       name={item.name}
                       value={other[item.name] ? other[item.name] : ""}
-                      onChange={handleOtherChange}
+                      onChange={(e) =>
+                        handleOtherChange(e, Number(e.target.value))
+                      }
                       helperText={error[item.name] ? `required` : ""}
                       sx={TextFieldStyle}
                       InputProps={{
@@ -262,12 +247,13 @@ export default function SyllabusOther() {
                   <Grid item xs={12} sm={6} md={6} lg={6}>
                     <TextField
                       required
-                      id={item.id}
                       error={error[item.name]}
                       name={item.name}
                       value={other[item.name] ? other[item.name] : ""}
                       type="number"
-                      onChange={handleOtherChange}
+                      onChange={(e) =>
+                        handleOtherChange(e, Number(e.target.value))
+                      }
                       helperText={error[item.name] ? "Required" : ""}
                       InputProps={{
                         endAdornment: "%",
@@ -305,13 +291,14 @@ export default function SyllabusOther() {
                     {item.title}
                     <TextField
                       required
-                      id={item.id}
                       error={error[item.name]}
                       name={item.name}
                       value={other[item.name] ? other[item.name] : ""}
                       type="number"
-                      onChange={handleOtherChange}
-                      helperText={error[item.name] ? `required` : ""}
+                      onChange={(e) =>
+                        handleOtherChange(e, Number(e.target.value))
+                      }
+                      helperText={error[item.name] ? `Required` : ""}
                       sx={TextFieldStyle}
                       InputProps={{
                         endAdornment: "%",
@@ -339,7 +326,7 @@ export default function SyllabusOther() {
               <Title>Training delivery principle</Title>
             </Box>
             <RichText
-              value={other.richtext ? other.richtext : ""}
+              value={code ? other?.trainingPrinciple : other?.trainingPrinciple}
               onChange={handleRichText}
             />
           </Box>

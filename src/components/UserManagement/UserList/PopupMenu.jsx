@@ -22,7 +22,6 @@ import ToastEmitter from "../../shared/lib/ToastEmitter";
 
 export default function PopupMenu({ item }) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isVisible, setIsVisible] = useState(true);
   const [id, setId] = useState(null);
   const { data, isSuccess } = useGetUserByIdQuery(id);
   const [update, isUpdate] = useState(false);
@@ -35,9 +34,6 @@ export default function PopupMenu({ item }) {
   };
   const handleClose = () => {
     setAnchorEl(null);
-  };
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
   };
 
   const handleUpdate = () => {
@@ -68,6 +64,30 @@ export default function PopupMenu({ item }) {
     );
   };
 
+  const handleChangeStatus = (status) => {
+    const { id, name, email, dateOfBirth, phone, gender, roleName } = item;
+    updateUser.mutate(
+      {
+        id,
+        name,
+        email,
+        dateOfBirth,
+        phone,
+        gender,
+        status,
+        rolename: roleName,
+      },
+      {
+        onSuccess: () => {
+          ToastEmitter.success(
+            status ? "Activate successfully!!!" : "De-activate successfully!!!"
+          );
+          queryClient.invalidateQueries({ queryKey: [QUERY_USER_KEY] });
+          handleClose();
+        },
+      }
+    );
+  };
   return (
     <div>
       <IconButton
@@ -121,13 +141,8 @@ export default function PopupMenu({ item }) {
             <ListItemIcon children={<ArrowForwardIosIcon fontSize="small" />} />
           </MenuItem>
         </InfoTooltip>
-        <MenuItem
-          onClick={() => {
-            toggleVisibility();
-            handleClose();
-          }}
-        >
-          {isVisible ? (
+        <MenuItem onClick={() => handleChangeStatus(!item.status)}>
+          {!item.status ? (
             <>
               <ListItemIcon children={<VisibilityIcon fontSize="small" />} />
               Activate user

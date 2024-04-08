@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import { Avatar, Typography, Divider, Button, Box, Link } from "@mui/material";
 import { useGetUserByIdQuery } from "../services/queries/userQuery";

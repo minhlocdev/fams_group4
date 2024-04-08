@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -17,7 +17,6 @@ import TableLoader from "../../shared/loader/TableLoader";
 import dayjs from "dayjs";
 import theme from "../../../assets/theme";
 import { Link, Typography } from "@mui/material";
-import useTable from "../../../utils/hooks/useTable";
 import ClassContext from "../../../context/ClassContext";
 
 const headCells = [
@@ -100,9 +99,7 @@ export default function ListofClass() {
                       </Link>
                     </TableCell>
                     <TableCell align="left">{row.classCode}</TableCell>
-                    <TableCell align="left">
-                      {dayjs(row.createdOn).format("DD/MM/YYYY")}
-                    </TableCell>
+                    <TableCell align="left">{row.createdDate}</TableCell>
                     <TableCell align="left">{row.createdBy}</TableCell>
                     <TableCell align="left">
                       {row.duration >= 2

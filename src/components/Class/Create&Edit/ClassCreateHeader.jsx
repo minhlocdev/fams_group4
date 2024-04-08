@@ -57,7 +57,7 @@ export default function ClassCreateHeader() {
       >
         {" "}
         <Typography
-          variant={"h5"}
+          variant={"h4"}
           sx={{
             wordSpacing: "5px",
             letterSpacing: "5px",

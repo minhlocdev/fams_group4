@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import ImportTraningProgram from "../components/TraningProgramList/ImportTrainingProgram";
 import { Typography, Stack, Button } from "@mui/material";
-import AppContainer from "../components/shared/layout/AppContainer";
-import { InputBoxSearch } from "../components/shared/InputBox/InputBox";
 import PublishIcon from "@mui/icons-material/Publish";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import SyllabusTable from "../components/Syllabus/SyllabusList/SyllabusTable";
@@ -10,6 +7,7 @@ import { Link } from "react-router-dom";
 import { SyllabusFilter } from "../components/Syllabus/SyllabusList/SyllabusFilter";
 import SyllabusWrapper from "../context/SyllabusWrapper";
 import SearchSyllabus from "../components/Syllabus/SyllabusList/SearchSyllabus";
+import ImportSyllabus from "../components/Syllabus/SyllabusList/ImportSyllabus";
 
 export default function SyllabusListing() {
   const [importFormOpen, setimportFormOpen] = useState(false);
@@ -30,6 +28,7 @@ export default function SyllabusListing() {
         display="flex"
         flexWrap="wrap"
         justifyContent="space-between"
+        alignItems={"center"}
         gap={1}
         sx={{ marginTop: 3 }}
       >
@@ -47,28 +46,25 @@ export default function SyllabusListing() {
           display="flex"
           flexWrap="wrap"
         >
-          <Link>
-            <Button
-              sx={{
-                backgroundColor: "orangered",
-                marginTop: { xs: 2, sm: 0 },
-                marginLeft: { xs: 0, sm: "auto" },
-                marginRight: { xs: "auto", sm: 0 },
-                borderRadius: 2,
-              }}
-              variant="contained"
-              size="small"
-              onClick={handleOpenImportForm}
-              startIcon={<PublishIcon />}
-            >
-              Import
-            </Button>
-            <ImportTraningProgram
-              isOpen={importFormOpen}
-              handleClose={handleCloseImportForm}
-              key={importFormOpen.toString()}
-            />
-          </Link>
+          <Button
+            sx={{
+              backgroundColor: "orangered",
+              marginTop: { xs: 2, sm: 0 },
+              marginLeft: { xs: 0, sm: "auto" },
+              marginRight: { xs: "auto", sm: 0 },
+              borderRadius: 2,
+            }}
+            variant="contained"
+            size="small"
+            onClick={handleOpenImportForm}
+            startIcon={<PublishIcon />}
+          >
+            Import
+          </Button>
+          <ImportSyllabus
+            isOpen={importFormOpen}
+            handleClose={handleCloseImportForm}
+          />
           <Link to="/syllabus/create">
             <Button
               sx={{

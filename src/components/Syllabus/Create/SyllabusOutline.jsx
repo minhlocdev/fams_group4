@@ -37,11 +37,12 @@ export default function SyllabusOutline() {
   const theme = useTheme();
   const [totalDay, setTotalDay] = useState(outline.length);
 
+  // console.log("outline", outline);
   const addDay = (e) => {
     setTotalDay(totalDay + 1);
     const tempojt = {
-      id: totalDay,
-      content: [],
+      dayNumber: totalDay + 1,
+      trainingUnits: [],
     };
     const tempData = [...outline];
     tempData.push(tempojt);
@@ -77,7 +78,7 @@ export default function SyllabusOutline() {
           </Button>
           {/* </Box> */}
         </Grid>
-        <Grid item container lg={2} justifyContent="flex-start">
+        <Grid item xs={12} lg={2} justifyContent="flex-start">
           <Box sx={{ width: { xs: "100%", sm: "80%", md: "80%", lg: "100%" } }}>
             <Box
               sx={{
@@ -89,15 +90,11 @@ export default function SyllabusOutline() {
             >
               <Title>Time Allocation</Title>
               <Box
-                sx={
-                  isDownLg
-                    ? {
-                        height: "209px",
-                        margin: "35px 0px 20px 0px",
-                        width: { xs: "100%", sm: "80%", md: "80%" },
-                      }
-                    : { height: "409px", width: { lg: "100%" } }
-                }
+                sx={{
+                  height: { xs: "209px", lg: "409px" },
+                  margin: { xs: "35px 0px 20px 0px" },
+                  width: { xs: "100%", sm: "80%", md: "80%", lg: "100%" },
+                }}
               >
                 {isDownLg ? <TimeAllocation control /> : <TimeAllocation />}
               </Box>

@@ -1,0 +1,2 @@
+export const TRAINING_TEMPLATE = "https://firebasestorage.googleapis.com/v0/b/fasm-14a0d.appspot.com/o/import_trainningprogramm.xlsx?alt=media&token=e2510575-017a-4598-94ab-a3d9f60fb5bd"
+export const SYLLABUS_TEMPLATE = "https://firebasestorage.googleapis.com/v0/b/fasm-14a0d.appspot.com/o/Template_Import_Syllabus.xlsx?alt=media&token=ff44036b-a780-4b3b-96b1-8710043ab748"

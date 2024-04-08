@@ -78,7 +78,14 @@ export default function UserListing() {
               {data?.list?.map((row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
                 return (
-                  <TableRow hover tabIndex={-1} key={row.id}>
+                  <TableRow
+                    hover
+                    tabIndex={-1}
+                    key={row.id}
+                    sx={{
+                      filter: row.status ? "none" : "opacity(30%)",
+                    }}
+                  >
                     <TableCell
                       component="th"
                       id={labelId}
@@ -97,14 +104,18 @@ export default function UserListing() {
                     <TableCell align="left">{row.email}</TableCell>
                     <TableCell align="left">{row.dateOfBirth}</TableCell>
                     <TableCell align="left">
-                      <PersonIcon
-                        style={{
-                          color:
-                            row.gender.toLowerCase() === "male"
-                              ? "#E74A3B"
-                              : "inherit",
-                        }}
-                      />
+                      <Box sx={{ display: "flex" }} alignItems={"center"}>
+                        <PersonIcon
+                          style={{
+                            color:
+                              row.gender.toLowerCase() === "male"
+                                ? "#E74A3B"
+                                : "inherit",
+                            marginRight: "5px",
+                          }}
+                        />
+                        {row.gender}
+                      </Box>
                     </TableCell>
                     <TableCell align="left">
                       <Chip

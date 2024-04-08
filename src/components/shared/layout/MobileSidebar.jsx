@@ -17,8 +17,9 @@ import {
   SchoolIcon,
   SettingIcon,
 } from "../../../assets/icon";
-import { Collapse, Link } from "@mui/material";
+import { Collapse } from "@mui/material";
 import { ExpandMore } from "../lib/CustomMUI";
+import { Link } from "react-router-dom";
 const menus = [
   {
     id: "1",
@@ -29,7 +30,7 @@ const menus = [
   {
     id: "2",
     icon: <BookIcon />,
-    to: "",
+    to: "#",
     title: "Syllabus",
     submenu: [
       {
@@ -48,7 +49,7 @@ const menus = [
     id: "3",
     icon: <Biotech />,
     // select view program -> traningProgramList
-    to: "",
+    to: "#",
     title: "Training Program",
     submenu: [
       {
@@ -66,7 +67,7 @@ const menus = [
   {
     id: "4",
     icon: <SchoolIcon />,
-    to: "",
+    to: "#",
     title: "Class",
     submenu: [
       {
@@ -91,6 +92,7 @@ const menus = [
     id: "6",
     icon: <GroupIcon />,
     title: "User Management",
+    to: "#",
     submenu: [
       {
         to: "/user",
@@ -121,6 +123,7 @@ const menus = [
     ],
   },
 ];
+
 export default function MobileSidebar() {
   const [open, setOpen] = React.useState(false);
 
@@ -166,13 +169,11 @@ export default function MobileSidebar() {
             <ListItemText
               sx={{
                 opacity: open ? 1 : 0,
-                textDecoration: "none",
-                color: "#000",
               }}
             >
               <Link
-                href={menu.to}
-                sx={{
+                to={menu.to}
+                style={{
                   textDecoration: "none",
                   color: "#000",
                 }}
@@ -213,8 +214,8 @@ export default function MobileSidebar() {
                     }}
                   >
                     <Link
-                      href={item.to}
-                      sx={{
+                      to={item.to}
+                      style={{
                         textDecoration: "none",
                         color: "#000",
                       }}
@@ -230,6 +231,8 @@ export default function MobileSidebar() {
                             opacity: 1,
                             textAlign: "left",
                             marginLeft: "60px",
+                            textDecoration: "none",
+                            color: "#000",
                           }}
                         >
                           {item.title}

@@ -8,6 +8,7 @@ import {
   Stack,
   Button,
 } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import DropDown from "./SyllabusModalDropDown";
 import Switch from "./SyllabusModalSwitch";
@@ -21,7 +22,7 @@ const style = {
   transform: "translate(-50%, -50%)",
   borderRadius: "20px",
   border: " 1px solid black",
-  width: { xs: "90%", lg: "35%" },
+  width: { xs: "90%", sm: "70%", lg: "35%" },
 };
 const textBox = {
   width: "100%",
@@ -77,61 +78,87 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
   const [isactive, setActive] = useState(false);
   const [isError, setError] = useState(false); //Open Warning modal when Hour exceed 8 hours
   const [formData, setFormData] = useState({
-    DeliveryType: "",
-    Name: "",
-    OutputStandard: "",
-    TrainingTime: "",
-    Method: "Online",
-    TrainingMaterial: [],
+    id: "",
+    deliveryType: "",
+    contentName: "",
+    learningObjectiveCode: "",
+    duration: "",
+    trainingFormat: "Online",
+    note: null,
+    materials: [],
   });
   const [errors, setErrors] = useState({
-    DeliveryType: "",
-    Name: "",
-    OutputStandard: "",
-    TrainingTime: "",
+    deliveryType: "",
+    contentName: "",
+    learningObjectiveCode: "",
+    duration: "",
   });
   const OpenWarningModal = () => {
     setError(true);
   };
+  function handleIconDelivery(deliveryData) {
+    let IconType;
+    switch (deliveryData) {
+      case "Assignment/Lab":
+        IconType = 1;
+        break;
+      case "Concept/Lecture":
+        IconType = 2;
+        break;
+      case "Guide/Review":
+        IconType = 3;
+        break;
+      case "Test/Quiz":
+        IconType = 4;
+        break;
+      case "Exam":
+        IconType = 5;
+        break;
+      case "Seminar/Workshop":
+        IconType = 6;
+        break;
+      default:
+        break;
+    }
+    return IconType;
+  }
+
   //Validate Data function here
   const validateForm = () => {
     let valid = true;
     const newErrors = { ...errors };
 
     //Validate Delivery Type
-    if (!formData.DeliveryType) {
-      newErrors.DeliveryType = "This field is required";
+    if (!formData.deliveryType) {
+      newErrors.deliveryType = "This field is required";
       valid = false;
     }
 
     //Validate Name
-    if (formData.Name.trim() === "") {
-      newErrors.Name = "This field is required";
+    if (formData.contentName.trim() === "") {
+      newErrors.contentName = "This field is required";
       valid = false;
-    } else if (!isNaN(formData.Name)) {
-      newErrors.Name = "This field cannot be all number";
+    } else if (!isNaN(formData.contentName)) {
+      newErrors.contentName = "This field cannot be all number";
       valid = false;
     }
     //Valid OutputStandard
-    if (formData.OutputStandard.trim() === "") {
-      newErrors.OutputStandard = "This field is required";
+    if (formData.learningObjectiveCode.trim() === "") {
+      newErrors.learningObjectiveCode = "This field is required";
       valid = false;
     }
     //Validate Trainning Time
-    if (formData.TrainingTime.trim() === "") {
-      newErrors.TrainingTime = "This field is required";
+    if (formData.duration === null) {
+      newErrors.duration = "This field is required";
       valid = false;
-    } else if (formData.TrainingTime >= 480) {
+    } else if (formData.duration >= 480) {
       OpenWarningModal();
       valid = false;
-    } else if (isNaN(formData.TrainingTime)) {
-      newErrors.TrainingTime = "This field must be a number";
+    } else if (isNaN(formData.duration)) {
+      newErrors.duration = "This field must be a number";
       valid = false;
-    } else if (formData.TrainingTime < 0) {
-      newErrors.TrainingTime = "Invalid time";
-      valid = false;
-    } else if (formData.TrainingTime < 0) {
-      newErrors.TrainingTime = "Invalid time";
+    } else if (formData.duration < 0) {
+      newErrors.duration = "Invalid time";
       valid = false;
     }
 
@@ -139,8 +166,8 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
     return valid;
   };
   const handleChange = (field, value) => {
-    const updateData = field === "OutputStandard" ? value.split(" ") : value;
-    setFormData({ ...formData, [field]: String(updateData) });
+    const updateData = field === "duration" ? Number(value) : value;
+    setFormData({ ...formData, [field]: updateData });
     setErrors({ ...errors, [field]: "" });
   };
   //Handle data after Click the Create Button
@@ -152,12 +179,13 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
     } else {
       //=================================================Put Submit logic here==================================
       e.preventDefault();
-      const DeliveryType = formData.DeliveryType;
-      const tempArray = formData.OutputStandard.split(",");
+      const DeliveryType = formData.deliveryType;
+      const v4Id = uuidv4();
       const tempOjb = {
         ...formData,
-        DeliveryType: DeliveryType,
-        OutputStandard: tempArray,
+        id: v4Id,
+        deliveryType: handleIconDelivery(DeliveryType),
+        learningObjectiveCode: formData.learningObjectiveCode,
       };
       AddData(tempOjb);
 
@@ -186,10 +214,10 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
               sx={textFields}
               id="outlined-basic"
               variant="outlined"
-              value={formData.Name}
-              onChange={(e) => handleChange("Name", e.target.value)}
-              error={Boolean(errors.Name)}
-              helperText={errors.Name}
+              value={formData.contentName}
+              onChange={(e) => handleChange("contentName", e.target.value)}
+              error={Boolean(errors.contentName)}
+              helperText={errors.contentName}
             />
           }
           label="Name"
@@ -208,10 +236,10 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
               sx={textFields}
               id="outlined-basic"
               variant="outlined"
-              value={formData.TrainingTime}
-              onChange={(e) => handleChange("TrainingTime", e.target.value)}
-              error={Boolean(errors.TrainingTime)}
-              helperText={errors.TrainingTime}
+              value={formData.duration}
+              onChange={(e) => handleChange("duration", e.target.value)}
+              error={Boolean(errors.duration)}
+              helperText={errors.duration}
             />
           }
           label="Training Time"
@@ -227,7 +255,7 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
           sx={textBox}
           control={
             <Switch
-              isactive={isactive}
+              isActive={isactive}
               setActive={setActive}
               handleChange={handleChange}
               formData={formData}
@@ -271,9 +299,7 @@ export default function SyllabusNewContent({
         <div
           style={{
             display: "flex",
-            height: "100%",
             flexDirection: "column",
-            // width: "33.875rem",
             height: "fit-content",
             alignItems: "center",
             borderRadius: "20px",

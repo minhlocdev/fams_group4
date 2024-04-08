@@ -103,12 +103,12 @@ export default function DropDown({
               },
             }}
             labelId="select-one-label"
-            value={formData.DeliveryType}
+            value={formData.deliveryType}
             onChange={(e) => {
               setHideLabel(e.target.value !== "");
-              handleChange("DeliveryType", e.target.value);
+              handleChange("deliveryType", e.target.value);
             }}
-            error={Boolean(errors.DeliveryType)}
+            error={Boolean(errors.deliveryType)}
             defaultValue={defaultValue ? defaultValue : ""}
           >
             {Type.map((value, index) => (
@@ -119,7 +119,7 @@ export default function DropDown({
             ))}
           </Select>
           <FormHelperText sx={{ color: "#db2f2f" }}>
-            {errors.DeliveryType}
+            {errors.deliveryType}
           </FormHelperText>
         </FormControl>
       }

@@ -5,13 +5,23 @@ import { SyllabusContext } from "../../context/SyllabusContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function TimeAllocation({ control, sm }) {
+export default function TimeAllocation({ control, timeallocation }) {
   const { timeAllocation } = useContext(SyllabusContext);
   const handleValueTimeAllocation = (array) => {
     const sum = array.reduce((acc, curr) => acc + curr, 0);
-    const newArray = array.map((item) => Math.ceil((item * 100) / sum));
-    return newArray;
+    if (sum !== 0) {
+      const newArray = array.map((item) => Math.ceil((item * 100) / sum));
+      return newArray;
+    } else return [0, 0, 0, 0, 0];
   };
+  const convertedArray = [
+    timeallocation?.assignment_Lab,
+    timeallocation?.concept_Lecture,
+    timeallocation?.guide_Review,
+    timeallocation?.test_Quiz,
+    timeallocation?.exam,
+  ];
+
   const data = {
     labels: [
       "Assignment/Lab",
@@ -22,7 +32,9 @@ export default function TimeAllocation({ control, sm }) {
     ],
     datasets: [
       {
-        data: handleValueTimeAllocation(timeAllocation),
+        data: handleValueTimeAllocation(
+          timeallocation ? convertedArray : timeAllocation
+        ),
         backgroundColor: [
           "#F4BE37",
           "#FF9F40",

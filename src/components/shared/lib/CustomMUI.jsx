@@ -2,7 +2,7 @@ import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import { IconButton } from "@mui/material";
-
+import Badge from "@mui/material/Badge";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { Unstable_NumberInput as BaseNumberInput } from "@mui/base/Unstable_NumberInput";
@@ -180,7 +180,6 @@ const StyledButton = styled("button")(
 //week picker
 
 dayjs.extend(isBetweenPlugin);
-
 const CustomPickersDay = styled(PickersDay, {
   shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "isHovered",
 })(({ theme, isSelected, isHovered, day }) => ({
@@ -218,17 +217,33 @@ const isInSameWeek = (dayA, dayB) => {
 };
 
 export function Day(props) {
-  const { day, selectedDay, hoveredDay, ...other } = props;
-
+  const {
+    day,
+    selectedDay,
+    hoveredDay,
+    highlightedDays = [],
+    outsideCurrentMonth,
+    ...other
+  } = props;
+  const isSelected =
+    !props.outsideCurrentMonth &&
+    highlightedDays.indexOf(dayjs(props.day).format("YYYY-MM-DD")) >= 0;
   return (
-    <CustomPickersDay
-      {...other}
-      day={day}
-      sx={{ px: 2.5 }}
-      disableMargin
-      selected={false}
-      isSelected={isInSameWeek(day, selectedDay)}
-      isHovered={isInSameWeek(day, hoveredDay)}
-    />
+    <Badge
+      key={props.day.toString()}
+      overlap="circular"
+      badgeContent={isSelected ? "💧" : undefined}
+      sx={{ flex: "1 1 0" }}
+    >
+      <CustomPickersDay
+        {...other}
+        day={day}
+        sx={{ px: 2.5 }}
+        disableMargin
+        selected={false}
+        isSelected={isInSameWeek(day, selectedDay)}
+        isHovered={isInSameWeek(day, hoveredDay)}
+      />
+    </Badge>
   );
 }

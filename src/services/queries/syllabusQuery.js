@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { QUERY_LEARNING_KEY, QUERY_SYLLABUS_KEY } from '../../constants/query';
-import { deleteSyllabus, duplicateSyllabus, getAllSyllabus, getLearningObjective, getSyllabus, getSyllabusByID, getSyllabusByOutputStandard, getSyllabusOutline, postSyllabus, putSyllabus } from '../Syllabus';
+import { QUERY_LEARNING_KEY, QUERY_SYLLABUS_KEY, QUERY_TIMEALLOCATION_KEY } from '../../constants/query';
+import { ChangeSyllabusStausByID, deleteSyllabus, duplicateSyllabus, getAllSyllabus, getLearningObjective, getSyllabus, getSyllabusByID, getSyllabusByOutputStandard, getTimeAllocationByID, getSyllabusOutline, postSyllabus, putSyllabus, postImportSyllabus } from '../Syllabus';
 
 export const useGetSyllabusOutlineQuery = (id) =>
     useQuery({
@@ -11,6 +11,13 @@ export const useGetSyllabusOutlineQuery = (id) =>
     });
 
 
+export const useGetSyllabusOutline = (id) =>
+    useQuery({
+        queryKey: [QUERY_LEARNING_KEY, "id:" + id],
+        queryFn: () => getSyllabusOutline(id).then((res) => res.data),
+        staleTime: 20000,
+    },
+    );
 export const useGetObjectiveQuery = () =>
     useQuery({
         queryKey: [QUERY_LEARNING_KEY],
@@ -59,6 +66,14 @@ export const useGetSyllabusByOutputStandardQuery = (OutputStandard) =>
         enabled: !!OutputStandard
     }
     );
+
+export const useGetTimeAllocationByIdQuery = (id) =>
+    useQuery({
+        queryKey: [QUERY_TIMEALLOCATION_KEY, "id:" + id],
+        queryFn: () => getTimeAllocationByID(id).then((res) => res.data),
+        staleTime: 20000,
+    }
+    );
 export const usePostSyllabusMutation = () => useMutation({
     mutationFn: postSyllabus
 })
@@ -73,3 +88,9 @@ export const useDuplicateSyllabusMutation = () => useMutation({
     mutationFn: duplicateSyllabus
 });
 
+export const usePutSyllabusStatus = () => useMutation({
+    mutationFn: ChangeSyllabusStausByID
+})
+export const usePostImportSyllabusMutation = () => useMutation({
+    mutationFn: postImportSyllabus
+})

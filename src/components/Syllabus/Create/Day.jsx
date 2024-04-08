@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Box, Button, Collapse, Grid, IconButton } from "@mui/material";
 import { SyllabusContext } from "../../../context/SyllabusContext";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
@@ -13,14 +13,15 @@ const button = {
   cursor: "pointer",
   "&:hover": { backgroundColor: "rgb(72 147 222 / 81%)" },
   fontWeight: "bold",
+  "&.Mui-disabled": { backgroundColor: "#ddd" },
 };
 export default function Day({ setTotalDay }) {
   const {
     outline,
     setOutline,
+    handleTimeAllocation,
     error,
     handleFieldValidation,
-    setTimeAllocation,
   } = useContext(SyllabusContext);
   const [isConfirmDelete, setConfirmDelete] = useState(true);
   const [deletedUnitIds, setDeletedUnitIds] = useState([]);
@@ -39,43 +40,62 @@ export default function Day({ setTotalDay }) {
     setConfirmDelete(false);
   };
   const removeDay = (dayid, dayIndex) => {
-    const deletedDay = outline.find((day) => day.id === dayid);
-    const deletedUnitIds = deletedDay.content.map((unit) => unit.id);
+    const deletedDay = outline.find((day) => day.dayNumber === dayid);
+    handleFieldValidation("unitTitle", "ngu");
+    deletedDay.trainingUnits.forEach((unit) => {
+      unit.trainingContents.forEach((dataUnit) => {
+        handleTimeAllocation(
+          dataUnit.deliveryType,
+          "remove",
+          dataUnit.duration
+        );
+      });
+    });
+    const deletedUnitIds = deletedDay.trainingUnits.map(
+      (unit) => unit.unitCode
+    );
     setDeletedUnitIds((prevDeletedUnits) => [
       ...prevDeletedUnits,
       ...deletedUnitIds,
     ]);
-    const tempDay = outline.filter((item) => item.id !== dayid);
+    const tempDay = outline.filter((item) => item.dayNumber !== dayid);
     const updateData = tempDay.map((item, i) => ({
       ...item,
-      id: i,
+      dayNumber: i + 1,
     }));
     setOutline(updateData);
     setTotalDay(updateData.length);
+
     handleClose();
   };
   const getTotalUnitCount = () => {
-    return outline.reduce((total, day) => total + day.content.length, 0);
+    return outline.reduce((total, day) => total + day.trainingUnits.length, 0);
   };
-
   const addUnit = (index) => {
-    let unitId;
+    const tempArray = [...outline];
+    let unitIds;
+    handleFieldValidation("unitTitle", "");
     if (deletedUnitIds.length > 0) {
-      unitId = deletedUnitIds.shift();
+      let deletedUnitId = deletedUnitIds.sort((a, b) => a - b);
+      unitIds = deletedUnitId.shift();
+      const newUnit = {
+        unitCode: unitIds,
+        unitName: null,
+        trainingContents: [],
+      };
+      tempArray[index].trainingUnits.push(newUnit);
+      setOutline(tempArray);
       setDeletedUnitIds(deletedUnitIds);
     } else {
-      unitId = getTotalUnitCount();
+      unitIds = getTotalUnitCount();
+      const newUnit = {
+        unitCode: unitIds + 1,
+        unitName: null,
+        trainingContents: [],
+      };
+      tempArray[index].trainingUnits.push(newUnit);
+      setOutline(tempArray);
     }
-    const newUnit = {
-      id: unitId,
-      title: null,
-      dataUnit: [],
-    };
-    const tempArray = [...outline];
-
-    tempArray[index].content.push(newUnit);
-    setOutline(tempArray);
-    // onChange(outline, "outline");
   };
   return (
     <Box
@@ -89,9 +109,8 @@ export default function Day({ setTotalDay }) {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           {outline?.map((day, dayIndex) => (
-            <>
+            <div key={dayIndex}>
               <Box
-                key={dayIndex}
                 sx={{
                   display: "flex",
                   gap: "5px",
@@ -106,7 +125,7 @@ export default function Day({ setTotalDay }) {
                   handlePress(dayIndex)
                 }
               >
-                Day {day.id + 1}
+                Day {day.dayNumber}
                 <IconButton
                   onClick={(e) => handleClickConfirmDelete(e, dayIndex)}
                 >
@@ -116,35 +135,45 @@ export default function Day({ setTotalDay }) {
               <SyllabusDeleteWarningModal
                 isConfirm={isConfirmDelete}
                 setConfirm={setConfirmDelete}
-                ConfirmDelete={() => removeDay(day.id, dayIndex)}
+                ConfirmDelete={() => removeDay(day.dayNumber, dayIndex)}
                 id={dayIndex}
               />
-              {outline[dayIndex]?.content?.length !== 0 && (
+              {outline[dayIndex]?.trainingUnits?.length !== 0 && (
                 <Collapse
-                  in={openState[dayIndex]}
+                  in={Boolean(openState[dayIndex])}
                   sx={{}}
                   timeout="auto"
                   unmountOnExit
                 >
+                  {outline[dayIndex].trainingUnits.map((item, index) => (
+                    <Unit
+                      key={index}
+                      day={day}
+                      unitIndex={index}
+                      dayIndex={dayIndex}
+                      openState={openState}
+                      setOpenState={setOpenState}
+                      setDeletedUnitIds={setDeletedUnitIds}
+                      unit={item}
+                    />
+                  ))}
                   {/* //Unit */}
-                  <Unit
-                    day={day}
-                    dayIndex={dayIndex}
-                    openState={openState}
-                    setOpenState={setOpenState}
-                  />
                 </Collapse>
               )}
               <Collapse
-                in={openState[dayIndex]}
+                in={Boolean(openState[dayIndex])}
                 unmountOnExit
                 sx={{ padding: "10px" }}
               >
-                <Button sx={button} onClick={() => addUnit(day.id, dayIndex)}>
+                <Button
+                  sx={button}
+                  onClick={() => addUnit(dayIndex)}
+                  disabled={error["unitTitle"]}
+                >
                   Add Unit
                 </Button>
               </Collapse>
-            </>
+            </div>
           ))}
         </Grid>
       </Grid>

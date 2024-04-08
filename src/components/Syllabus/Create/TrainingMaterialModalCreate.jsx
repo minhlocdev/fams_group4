@@ -15,24 +15,15 @@ const style = {
 };
 
 export default function TrainingMaterialModalCreate({
+  //trainingUnit content
+  dataUnitId,
   openTraining,
   handleClose,
   dayIndex,
   unitIndex,
   dataUnitIndex,
 }) {
-  const { outline, setOutline } = useContext(SyllabusContext);
-  const handleButtonData = (newTraining) => {
-    const newArray = [...outline];
-    setOutline(() => {
-      const newContent = newArray[dayIndex].content;
-      const newDataUnit = newContent[unitIndex].dataUnit;
-      newDataUnit[dataUnitIndex] = newTraining;
-      return newContent;
-    });
-  };
-  // console.log(unitData);
-
+  const { outline } = useContext(SyllabusContext);
   return (
     <div>
       <Modal
@@ -67,7 +58,7 @@ export default function TrainingMaterialModalCreate({
                 position: "relative",
               }}
             >
-              {`Day  ${outline[dayIndex].id + 1}`}
+              {`Day  ${outline[dayIndex].dayNumber}`}
               <div
                 style={{
                   position: "absolute",
@@ -80,7 +71,7 @@ export default function TrainingMaterialModalCreate({
               </div>
             </div>
             <TrainingMaterialModalContent
-              handleOnChange={handleButtonData}
+              dataUnitId={dataUnitId} // trainingContent
               dayIndex={dayIndex}
               dataUnitIndex={dataUnitIndex}
               unitIndex={unitIndex}

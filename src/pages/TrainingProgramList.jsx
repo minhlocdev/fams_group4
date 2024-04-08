@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, Stack, Typography } from "@mui/material";
-import { InputBoxSearch } from "../components/shared/InputBox/InputBox";
 import { BasicFilterProgrambtn } from "../components/TraningProgramList/FilterButtonProgram";
 import PublishIcon from "@mui/icons-material/Publish";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";

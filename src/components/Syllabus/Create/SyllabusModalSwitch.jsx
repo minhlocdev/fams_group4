@@ -90,7 +90,7 @@ export default function Switch({
         style={isactive ? sliderStyles2 : sliderStyles}
         onClick={() => {
           setActive(!isactive);
-          handleChange("Method", !isactive ? "Offline" : "Online");
+          handleChange("trainingFormat", !isactive ? "Offline" : "Online");
         }}
       >
         {isactive ? (
@@ -99,7 +99,7 @@ export default function Switch({
           <div style={activeTextStyle}>Online</div>
         )}
         <div
-          value={formData.Method}
+          value={formData.trainingFormat}
           className="thumb"
           style={
             isactive
@@ -108,7 +108,7 @@ export default function Switch({
           }
           onClick={() => {
             setActive(!isactive);
-            handleChange("Method", !isactive ? "Offline" : "Online");
+            handleChange("trainingFormat", !isactive ? "Offline" : "Online");
           }}
         ></div>
       </div>

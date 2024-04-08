@@ -14,32 +14,26 @@ import SnippetFolderOutlinedIcon from "@mui/icons-material/SnippetFolderOutlined
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
-import {
-  useDeleteProgramMutation,
-  useGetProgramByIdQuery,
-  useDuplicateProgramMutation,
-} from "../../services/queries/programQuery";
 import queryClient from "../../services/queries/queryClient";
 import { QUERY_PROGRAM_KEY } from "../../constants/query";
 import ToastEmitter from "../shared/lib/ToastEmitter";
+import { useDeleteProgramMutation, usePostDuplicateTrainingMutation, usePutTrainingStatusMutation } from "../../services/queries/trainingQuery";
+import { useGetProgramByIdQuery } from "../../services/queries/programQuery";
+import { Link } from "react-router-dom";
 
 export default function ManageProgram({ item }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(item.status === 1);
   const [id, setId] = useState(null);
   const { data, isSuccess } = useGetProgramByIdQuery(id);
-
+  console.log('item', item)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
-  };
-
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
   };
 
   const handleCloseModal = () => {
@@ -58,10 +52,11 @@ export default function ManageProgram({ item }) {
       console.error(message, description);
     },
   };
-
-  const deleteProgram = useDeleteProgramMutation();
+  const { mutate: putProgramStatus, isSuccess: isSuccessPut } = usePutTrainingStatusMutation(item.id);
+  const { mutate: postDuplicateMutation, isSuccess: isSuccessPost } = usePostDuplicateTrainingMutation();
+  const { mutate: deleteProgramMutation, isSuccess: isSuccessDelete } = useDeleteProgramMutation();
   const handleDeleteProgram = () => {
-    deleteProgram.mutate(item.id, {
+    deleteProgramMutation(item.trainingProgramCode, {
       onSuccess: () => {
         ToastEmitter.success("Delete Program successfully!!!");
         queryClient.invalidateQueries({ queryKey: [QUERY_PROGRAM_KEY] });
@@ -69,15 +64,32 @@ export default function ManageProgram({ item }) {
     });
   };
 
-  const duplicateProgram = useDuplicateProgramMutation();
+
   const handleDuplicateProgram = () => {
-    duplicateProgram.mutate(item.id, {
+    postDuplicateMutation(item.trainingProgramCode, {
       onSuccess: () => {
         ToastEmitter.success("Duplicate Program successfully!!!");
         queryClient.invalidateQueries({ queryKey: [QUERY_PROGRAM_KEY] });
       },
+      onError: () => {
+        ToastEmitter.error("Delete failed!!");
+      },
     });
   };
+  const handleChangeStatus = () => {
+    const sta = item.status === 0 ? 1 : 0
+    putProgramStatus({ id: item.trainingProgramCode, status: sta }, {
+      onSuccess: () => {
+        setIsVisible(!isVisible)
+        ToastEmitter.success("Change status successfully!!!");
+        queryClient.invalidateQueries({ queryKey: [QUERY_PROGRAM_KEY] });
+      },
+      onError: () => {
+        ToastEmitter.error(" Change Status failed!! ");
+      },
+    });
+
+  }
 
   return (
     <div>
@@ -127,12 +139,16 @@ export default function ManageProgram({ item }) {
             Training material
           </MenuItem>
 
-          <MenuItem sx={{ color: "#2C5282" }} onClick={handleClickopen}>
-            <ListItemIcon>
-              <CreateOutlinedIcon sx={{ color: "#285D9A" }} />
-            </ListItemIcon>
-            Edit program
-          </MenuItem>
+          <Link to={`/training/edit/${item.trainingProgramCode}`}>
+            <MenuItem sx={{ color: "#2C5282" }}>
+
+              <ListItemIcon>
+                <CreateOutlinedIcon sx={{ color: "#285D9A" }} />
+              </ListItemIcon>
+
+              Edit program
+            </MenuItem>
+          </Link>
 
           <MenuItem
             sx={{ color: "#2C5282" }}
@@ -146,12 +162,12 @@ export default function ManageProgram({ item }) {
 
           <MenuItem
             onClick={() => {
-              toggleVisibility();
+              handleChangeStatus();
               handleCloseMenu();
             }}
           >
             <Typography variant="inherit">
-              {isVisible ? (
+              {!isVisible ? (
                 <>
                   <ListItemIcon>
                     <VisibilityIcon fontSize="small" />
