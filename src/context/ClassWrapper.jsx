@@ -13,9 +13,16 @@ import {
   usePostClassMutation,
   usePutClassMutation,
 } from "../services/queries/classQuery";
-import { useGetUserQuery } from "../services/queries/userQuery";
+import {
+  useGetAllUserQuery,
+  useGetClassAdminQuery,
+  useGetTrainerQuery,
+} from "../services/queries/userQuery";
 import dayjs from "dayjs";
-import { useGetTrainingProgramByIdQuery } from "../services/queries/trainingQuery";
+import {
+  useGetAllTrainingProgramQuery,
+  useGetTrainingProgramByIdQuery,
+} from "../services/queries/trainingQuery";
 import AuthContext from "../utils/authUtil";
 import ToastEmitter from "../components/shared/lib/ToastEmitter";
 import queryClient from "../services/queries/queryClient";
@@ -27,17 +34,17 @@ export default function ClassWrapper(props) {
   const locate = useLocation();
   const navigate = useNavigate();
   const isCreate = locate.pathname.includes("create");
+  const isDetail = locate.pathname.includes("detail");
   const { loginUser } = useContext(AuthContext);
   const { code } = useParams();
   const { data } = useGetClassByIdQuery(code);
-  const { data: classAdmin } = useGetUserQuery(0, 100, "", "", "", {
-    roleName: "Class Admin",
-  });
-  const { data: trainerData } = useGetUserQuery(0, 100, "", "", "", {
-    roleName: "Trainer",
-  });
-  const { data: fsuContact } = useGetUserQuery(0, 100, "", "", "", {});
-  const [activeStep, setActiveStep] = React.useState(isCreate ? 0 : 1);
+  const { data: classAdmin } = useGetClassAdminQuery(isDetail);
+  const { data: trainerData } = useGetTrainerQuery(isDetail);
+  const { data: fsuContact } = useGetAllUserQuery(isDetail);
+  const { data: allTraining } = useGetAllTrainingProgramQuery(!isDetail);
+  const [activeStep, setActiveStep] = React.useState(
+    isDetail || isCreate ? 0 : 1
+  );
   const [activeTab, setActiveTab] = useState(0);
   const [search, setSearch] = useState(null);
   const [classTitle, setClassTitle] = useState("");
@@ -174,6 +181,7 @@ export default function ClassWrapper(props) {
     trainers,
     attendee,
   ]);
+  console.log(postParams);
   const putParms = useMemo(() => {
     const [from, to] = classTime.split("-");
     const adminID = admin.map((a) => a.id);
@@ -313,20 +321,8 @@ export default function ClassWrapper(props) {
   }, []);
 
   const handleCancel = useCallback(() => {
-    setActiveTab(0);
-    setSearch(null);
-    setClassTitle("");
-    setTrainers([]);
-    setAdmin([]);
-    setFsu({});
-    setContact({});
-    setAttendee({
-      type: "",
-      planned: 0,
-      accepted: 0,
-      actual: 0,
-    });
-  }, []);
+    navigate("/class");
+  }, [navigate]);
 
   const postClass = usePostClassMutation();
   const handleSave = useCallback(() => {
@@ -334,28 +330,71 @@ export default function ClassWrapper(props) {
     // eslint-disable-next-line
   }, [postParams, putParms]);
   const handleCreate = useCallback(() => {
-    console.log(postParams);
     postClass.mutate(postParams, {
       onSuccess: () => {
-        ToastEmitter.success("Create class successfully!!!");
+        ToastEmitter.update(
+          "Create class successfully!!!",
+          "loading",
+          "success"
+        );
         queryClient.invalidateQueries({ queryKey: [QUERY_CLASS_KEY] });
         navigate("/class");
+      },
+      onError: () => {
+        ToastEmitter.update("Create class failed!!", "loading", "error");
       },
     });
     // eslint-disable-next-line
   }, [postParams]);
   const putClass = usePutClassMutation();
   const handleUpdate = useCallback(() => {
-    console.log(putParms);
     putClass.mutate(putParms, {
       onSuccess: () => {
-        ToastEmitter.success("Update class successfully!!!");
+        ToastEmitter.update(
+          "Update class successfully!!!",
+          "loading",
+          "success"
+        );
         queryClient.invalidateQueries({ queryKey: [QUERY_CLASS_KEY] });
         navigate("/class");
+      },
+      onError: () => {
+        ToastEmitter.update("Update class failed!!", "loading", "error");
       },
     });
     // eslint-disable-next-line
   }, [postParams]);
+  const handleDraft = useCallback(() => {
+    console.log(postParams);
+    postClass.mutate(
+      {
+        ...postParams,
+        status: PublishStatusEnum[0],
+      },
+      {
+        onSuccess: () => {
+          ToastEmitter.update(
+            "Create class as draft successfully!!!",
+            "loading",
+            "success"
+          );
+          queryClient.invalidateQueries({ queryKey: [QUERY_CLASS_KEY] });
+          navigate("/class");
+        },
+        onError: () => {
+          ToastEmitter.update(
+            "Create class as draft failed!!",
+            "loading",
+            "error"
+          );
+        },
+      }
+    );
+    // eslint-disable-next-line
+  }, [postParams]);
+  if (putClass.isPending || postClass.isPending) {
+    ToastEmitter.loading("...Loading", "loading");
+  }
   const contextValue = useMemo(
     () => ({
       activeTab,
@@ -400,6 +439,8 @@ export default function ClassWrapper(props) {
       status,
       setStatus,
       handleLocations,
+      allTraining: allTraining?.list,
+      handleDraft,
     }),
     [
       activeTab,
@@ -444,6 +485,8 @@ export default function ClassWrapper(props) {
       status,
       setStatus,
       handleLocations,
+      allTraining,
+      handleDraft,
     ]
   );
 

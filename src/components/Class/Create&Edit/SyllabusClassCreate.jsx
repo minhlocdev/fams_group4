@@ -1,22 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
-import { IconButton, Stack, Typography } from "@mui/material";
+import { IconButton, Stack, Typography, Box } from "@mui/material";
 import SearchTranningProgram from "./SearchTranningProgram";
 import ClassContext from "../../../context/ClassContext";
 import { EditOutlined, WarningAmber } from "@mui/icons-material";
-import { useGetAllTrainingProgramQuery } from "../../../services/queries/trainingQuery";
 import SyllabusCardItem from "../Others/SyllabusCardItem";
 import { InfoTooltip } from "../../shared/lib/CustomMUI";
 export default function SyllabusCardOfClass() {
   const [program, setProgram] = useState([]);
-  const { handleSearch, trainingProgramDetail } = useContext(ClassContext);
-  const { data, isSuccess, isLoading } = useGetAllTrainingProgramQuery();
+  const { handleSearch, trainingProgramDetail, allTraining } =
+    useContext(ClassContext);
   useEffect(() => {
-    if (isSuccess) {
-      const trainingList = [...data.list];
+    if (allTraining) {
+      const trainingList = [...allTraining];
       const filteredTrainingList = trainingList.filter((t) => t.status === 1);
       setProgram(filteredTrainingList);
     }
-  }, [data, isSuccess]);
+  }, [allTraining]);
 
   return (
     <>
@@ -34,16 +33,18 @@ export default function SyllabusCardOfClass() {
         }}
       >
         <Stack
-          direction={"row"}
-          spacing={2}
+          rowGap={1}
+          columnGap={1}
           alignItems={"center"}
-          sx={{ paddingLeft: 2, paddingTop: 2, color: "#FFFFFF" }}
+          sx={{
+            flexDirection: { xs: "column", lg: "row" },
+            padding: 2,
+            color: "#FFFFFF",
+          }}
         >
           {!trainingProgramDetail ? (
             <>
-              <Typography variant="h5" gutterBottom>
-                Training Program Name
-              </Typography>
+              <Typography variant="h5">Training Program Name</Typography>
               <InfoTooltip
                 title={
                   <Typography variant="span">{"Required field"}</Typography>
@@ -51,21 +52,24 @@ export default function SyllabusCardOfClass() {
               >
                 <WarningAmber color="error" />
               </InfoTooltip>
-              <SearchTranningProgram program={program} loading={isLoading} />
+              <SearchTranningProgram program={program} loading={!allTraining} />
             </>
           ) : (
-            <>
+            <Stack direction={"row"} spacing={1}>
               <Typography
                 variant="h4"
                 gutterBottom
-                sx={{ letterSpacing: "5px" }}
+                sx={{
+                  color: "#FFFFFF",
+                  letterSpacing: "5px",
+                }}
               >
                 {trainingProgramDetail?.name}
               </Typography>
               <IconButton color="inherit" onClick={() => handleSearch(null)}>
                 <EditOutlined />
               </IconButton>
-            </>
+            </Stack>
           )}
         </Stack>
         {trainingProgramDetail && (
@@ -74,15 +78,22 @@ export default function SyllabusCardOfClass() {
             spacing={2}
             justifyContent={"flex-start"}
             alignItems={"center"}
-            sx={{ paddingLeft: 2 }}
+            sx={{
+              flexDirection: { xs: "column", lg: "row" },
+              flexWrap: "wrap",
+              paddingLeft: 2,
+            }}
           >
             <Typography variant="body1" sx={{ color: "#FFFFFF" }}>
               Duration: {trainingProgramDetail?.durationByDay} days (
               {trainingProgramDetail?.durationByHour} hours)
             </Typography>
-            <div
-              style={{ borderRight: "1px solid #fff", height: "20px" }}
-            ></div>
+            <Box
+              sx={{
+                borderRight: "1px solid #fff",
+                height: { xs: "0px", lg: "20px" },
+              }}
+            ></Box>
             <Typography variant="body1" sx={{ color: "#FFFFFF" }}>
               Modified on {trainingProgramDetail?.createdDate} by{" "}
               {trainingProgramDetail?.createdBy}
@@ -93,7 +104,7 @@ export default function SyllabusCardOfClass() {
       {trainingProgramDetail && (
         <>
           {trainingProgramDetail.outline.map((data) => (
-            <SyllabusCardItem card={data} key={data.id} />
+            <SyllabusCardItem card={data} key={data.id} isEdit={true} />
           ))}
         </>
       )}

@@ -2,11 +2,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { QUERY_PROGRAM_KEY, QUERY_TRAINER_KEY } from "../../constants/query";
 import { deleteProgram, duplicateProgram, getAllTrainers, getAllTrainningProgram, getTrainningProgramById, postProgram, putProgram, putProgramStatus } from "../TranningProgram";
 
-export const useGetAllTrainingProgramQuery = () =>
+export const useGetAllTrainingProgramQuery = (isChoosing) =>
     useQuery({
         queryKey: [QUERY_PROGRAM_KEY],
         queryFn: () => getAllTrainningProgram().then((res) => res.data),
         staleTime: 20000,
+        enabled: isChoosing
     },
     );
 export const useGetTrainingProgramByIdQuery = (id) =>

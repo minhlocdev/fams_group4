@@ -94,7 +94,14 @@ export default function CreateGeneral() {
         }}
         onClick={() => handleExpandClick()}
       >
-        <Stack direction={"row"} spacing={2} alignItems={"center"}>
+        <Stack
+          direction={"row"}
+          spacing={2}
+          alignItems={"center"}
+          sx={{
+            justifyContent: { xs: "center", md: "flex-start" },
+          }}
+        >
           <CalendarToday fontSize="small" />
           <Typography variant="p" fontWeight={600}>
             General
@@ -130,33 +137,48 @@ export default function CreateGeneral() {
           }}
         >
           {/* time */}
-          <Grid item xs={4} paddingBottom={3} py={1}>
-            <Stack direction={"row"} spacing={2} alignItems={"center"}>
+          <Grid item xs={12} md={4} paddingBottom={3} py={1}>
+            <Stack
+              direction={"row"}
+              spacing={2}
+              alignItems={"center"}
+              sx={{
+                justifyContent: { xs: "center", md: "flex-start" },
+              }}
+            >
               <AccessAlarm fontSize="small" color="primary" />
               <Typography variant="p" fontWeight={600}>
                 Class Time
               </Typography>
             </Stack>
           </Grid>
-          <Grid item xs={8} alignItems={"center"} paddingBottom={3}>
+          <Grid item xs={12} md={8} alignItems={"center"} paddingBottom={3}>
             <TimeToTime classTime={classTime} setTimeRange={setClassTime} />
           </Grid>
           {/* location */}
-          <Grid item xs={4} paddingTop={1}>
-            <Stack direction={"row"} spacing={2} alignItems={"center"}>
+          <Grid item xs={12} md={4} paddingTop={1}>
+            <Stack
+              direction={"row"}
+              spacing={2}
+              alignItems={"center"}
+              sx={{
+                justifyContent: { xs: "center", md: "flex-start" },
+              }}
+            >
               <HomeWorkOutlined fontSize="small" color="primary" />
               <Typography variant="p" fontWeight={600}>
                 Location
               </Typography>
             </Stack>
           </Grid>
-          <Grid item xs={8} paddingBottom={2}>
-            <FormControl sx={{ width: "100%" }} size="small">
+          <Grid item xs={12} md={8} paddingBottom={2}>
+            <FormControl fullWidth size="small">
               <InputLabel id="location">Location</InputLabel>
               <Select
                 labelId="location"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
+                inputProps={{ MenuProps: { disableScrollLock: true } }}
               >
                 <MenuItem value={"Ho Chi Minh"}>Ho Chi Minh</MenuItem>
                 <MenuItem value={"Ha Noi"}>Ha Noi</MenuItem>
@@ -168,15 +190,28 @@ export default function CreateGeneral() {
           </Grid>
           {getCampus(trainers).map((tr, index) => (
             <React.Fragment key={index}>
-              <Grid item xs={4} paddingTop={1}></Grid>
-              <Grid item xs={8} paddingBottom={1}>
+              <Grid item xs={12} md={4} paddingTop={1}></Grid>
+              <Grid item xs={12} md={8} paddingBottom={1}>
                 <Typography variant="span">{tr}</Typography>
               </Grid>
             </React.Fragment>
           ))}
           {/* trainer */}
-          <Grid item xs={4} paddingBottom={1} sx={{ color: theme.unmodified }}>
-            <Stack direction={"row"} spacing={2} alignItems={"center"}>
+          <Grid
+            item
+            xs={12}
+            md={4}
+            paddingBottom={1}
+            sx={{ color: theme.unmodified }}
+          >
+            <Stack
+              direction={"row"}
+              spacing={2}
+              alignItems={"center"}
+              sx={{
+                justifyContent: { xs: "center", md: "flex-start" },
+              }}
+            >
               <RecordVoiceOverOutlined fontSize="small" />
               <Typography variant="p" fontWeight={600}>
                 Trainer
@@ -187,13 +222,13 @@ export default function CreateGeneral() {
             <React.Fragment key={index}>
               {index !== 0 ? (
                 <>
-                  <Grid item xs={4} paddingTop={1}></Grid>
-                  <Grid item xs={8} paddingBottom={1}>
+                  <Grid item xs={12} md={4} paddingTop={1}></Grid>
+                  <Grid item xs={12} md={8} paddingBottom={1}>
                     <Typography variant="span">{tr.name}</Typography>
                   </Grid>
                 </>
               ) : (
-                <Grid item xs={8} paddingBottom={1}>
+                <Grid item xs={12} md={8} paddingBottom={1}>
                   <Typography variant="span">{tr.name}</Typography>
                 </Grid>
               )}
@@ -201,18 +236,25 @@ export default function CreateGeneral() {
           ))}
 
           {getTrainers(trainers).length === 0 && (
-            <Grid item xs={8} paddingBottom={3}></Grid>
+            <Grid item xs={12} md={8} paddingBottom={3}></Grid>
           )}
           {/* admin */}
-          <Grid item xs={4} paddingBottom={3} paddingTop={2}>
-            <Stack direction={"row"} spacing={2} alignItems={"center"}>
+          <Grid item xs={12} md={4} paddingBottom={3} paddingTop={2}>
+            <Stack
+              direction={"row"}
+              spacing={2}
+              alignItems={"center"}
+              sx={{
+                justifyContent: { xs: "center", md: "flex-start" },
+              }}
+            >
               <StarBorderOutlined fontSize="small" color="primary" />
               <Typography variant="p" fontWeight={600}>
                 Admin
               </Typography>
             </Stack>
           </Grid>
-          <Grid item xs={8} paddingBottom={2} paddingTop={2}>
+          <Grid item xs={12} md={8} paddingBottom={2} paddingTop={2}>
             {!classAdmin ? (
               <Skeleton variant="rectangle" width={300} height={30} />
             ) : (
@@ -256,6 +298,7 @@ export default function CreateGeneral() {
                     value={admin}
                     labelId="admin"
                     onChange={(e) => handleAdmin(e.target.value)}
+                    inputProps={{ MenuProps: { disableScrollLock: true } }}
                     multiple
                   >
                     {classAdmin.map((a) => (
@@ -269,21 +312,29 @@ export default function CreateGeneral() {
             )}
           </Grid>
           {/* FSU */}
-          <Grid item xs={4} paddingTop={1}>
-            <Stack direction={"row"} spacing={2} alignItems={"center"}>
+          <Grid item xs={12} md={4} paddingTop={1}>
+            <Stack
+              direction={"row"}
+              spacing={2}
+              alignItems={"center"}
+              sx={{
+                justifyContent: { xs: "center", md: "flex-start" },
+              }}
+            >
               <StarsOutlined fontSize="small" color="primary" />
               <Typography variant="p" fontWeight={600}>
                 FSU
               </Typography>
             </Stack>
           </Grid>
-          <Grid item xs={8} paddingBottom={2}>
+          <Grid item xs={12} md={8} paddingBottom={2}>
             <FormControl sx={{ width: "100%" }} size="small">
               <InputLabel id="fsu">FSU</InputLabel>
               <Select
                 labelId="fsu"
                 value={fsu}
                 onChange={(e) => handleFsu(e.target.value)}
+                inputProps={{ MenuProps: { disableScrollLock: true } }}
               >
                 <MenuItem value={"FHU"}>FHU</MenuItem>
                 <MenuItem value={"FHM"}>FHM</MenuItem>
@@ -291,8 +342,8 @@ export default function CreateGeneral() {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={4}></Grid>
-          <Grid item xs={8} paddingBottom={3}>
+          <Grid item xs={12} md={4}></Grid>
+          <Grid item xs={12} md={8} paddingBottom={3}>
             {!fsuContact ? (
               <Skeleton variant="rectangle" width={300} height={30} />
             ) : (
@@ -303,6 +354,7 @@ export default function CreateGeneral() {
                   value={contact}
                   onChange={(e) => handleContact(e.target.value)}
                   MenuProps={{ sx: { maxHeight: "300px" } }}
+                  inputProps={{ MenuProps: { disableScrollLock: true } }}
                 >
                   {fsuContact.list.map((contact) => (
                     <MenuItem value={contact.email} key={contact.id}>
@@ -314,52 +366,67 @@ export default function CreateGeneral() {
             )}
           </Grid>
 
-          <Grid item xs={12} paddingBottom={3}>
+          <Grid item xs={12} md={12} paddingBottom={3}>
             <Divider />
           </Grid>
           {/* create */}
           <Grid
             item
-            xs={4}
+            xs={12}
+            md={4}
             paddingBottom={3}
-            textAlign={"left"}
-            sx={{ color: theme.unmodified }}
+            sx={{
+              color: theme.unmodified,
+              textAlign: { xs: "center", md: "left" },
+            }}
           >
             <Typography variant="p" fontWeight={600}>
               Created
             </Typography>
           </Grid>
-          <Grid item xs={8} paddingBottom={3} sx={{ color: theme.unmodified }}>
+          <Grid
+            item
+            xs={12}
+            md={8}
+            paddingBottom={3}
+            sx={{ color: theme.unmodified }}
+          >
             {mode && `${classData?.createdBy} on ${classData?.createdDate}`}
           </Grid>
           {/* review */}
           <Grid
             item
-            xs={4}
+            xs={12}
+            md={4}
             paddingBottom={3}
-            textAlign={"left"}
-            sx={{ color: theme.unmodified }}
+            sx={{
+              color: theme.unmodified,
+              textAlign: { xs: "center", md: "left" },
+            }}
           >
             <Typography variant="p" fontWeight={600}>
               Review
             </Typography>
           </Grid>
-          <Grid item xs={8} paddingBottom={3}>
+          <Grid item xs={12} md={8} paddingBottom={3}>
             {mode && `${classData?.modifiedBy} on ${classData?.modifiedDate}`}
           </Grid>
           {/* approve */}
           <Grid
             item
-            xs={4}
+            xs={12}
+            md={4}
             paddingBottom={3}
-            textAlign={"left"}
-            sx={{ color: theme.unmodified }}
+            sx={{
+              color: theme.unmodified,
+              textAlign: { xs: "center", md: "left" },
+            }}
           >
             <Typography variant="p" fontWeight={600}>
               Approve
             </Typography>
           </Grid>
-          <Grid item xs={8} paddingBottom={3}>
+          <Grid item xs={12} md={8} paddingBottom={3}>
             {mode && `${classData?.modifiedBy} on ${classData?.modifiedDate}`}
           </Grid>
         </Grid>

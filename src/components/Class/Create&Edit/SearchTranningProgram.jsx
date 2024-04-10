@@ -13,84 +13,80 @@ export default function SearchTranningProgram(probs) {
 
   return (
     <>
-    {program && (
-    <Autocomplete
-      id="asynchronous-demo"
-      sx={{ width: 400, marginTop: 2, marginLeft: 4, marginRight: 4 }}
-      fullWidth
-      open={open}
-      onOpen={() => {
-        setOpen(true);
-      }}
-      onClose={() => {
-        setOpen(false);
-      }}
-      isOptionEqualToValue={(option, value) => option.name === value.name}
-      onChange={(event, newValue) => handleSearch(newValue)}
-      getOptionLabel={(option) => option.name}
-      options={program}
-      loading={loading}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          sx={{
-            width: "400px",
-            backgroundColor: "#FFFFFF",
-            borderRadius: 2,
+      {program && (
+        <Autocomplete
+          id="asynchronous-demo"
+          sx={{ width: "70%" }}
+          fullWidth
+          open={open}
+          onOpen={() => {
+            setOpen(true);
           }}
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <React.Fragment>
-                {loading ? (
-                  <CircularProgress color="inherit" size={20} />
-                ) : null}
-                {params.InputProps.endAdornment}
-              </React.Fragment>
-            ),
-            startAdornment: <SearchOutlined />,
+          onClose={() => {
+            setOpen(false);
+          }}
+          isOptionEqualToValue={(option, value) => option.name === value.name}
+          onChange={(event, newValue) => handleSearch(newValue)}
+          getOptionLabel={(option) => option.name}
+          options={program}
+          loading={loading}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              sx={{
+                width: { xs: "100%", lg: "400px" },
+                backgroundColor: "#FFFFFF",
+                borderRadius: 2,
+              }}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <React.Fragment>
+                    {loading ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : null}
+                    {params.InputProps.endAdornment}
+                  </React.Fragment>
+                ),
+                startAdornment: <SearchOutlined />,
+              }}
+            />
+          )}
+          renderOption={(props, option) => {
+            return (
+              <div
+                {...props}
+                style={{
+                  padding: "10px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
+                <Typography variant="p" sx={{}} fontWeight={600}>
+                  {option.name}
+                </Typography>
+                <Stack
+                  justifyContent={"space-between"}
+                  spacing={1}
+                  sx={{
+                    direction: { xs: "column", md: "row" },
+                    fontStyle: "italic",
+                    fontSize: "12px",
+                  }}
+                >
+                  <Typography variant="span" sx={{}}>
+                    {option.durationByDay} days ({option.durationByHour} hours)
+                  </Typography>
+                  <Typography variant="span" sx={{}}>
+                    {option.createdDate} by:{option.createdBy}
+                  </Typography>
+                </Stack>
+              </div>
+            );
           }}
         />
       )}
-      renderOption={(props, option) => {
-        return (
-          <div
-            {...props}
-            style={{
-              padding: "10px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-            }}
-          >
-            <Typography variant="p" sx={{}} fontWeight={600}>
-              {option.name}
-            </Typography>
-            <Stack
-              direction={"row"}
-              justifyContent={"space-between"}
-              spacing={1}
-              sx={{
-                fontStyle: "italic",
-                fontSize: "12px",
-              }}
-            >
-              <Typography variant="span" sx={{}}>
-                {option.durationByDay} days ({option.durationByHour} hours)
-              </Typography>
-              <Typography variant="span" sx={{}}>
-                {option.createdDate}
-              </Typography>
-
-              <Typography variant="span" sx={{}}>
-                by:{option.createdBy}
-              </Typography>
-            </Stack>
-          </div>
-        );
-      }}
-    />
-    )}
-  </>
+    </>
   );
 }

@@ -17,6 +17,7 @@ export default function HeaderSkeleton() {
         sx={{
           wordSpacing: "5px",
           letterSpacing: "5px",
+          textAlign: { xs: "center", md: "left" },
         }}
       >
         Class

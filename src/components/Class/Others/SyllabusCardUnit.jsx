@@ -23,7 +23,7 @@ import {
 } from "@mui/icons-material";
 import ClassContext from "../../../context/ClassContext";
 
-export default function SyllabusCardUnit({ unit, syllabusId }) {
+export default function SyllabusCardUnit({ unit, syllabusId, isEdit }) {
   const { trainerData, trainers, handleTrainers, handleLocations } =
     useContext(ClassContext);
   const location = trainers.find(
@@ -121,21 +121,27 @@ export default function SyllabusCardUnit({ unit, syllabusId }) {
               trainers.map(
                 (tr) =>
                   tr.unitCode === unit.unitCode && (
-                    <Avatar
-                      key={tr.id}
-                      src={tr.avatarUrl}
-                      onClick={handleClick}
-                      sx={{ cursor: "pointer" }}
-                    />
+                    <>
+                      <Avatar
+                        key={tr.id}
+                        src={tr.avatarUrl}
+                        onClick={handleClick}
+                        sx={{ cursor: "pointer" }}
+                      />
+                      <Typography variant="span" fontSize={"10px"}>
+                        {tr.name}
+                      </Typography>
+                    </>
                   )
               )
             )}
-
             <Divider variant="inset" flexItem />
             {/* location */}
             <Select
+              disabled={!isEdit}
               value={location}
               onChange={(e) =>
+                isEdit &&
                 handleLocations(unit.unitCode, e.target.value, syllabusId)
               }
               size="small"
@@ -162,7 +168,7 @@ export default function SyllabusCardUnit({ unit, syllabusId }) {
               "aria-labelledby": "long-button",
             }}
             anchorEl={anchorEl}
-            open={open}
+            open={isEdit && open}
             onClose={handleClose}
             sx={{
               maxHeight: "400px",

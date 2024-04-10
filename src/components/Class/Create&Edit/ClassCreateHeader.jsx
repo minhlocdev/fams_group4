@@ -1,18 +1,9 @@
-import {
-  Box,
-  IconButton,
-  Menu,
-  MenuItem,
-  Stack,
-  Typography,
-} from "@mui/material";
-import React, { useContext, useState } from "react";
+import { Box, Stack, Typography } from "@mui/material";
+import React, { useContext } from "react";
 import theme from "../../../assets/theme";
 import {
   BackHandOutlined,
   BookOutlined,
-  EditOutlined,
-  MoreHoriz,
   RecordVoiceOverOutlined,
   SettingsInputAntennaRounded,
   SpellcheckOutlined,
@@ -34,17 +25,9 @@ export default function ClassCreateHeader() {
     initialDays,
     classData,
   } = useContext(ClassContext);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
   if (!classData && !isCreate) {
     return <HeaderSkeleton />;
   }
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   return (
     <>
       <Box
@@ -61,17 +44,25 @@ export default function ClassCreateHeader() {
           sx={{
             wordSpacing: "5px",
             letterSpacing: "5px",
+            textAlign: { xs: "center", md: "left" },
           }}
         >
           Class
         </Typography>
-        <Stack direction={"row"} alignItems={"flex-start"}>
+        <Stack
+          spacing={1}
+          sx={{
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: { xs: "center", md: "flex-start" },
+            textAlign: { xs: "center", md: "left" },
+          }}
+        >
           <Typography
             variant={"h4"}
             sx={{
-              wordSpacing: "5px",
-              letterSpacing: "5px",
-              fontWeight: "600",
+              wordSpacing: { md: "5px" },
+              letterSpacing: { md: "5px" },
+              fontWeight: { md: "600" },
             }}
           >
             <ContentEditable
@@ -90,55 +81,34 @@ export default function ClassCreateHeader() {
               border: "1px solid #fff",
               padding: "3px 10px",
               marginLeft: "5px",
+              fontSize: "12px",
             }}
           >
             Planning
           </Typography>
-          {!isCreate && (
-            <>
-              <IconButton
-                size="large"
-                color="inherit"
-                children={<MoreHoriz />}
-                sx={{ marginLeft: "auto" }}
-                id="basic-button"
-                aria-controls={open ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                onClick={handleClick}
-              ></IconButton>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                <MenuItem onClick={handleClose} disableRipple>
-                  <EditOutlined />
-                  Edit
-                </MenuItem>
-              </Menu>
-            </>
-          )}
         </Stack>
-        <ContentEditable
-          value={classCode}
-          onChange={(updatedContent) => {
-            setClassCode(updatedContent);
-          }}
-          tooltipTitle="Enter class code"
-        />
-        <div
-          style={{
+        <Box sx={{ marginTop: { xs: "10px", md: "0" } }}>
+          <ContentEditable
+            value={classCode}
+            onChange={(updatedContent) => {
+              setClassCode(updatedContent);
+            }}
+            tooltipTitle="Enter class code"
+          />
+        </Box>
+        <Box
+          sx={{
             borderBottom: "1px solid white",
-            width: "38%",
+            width: { xs: "100%", lg: "38%" },
             margin: "10px 0",
           }}
-        ></div>
-        <Stack direction={"row"} spacing={1} alignItems={"center"}>
+        ></Box>
+        <Stack
+          direction={"row"}
+          spacing={1}
+          alignItems={"center"}
+          sx={{ flexWrap: "wrap" }}
+        >
           <Typography variant={"span"} sx={{ fontSize: "18px" }}>
             {initialDays.length + 1 || "--"}
           </Typography>

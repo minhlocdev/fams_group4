@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { styled } from "@mui/system";
 import SortIcon from "@mui/icons-material/Sort";
@@ -49,7 +48,7 @@ function EnhancedTableHead(props) {
           sx={{ backgroundColor: "#2D3748", cursor: "pointer" }}
           align="right"
           onClick={() => {
-            navigate("/training-programs");
+            navigate("/training/list");
           }}
         >
           <InfoTooltip title={"Reset sort"}>

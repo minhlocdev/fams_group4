@@ -1,3 +1,4 @@
+"use client";
 import { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { privateRoute, publicRoute } from "./routers/routes";
@@ -6,8 +7,13 @@ import { createTheme } from "@mui/material/styles";
 import BackdropLoader from "./components/shared/loader/BackdropLoader";
 import { ToastContainer } from "react-toastify";
 import AppContainer from "./components/shared/layout/AppContainer";
+import { ErrorBoundary } from "react-error-boundary";
+import { useQueryErrorResetBoundary } from '@tanstack/react-query';
+import ErrorFallback from "./components/shared/loader/ErrorFallback";
 const theme = createTheme();
 function App() {
+
+  const { reset } = useQueryErrorResetBoundary();
   return (
     <ThemeProvider theme={theme}>
       <Routes>
@@ -18,7 +24,14 @@ function App() {
           {privateRoute.map((route) => (
             <Route key={route.path} path={route.path} element={
               <Suspense fallback={<BackdropLoader />}>
-                {route.element}
+                <ErrorBoundary
+                  onReset={reset}
+                  fallbackRender={({ resetErrorBoundary }) => (
+                    <ErrorFallback resetErrorBoundary={resetErrorBoundary} />
+                  )}
+                >
+                  {route.element}
+                </ErrorBoundary>
               </Suspense>
             } />
           ))}

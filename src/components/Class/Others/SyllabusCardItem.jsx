@@ -15,10 +15,10 @@ import SyllabusCardDay from "./SyllabusCardDay";
 import ClassContext from "../../../context/ClassContext";
 export default function SyllabusCardItem({ card, isEdit }) {
   const { data } = useGetSyllabusOutlineQuery(card.id);
-  const { trainers } = useContext(ClassContext);
+  const { trainers, activeStep } = useContext(ClassContext);
   const [expanded, setExpanded] = React.useState(false);
   const handleExpandClick = () => {
-    isEdit && setExpanded(!expanded);
+    activeStep !== 1 && setExpanded(!expanded);
   };
   const getTrainers = (array) => {
     const unique = array.reduce((accumulator, current) => {
@@ -40,23 +40,26 @@ export default function SyllabusCardItem({ card, isEdit }) {
         container
         key={card.id}
         sx={{
+          flexDirection: { xs: "column", lg: "row" },
           marginTop: "20px",
         }}
       >
         <Grid
           item
           sx={{
-            maxWidth: expanded && "0px !important",
             transition: "max-width 0.5s ease",
             backgroundColor: theme.primary,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "10px 0",
             borderTopLeftRadius: "20px",
-            borderBottomLeftRadius: !isEdit ? "20px" : "0px",
+            borderBottomLeftRadius: "20px",
+            borderBottomRightRadius: { xs: "20px", lg: "0" },
+            borderTopRightRadius: { xs: "20px", lg: "0" },
+            padding: "10px 0",
           }}
-          xs={2}
+          xs={12}
+          lg={!expanded ? 2 : "auto"}
         >
           {trainers.length !== 0 ? (
             <Stack direction={"row"} spacing={1}>
@@ -90,7 +93,8 @@ export default function SyllabusCardItem({ card, isEdit }) {
         </Grid>
         <Grid
           item
-          xs={expanded ? 12 : 10}
+          xs={12}
+          lg={expanded ? 12 : 10}
           sx={{ transition: "max-width 0.5s ease" }}
           onClick={() => handleExpandClick()}
         >
@@ -172,6 +176,7 @@ export default function SyllabusCardItem({ card, isEdit }) {
                   key={day.dayNumber}
                   day={day}
                   syllabusId={card.id}
+                  isEdit={isEdit}
                 />
               ))}
           </Collapse>

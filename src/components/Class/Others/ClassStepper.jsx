@@ -10,8 +10,14 @@ import ClassTitle from "../Create&Edit/ClassTitle";
 
 export default function ClassStepper() {
   const theme = useTheme();
-  const { activeStep, setActiveStep, fieldValidation, handleSave } =
-    useContext(ClassContext);
+  const {
+    activeStep,
+    setActiveStep,
+    fieldValidation,
+    handleSave,
+    handleCancel,
+    handleDraft,
+  } = useContext(ClassContext);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -57,12 +63,12 @@ export default function ClassStepper() {
                   textDecoration: "underline",
                   fontWeight: "bold",
                 }}
-                //   onClick={() => handleCancel()}
+                onClick={() => handleCancel()}
               >
                 Cancel
               </Button>
               <Button
-                //   onClick={handleDraftButton}
+                onClick={handleDraft}
                 sx={{
                   color: "white",
                   backgroundColor: "#474747",
@@ -76,7 +82,7 @@ export default function ClassStepper() {
                 onClick={() => {
                   activeStep !== 3 - 1 ? handleNext() : handleSave();
                 }}
-                disabled={handleValidateField()}
+                disabled={handleValidateField() && activeStep === 2}
               >
                 {activeStep === 2 ? "Save" : "Next"}
                 {theme.direction === "rtl" ? (

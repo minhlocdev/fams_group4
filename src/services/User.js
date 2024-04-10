@@ -19,6 +19,41 @@ export const getUser = async (page, limit, orderBy, order, debouncedSearchTerm, 
         url: `/users?${queryString}`,
     });
 };
+export const getAllUser = async () => {
+    const params = {
+        pageNumber: 1,
+        pageSize: 100,
+    };
+    const queryString = paramsToString(params)
+    return await apiClient({
+        method: 'get',
+        url: `/users?${queryString}`,
+    });
+};
+export const getClassAdmin = async () => {
+    const params = {
+        pageNumber: 1,
+        pageSize: 100,
+        roleName: "Class Admin"
+    };
+    const queryString = paramsToString(params)
+    return await apiClient({
+        method: 'get',
+        url: `/users?${queryString}`,
+    });
+};
+export const getTrainer = async () => {
+    const params = {
+        pageNumber: 1,
+        pageSize: 100,
+        roleName: "Trainer"
+    };
+    const queryString = paramsToString(params)
+    return await apiClient({
+        method: 'get',
+        url: `/users?${queryString}`,
+    });
+};
 export const getUserByID = async (id) => {
     return await apiClient({
         method: 'get',

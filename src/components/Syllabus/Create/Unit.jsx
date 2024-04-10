@@ -50,7 +50,7 @@ export default function Unit({
     e.preventDefault();
     const tempArray = [...outline];
     let tempContent = tempArray[dayIndex].trainingUnits;
-    handleFieldValidation(`unitTitle`, title);
+    handleFieldValidation(`unitTitle`, title.trim());
     if (title !== "") {
       tempContent[unitIndex].unitName = title;
       setOutline(tempArray);
@@ -60,7 +60,7 @@ export default function Unit({
     e.preventDefault();
     const tempArray = [...outline];
     tempArray[dayIndex].trainingUnits[unitIndex].unitName = e.target.value;
-    handleFieldValidation("unitTitle", unit.unitName);
+    handleFieldValidation("unitTitle", unit.unitName.trim());
     setOutline(tempArray);
   };
   const checkKeyDownRename = (e) => {
@@ -169,7 +169,7 @@ export default function Unit({
                   error={error["unitTitle"]}
                   sx={textField}
                   value={title}
-                  onChange={(e) => setTitle(e.target.value.trim())}
+                  onChange={(e) => setTitle(e.target.value)}
                   name="unitName"
                 />
                 <Button

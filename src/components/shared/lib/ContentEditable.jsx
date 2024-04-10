@@ -25,7 +25,13 @@ export default function ContentEditable(props) {
   }, [props.value]);
 
   return (
-    <Stack direction={"row"} spacing={1}>
+    <Stack
+      direction={"row"}
+      spacing={1}
+      sx={{
+        justifyContent: { xs: "center", md: "flex-start" },
+      }}
+    >
       <div
         style={{
           minWidth: "100px",

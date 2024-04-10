@@ -21,6 +21,7 @@ import { InfoTooltip, ExpandMore } from "../../shared/lib/CustomMUI";
 import ClassContext from "../../../context/ClassContext";
 import GeneralSkeleton from "../ClassSkeleton/GeneralSkeleton";
 
+const MAX_TRAINERS_TO_DISPLAY = 3;
 export default function General() {
   const { classData } = useContext(ClassContext);
   const [expanded, setExpanded] = React.useState(true);
@@ -144,39 +145,49 @@ export default function General() {
           </Grid>
           <Grid item xs={8} paddingBottom={3}>
             <Stack spacing={2}>
-              {getTrainers(infoTrainers).map((trainer, index) => (
-                <Typography
-                  key={index}
-                  variant="span"
-                  sx={{ textDecoration: "underline", color: "#285D9A" }}
-                >
-                  {trainer.name}
-                  <InfoTooltip
-                    title={
-                      <List>
-                        <ListItem sx={{ padding: "0" }}>
-                          <PhoneInTalk color="primary" />
-                          <Typography variant="p" p={1} fontSize={"14px"}>
-                            {trainer.phone}
-                          </Typography>
-                        </ListItem>
-                        <ListItem sx={{ padding: "0" }}>
-                          <MailOutline color="primary" />
-                          <Typography variant="p" p={1} fontSize={"14px"}>
-                            {trainer.email}
-                          </Typography>
-                        </ListItem>
-                      </List>
-                    }
-                  >
-                    <Info
-                      color="success"
-                      fontSize="10px"
-                      sx={{ cursor: "pointer" }}
-                    />
-                  </InfoTooltip>
+              {getTrainers(infoTrainers)
+                .slice(0, MAX_TRAINERS_TO_DISPLAY)
+                .map((trainer, index) => (
+                  <>
+                    <Typography
+                      key={index}
+                      variant="span"
+                      sx={{ textDecoration: "underline", color: "#285D9A" }}
+                    >
+                      {trainer.name}
+                      <InfoTooltip
+                        title={
+                          <List>
+                            <ListItem sx={{ padding: "0" }}>
+                              <PhoneInTalk color="primary" />
+                              <Typography variant="p" p={1} fontSize={"14px"}>
+                                {trainer.phone}
+                              </Typography>
+                            </ListItem>
+                            <ListItem sx={{ padding: "0" }}>
+                              <MailOutline color="primary" />
+                              <Typography variant="p" p={1} fontSize={"14px"}>
+                                {trainer.email}
+                              </Typography>
+                            </ListItem>
+                          </List>
+                        }
+                      >
+                        <Info
+                          color="success"
+                          fontSize="10px"
+                          sx={{ cursor: "pointer" }}
+                        />
+                      </InfoTooltip>
+                    </Typography>
+                  </>
+                ))}
+              {getTrainers(infoTrainers).length > MAX_TRAINERS_TO_DISPLAY && (
+                <Typography key="more" variant="span" sx={{ color: "#285D9A" }}>
+                  +{getTrainers(infoTrainers).length - MAX_TRAINERS_TO_DISPLAY}{" "}
+                  more
                 </Typography>
-              ))}
+              )}
             </Stack>
           </Grid>
           {/* admin */}
@@ -190,8 +201,9 @@ export default function General() {
           </Grid>
           <Grid item xs={8} paddingBottom={3}>
             <Stack spacing={2}>
-              {infoAdmins.map((admin) => (
+              {infoAdmins.map((admin, index) => (
                 <Typography
+                  key={index}
                   variant="span"
                   sx={{ textDecoration: "underline", color: "#285D9A" }}
                 >
@@ -202,7 +214,7 @@ export default function General() {
                         <ListItem sx={{ padding: "0" }}>
                           <PhoneInTalk color="primary" />
                           <Typography variant="p" p={1} fontSize={"14px"}>
-                            {admin.phoneNumber}
+                            {admin.phone}
                           </Typography>
                         </ListItem>
                         <ListItem sx={{ padding: "0" }}>

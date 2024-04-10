@@ -3,7 +3,7 @@ import theme from "../../../assets/theme";
 import { Box, Collapse, Paper } from "@mui/material";
 import SyllabusCardUnit from "./SyllabusCardUnit";
 
-export default function SyllabusCardDay({ day, syllabusId }) {
+export default function SyllabusCardDay({ day, syllabusId, isEdit }) {
   const [expanded, setExpanded] = React.useState(false);
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -29,6 +29,7 @@ export default function SyllabusCardDay({ day, syllabusId }) {
               unit={unit}
               key={unit.unitCode}
               syllabusId={syllabusId}
+              isEdit={isEdit}
             />
           ))}
         </Paper>

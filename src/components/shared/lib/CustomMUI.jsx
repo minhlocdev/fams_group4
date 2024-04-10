@@ -117,10 +117,10 @@ const StyledInput = styled("input")(
   border: 1px solid ${grey[200]};
   box-shadow: 0px 2px 4px ${"rgba(0,0,0, 0.05)"};
   border-radius: 8px;
-  margin: 0 8px;
-  padding: 10px 12px;
+  margin: 0 3px;
+  padding: 5px 5px;
   outline: 0;
-  min-width: 0;
+  min-width: 45px;
   width: 4rem;
   text-align: center;
 
@@ -173,6 +173,9 @@ const StyledButton = styled("button")(
 
   &.increment {
     order: 1;
+  }
+   @media (max-width: ${theme.breakpoints.values.lg}px) {
+    display: none;
   }
 `
 );

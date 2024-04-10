@@ -57,6 +57,7 @@ export default function CreateTimeFrame() {
             : theme.primary,
           color: "#fff",
           px: "15px",
+          py: { xs: "5px", lg: "0" },
           borderRadius: "10px",
           transition: "background-color .3s linear",
           marginBottom: "5px",
@@ -64,60 +65,80 @@ export default function CreateTimeFrame() {
         onClick={handleExpandClick}
       >
         <Stack
-          direction={"row"}
-          spacing={2}
           alignItems={"center"}
+          rowGap={1}
+          sx={{
+            flexDirection: { xs: "column", lg: "row" },
+            flex: "1 1 0",
+          }}
           onClick={(e) => e.stopPropagation()}
         >
-          <CalendarToday fontSize="small" />
-          <Typography variant="p" fontWeight={600}>
-            Time Frame
-          </Typography>
-
-          <Stack direction={"row"} spacing={1} sx={{ alignItems: "center" }}>
-            <Typography variant="span" fontWeight={"light"} fontSize={"14px"}>
-              Start date
+          <Stack spacing={2} alignItems={"center"} direction={"row"}>
+            <CalendarToday fontSize="small" />
+            <Typography variant="p" fontWeight={600} mx={1} paddingRight={2}>
+              Time Frame
             </Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={startDate}
-                onChange={(newValue) => {
-                  setStartDate(newValue);
-                  setInitialDays([]);
-                }}
-                inputFormat="DD-MM-yyyy"
-                views={["year", "month", "day"]}
-                slotProps={{ textField: { helperText: "" } }}
-                sx={{
-                  backgroundColor: "white",
-                  border: "unset",
-                  borderRadius: "5px",
+          </Stack>
 
-                  "& .MuiInputBase-root ": {
-                    width: "120px",
-                    overflow: "hidden",
-                    padding: "0 10px",
-                  },
-                  "& .MuiInputBase-input ": {
-                    padding: "5px 0",
-                    fontSize: "12px",
-                    "&::placeholder": {
-                      fontSize: "12px",
+          <Stack
+            rowGap={1}
+            sx={{
+              flexDirection: { xs: "column", lg: "row" },
+              alignItems: "center",
+            }}
+          >
+            <Stack
+              direction={"row"}
+              spacing={1}
+              sx={{ alignItems: "center" }}
+              paddingRight={2}
+            >
+              <Typography variant="span" fontWeight={"light"} fontSize={"14px"}>
+                Start date
+              </Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={startDate}
+                  onChange={(newValue) => {
+                    setStartDate(newValue);
+                    setInitialDays([]);
+                  }}
+                  inputFormat="DD-MM-yyyy"
+                  views={["year", "month", "day"]}
+                  slotProps={{ textField: { helperText: "" } }}
+                  sx={{
+                    backgroundColor: "white",
+                    border: "unset",
+                    borderRadius: "5px",
+
+                    "& .MuiInputBase-root ": {
+                      width: "120px",
+                      overflow: "hidden",
+                      padding: "0 10px",
                     },
-                  },
-                  "& .MuiButtonBase-root": {
-                    margin: "0",
-                    padding: "0",
-                  },
-                }}
-              />
-              {(StartDate || InitialDays) && (
-                <InfoTooltip
-                  title={<Typography variant="span">Choose dates</Typography>}
-                >
-                  <WarningAmber color="error" />
-                </InfoTooltip>
-              )}
+                    "& .MuiInputBase-input ": {
+                      padding: "5px 0",
+                      fontSize: "12px",
+                      "&::placeholder": {
+                        fontSize: "12px",
+                      },
+                    },
+                    "& .MuiButtonBase-root": {
+                      margin: "0",
+                      padding: "0",
+                    },
+                  }}
+                />
+                {(StartDate || InitialDays) && (
+                  <InfoTooltip
+                    title={<Typography variant="span">Choose dates</Typography>}
+                  >
+                    <WarningAmber color="error" />
+                  </InfoTooltip>
+                )}
+              </LocalizationProvider>
+            </Stack>
+            <Stack direction={"row"} spacing={1} sx={{ alignItems: "center" }}>
               <Button
                 sx={{
                   color: "#fff",
@@ -134,7 +155,7 @@ export default function CreateTimeFrame() {
                 Reset
               </Button>
               <TimeFrameOptions startDate={startDate} />
-            </LocalizationProvider>
+            </Stack>
           </Stack>
         </Stack>
         <ExpandMore
@@ -166,6 +187,18 @@ export default function CreateTimeFrame() {
               },
               month: {
                 margin: "0 auto",
+              },
+              caption_label: {
+                borderBottom: ".5px solid #ddd",
+                padding: "0  50px 15px",
+                textAlign: "center",
+                display: "inline-block",
+                fontSize: "16px",
+              },
+              cell: {
+                height: { lg: "40px" },
+                padding: { lg: "5px" },
+                fontSize: { lg: "13px" },
               },
             }}
             mode="multiple"
@@ -203,6 +236,18 @@ export default function CreateTimeFrame() {
               },
               month: {
                 margin: "0 auto",
+              },
+              caption_label: {
+                borderBottom: ".5px solid #ddd",
+                padding: "0  50px 15px",
+                textAlign: "center",
+                display: "inline-block",
+                fontSize: "16px",
+              },
+              cell: {
+                height: { lg: "40px" },
+                padding: { lg: "5px" },
+                fontSize: { lg: "13px" },
               },
             }}
             mode="multiple"

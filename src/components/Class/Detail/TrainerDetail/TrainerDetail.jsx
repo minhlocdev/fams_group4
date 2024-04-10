@@ -4,17 +4,9 @@ import ClassContext from "../../../../context/ClassContext";
 import theme from "../../../../assets/theme";
 import { PublishStatusEnum } from "../../../../constants/PublishStatusEnum";
 import SyllabusCardItem from "../../Others/SyllabusCardItem";
-import SyllabusCardOfClass from "../SyllabusClassCreate";
-export default function AddTrainer() {
+export default function TrainerDetail() {
   const { classTitle, search, initialDays, trainingProgramDetail } =
     useContext(ClassContext);
-  if (!search || !trainingProgramDetail) {
-    return (
-      <Box sx={{ marginTop: "90px" }}>
-        <SyllabusCardOfClass />
-      </Box>
-    );
-  }
   return (
     <Box
       sx={{
@@ -117,7 +109,7 @@ export default function AddTrainer() {
       {trainingProgramDetail && (
         <>
           {trainingProgramDetail.outline.map((data) => (
-            <SyllabusCardItem card={data} isEdit={true} key={data.id} />
+            <SyllabusCardItem card={data} key={data.id} isEdit={false} />
           ))}
         </>
       )}

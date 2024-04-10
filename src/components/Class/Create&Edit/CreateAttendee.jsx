@@ -70,6 +70,7 @@ export default function CreateAttendee() {
               onChange={(e) => handleAttendee("type", e.target.value)}
               required
               autoWidth
+              inputProps={{ MenuProps: { disableScrollLock: true } }}
             >
               <MenuItem value={"Fresher"}>Fresher</MenuItem>
               <MenuItem value={"Intern"}>Intern</MenuItem>
