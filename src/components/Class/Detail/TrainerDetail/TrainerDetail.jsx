@@ -22,17 +22,27 @@ export default function TrainerDetail() {
         sx={{
           wordSpacing: "5px",
           letterSpacing: "5px",
+          textAlign: { xs: "center", md: "left" },
         }}
       >
         Training program of {classTitle}
       </Typography>
-      <Stack direction={"row"} alignItems={"flex-start"}>
+      <Stack
+        direction={"row"}
+        alignItems={"flex-start"}
+        sx={{
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: { xs: "center", md: "flex-start" },
+        }}
+      >
         <Typography
           variant={"h4"}
           sx={{
             wordSpacing: "5px",
             letterSpacing: "5px",
             fontWeight: "600",
+            textAlign: { xs: "center", md: "left" },
+            fontSize: { xs: "28px", md: "34px" },
           }}
         >
           {trainingProgramDetail.name}

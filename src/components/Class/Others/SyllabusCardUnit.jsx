@@ -59,28 +59,34 @@ export default function SyllabusCardUnit({ unit, syllabusId, isEdit }) {
             justifyContent: "center",
             padding: "10px 0",
           }}
-          xs={1}
+          xs={12}
+          md={1}
         >
           Unit
         </Grid>
         <Grid
           item
-          xs={11}
+          xs={12}
+          md={11}
           sx={{
             borderBottomRightRadius: "20px",
             alignContent: "center",
             cursor: "pointer",
-            padding: "15px 0",
+            padding: { xs: "10px", md: "15px 0" },
           }}
         >
-          <Stack direction={"row"}>
+          <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            sx={{ justifyContent: { xs: "center", md: "space-between" } }}
+          >
             <Stack>
               {unit.unitName}
               <span style={{ color: theme.unmodified, fontStyle: "italic" }}>
                 {parseFloat(unit.durationByHour / 60).toFixed(2)}hrs
               </span>
             </Stack>
-            <IconButton sx={{ marginLeft: "auto", marginRight: "20px" }}>
+            <IconButton sx={{ marginRight: "20px" }}>
               <ArrowDownwardRounded />
             </IconButton>
           </Stack>
@@ -107,7 +113,8 @@ export default function SyllabusCardUnit({ unit, syllabusId, isEdit }) {
             justifyContent: "center",
             padding: "10px 0",
           }}
-          xs={1}
+          xs={12}
+          md={1}
         >
           <Stack spacing={1} alignItems={"center"}>
             {trainers.length === 0 ||
@@ -168,6 +175,14 @@ export default function SyllabusCardUnit({ unit, syllabusId, isEdit }) {
               "aria-labelledby": "long-button",
             }}
             anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
             open={isEdit && open}
             onClose={handleClose}
             sx={{
@@ -213,7 +228,8 @@ export default function SyllabusCardUnit({ unit, syllabusId, isEdit }) {
         {/* content */}
         <Grid
           item
-          xs={11}
+          xs={12}
+          md={11}
           sx={{
             borderBottomRightRadius: "20px",
             alignContent: "center",
@@ -228,10 +244,18 @@ export default function SyllabusCardUnit({ unit, syllabusId, isEdit }) {
                   backgroundColor: "#DFDEDE",
                   borderRadius: "10px",
                   margin: "5px 0",
+                  textAlign: { xs: "center", md: "left" },
+                  flexDirection: { xs: "column", md: "row" },
                 }}
               >
                 {content.contentName}
-                <Stack direction={"row"} spacing={2} alignItems={"center"}>
+                <Stack
+                  direction={"row"}
+                  spacing={2}
+                  alignItems={"center"}
+                  flexWrap={"wrap"}
+                  justifyContent={"center"}
+                >
                   <Chip
                     sx={{
                       backgroundColor: "#2D3748",

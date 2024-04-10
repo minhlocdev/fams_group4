@@ -49,6 +49,7 @@ export default function ClassStepper() {
       <MobileStepper
         sx={{
           "& .MuiMobileStepper-dots": { display: "none" },
+          marginTop: "10px",
         }}
         variant="dots"
         steps={3}
@@ -58,6 +59,7 @@ export default function ClassStepper() {
           activeStep !== 0 && (
             <Stack direction={"row"} marginLeft={"auto"} spacing={1}>
               <Button
+                size="small"
                 sx={{
                   color: "red",
                   textDecoration: "underline",
@@ -69,10 +71,12 @@ export default function ClassStepper() {
               </Button>
               <Button
                 onClick={handleDraft}
+                size="small"
                 sx={{
                   color: "white",
                   backgroundColor: "#474747",
                   "&:hover": { backgroundColor: "rgb(72 147 222 / 81%)" },
+                  fontSize: { xs: "12px" },
                 }}
               >
                 Save as draft

@@ -111,6 +111,8 @@ export default function SyllabusCardItem({ card, isEdit }) {
               direction={"row"}
               alignItems={"flex-start"}
               sx={{
+                flexDirection: { xs: "column", md: "row" },
+                alignItems: { xs: "center", md: "flex-start" },
                 color: theme.primary,
                 maxWidth: "100%",
                 overflow: "hidden",
@@ -122,9 +124,11 @@ export default function SyllabusCardItem({ card, isEdit }) {
                 sx={{
                   maxWidth: "90%",
                   letterSpacing: "5px",
-                  whiteSpace: "nowrap",
+                  whiteSpace: { xs: "wrap", md: "nowrap" },
                   textOverflow: "ellipsis",
                   overflow: "hidden",
+                  fontSize: { xs: "25px", md: "34px" },
+                  textAlign: { xs: "center", md: "left" },
                 }}
               >
                 {card.syllabusName}
@@ -147,21 +151,19 @@ export default function SyllabusCardItem({ card, isEdit }) {
             </Stack>
             <Stack
               direction={"row"}
-              spacing={2}
+              columnGap={2}
               justifyContent={"flex-start"}
               alignItems={"center"}
-              sx={{ color: theme.primary }}
+              sx={{
+                color: theme.primary,
+                flexDirection: { xs: "column", md: "row" },
+                alignItems: { xs: "flex-start", md: "center" },
+              }}
             >
               <Typography variant="body1" sx={{}}>
                 Duration: {card.durationByDay} days ({card.durationByHour}{" "}
                 hours)
               </Typography>
-              <div
-                style={{
-                  borderRight: "1px solid #fff",
-                  height: "20px",
-                }}
-              ></div>
               <Typography variant="body1" sx={{}}>
                 Modified on {card.modifiedDate} by {card.modifiedBy}
               </Typography>
