@@ -37,7 +37,7 @@ export default function ClassWrapper(props) {
   const isDetail = locate.pathname.includes("detail");
   const { loginUser } = useContext(AuthContext);
   const { code } = useParams();
-  const { data } = useGetClassByIdQuery(code);
+  const { data, isError } = useGetClassByIdQuery(code);
   const { data: classAdmin } = useGetClassAdminQuery(isDetail);
   const { data: trainerData } = useGetTrainerQuery(isDetail);
   const { data: fsuContact } = useGetAllUserQuery(isDetail);
@@ -441,6 +441,7 @@ export default function ClassWrapper(props) {
       handleLocations,
       allTraining: allTraining?.list,
       handleDraft,
+      isError,
     }),
     [
       activeTab,
@@ -487,6 +488,7 @@ export default function ClassWrapper(props) {
       handleLocations,
       allTraining,
       handleDraft,
+      isError,
     ]
   );
 

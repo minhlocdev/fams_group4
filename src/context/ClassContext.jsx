@@ -43,5 +43,6 @@ const ClassContext = React.createContext({
   handleLocations: () => {},
   allTraining: [],
   handleDraft: () => {},
+  isError: false,
 });
 export default ClassContext;

@@ -1,13 +1,46 @@
 import { useTheme } from "@emotion/react";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
-import { Button, MobileStepper, Stack } from "@mui/material";
+import { Button, MobileStepper, Stack, Box, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import ClassCreateHeader from "../Create&Edit/ClassCreateHeader";
 import ClassCreateDetail from "../Create&Edit/ClassCreateDetail";
 import AddTrainer from "../Create&Edit/AddTrainer.jsx/AddTrainer";
 import ClassContext from "../../../context/ClassContext";
 import ClassTitle from "../Create&Edit/ClassTitle";
-
+import theme from "../../../assets/theme";
+import { Link } from "react-router-dom";
+const NotFoundClass = () => {
+  return (
+    <>
+      <Box
+        sx={{
+          width: "100%",
+          background: theme.primary,
+          padding: "10px 20px",
+          color: "#fff",
+        }}
+      >
+        {" "}
+        <Typography
+          variant={"h5"}
+          sx={{
+            wordSpacing: "5px",
+            letterSpacing: "5px",
+            textAlign: { xs: "center", md: "left" },
+          }}
+        >
+          Class
+        </Typography>
+      </Box>
+      <div style={{ minHeight: "50vh", alignContent: "center" }}>
+        <h3 style={{ textAlign: "center" }}>Not Found Any Class</h3>
+        <p style={{ textAlign: "center" }}>
+          <Link to={"/class/create"}>Create a new class?</Link>
+        </p>
+      </div>
+    </>
+  );
+};
 export default function ClassStepper() {
   const theme = useTheme();
   const {
@@ -17,8 +50,11 @@ export default function ClassStepper() {
     handleSave,
     handleCancel,
     handleDraft,
+    isError,
   } = useContext(ClassContext);
-
+  if (isError) {
+    return <NotFoundClass />;
+  }
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
