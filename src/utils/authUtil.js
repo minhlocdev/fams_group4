@@ -5,6 +5,7 @@ import Token from "./token";
 import { ACCESS_TOKEN_KEY } from "../constants/token";
 import { getLoginUser } from "../services/User";
 import { QUERY_LOGIN_USER_KEY } from "../constants/query";
+import { useGetUserPermission } from "../services/queries/userQuery";
 
 const AuthContext = createContext();
 const tokenManager = Token;
@@ -13,6 +14,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [userToken, setUserToken] = useState(null);
   const [loginUser, setLoginUser] = useState(!!tokenManager.getCookie(QUERY_LOGIN_USER_KEY));
+  const { data: userPermission } = useGetUserPermission()
   useEffect(() => {
     const tokenFromCookie = tokenManager.getToken(ACCESS_TOKEN_KEY);
     const userFromCookie = tokenManager.getCookie(QUERY_LOGIN_USER_KEY);

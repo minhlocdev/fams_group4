@@ -114,3 +114,10 @@ export const putUserAvatar = async ({ id, link }) => {
         data: `${link}`
     });
 };
+
+export const getUserDashBoard = async () => {
+    return await apiClient({
+        method: 'get',
+        url: `/users/dashboard`,
+    });
+};

@@ -1,6 +1,6 @@
 
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { getAllUser, getClassAdmin, getTrainer, getUser, getUserByID, getUserPermission, postUser, putUser, putUserAvatar, putUserPermission } from '../User';
+import { getAllUser, getClassAdmin, getTrainer, getUser, getUserByID, getUserDashBoard, getUserPermission, postUser, putUser, putUserAvatar, putUserPermission } from '../User';
 import { QUERY_PERMISSISON_KEY, QUERY_USER_KEY } from '../../constants/query';
 
 export const useGetUserQuery = (page, limit, orderby, order, debouncedSearchTerm, filter) =>
@@ -21,7 +21,7 @@ export const useGetClassAdminQuery = (detail) =>
     );
 export const useGetTrainerQuery = (detail) =>
     useQuery({
-        queryKey: [QUERY_USER_KEY, { roleName: 'Class Admin' }],
+        queryKey: [QUERY_USER_KEY, { roleName: 'Trainer' }],
         queryFn: () => getTrainer().then((res) => res.data),
         staleTime: 20000,
         enabled: !detail
@@ -47,6 +47,13 @@ export const useGetUserPermission = () =>
     useQuery({
         queryKey: [QUERY_PERMISSISON_KEY],
         queryFn: () => getUserPermission().then((res) => res.data),
+        staleTime: 20000,
+    }
+    );
+export const useGetUserDashboard = () =>
+    useQuery({
+        queryKey: ["Dashboard", "User"],
+        queryFn: () => getUserDashBoard().then((res) => res.data),
         staleTime: 20000,
     }
     );
