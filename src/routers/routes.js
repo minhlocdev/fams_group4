@@ -2,11 +2,10 @@ import { lazy } from "react";
 import SyllabusCreate from "../pages/SyllabusCreate";
 import CreateTrainingProgramList from "../pages/CreateTrainingProgram";
 import ClassCreate from "../pages/ClassCreate";
-import Dashboard from "../pages/Dashboard";
 import LoginPage from "../pages/LoginPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import EditTrainingProgram from "../pages/EditTrainingProgram";
-
+const Dashboard = lazy(() => import("../pages/Dashboard"));
 const ClassDetail = lazy(() => import("../pages/ClassDetail"));
 const ClassListing = lazy(() => import("../pages/ClassListing"));
 const UserPermission = lazy(() => import("../pages/UserPermission"));

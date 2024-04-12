@@ -31,7 +31,7 @@ export default function ClassHeader() {
     setAnchorEl(null);
   };
   const { classData, isError } = useContext(ClassContext);
-  if (!isError) {
+  if (!classData) {
     return <HeaderSkeleton />;
   }
   const { className, classCode, status, durationByDay, durationByHour } =

@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { Grid, Typography } from "@mui/material";
+import React, { useContext } from "react";
+import { Grid } from "@mui/material";
 import SyllabusWrapper from "../context/SyllabusWrapper";
 import { SyllabusContext } from "../context/SyllabusContext";
 import SyllabusTabContent from "../components/Syllabus/Create/SyllabusTabContent";

@@ -10,26 +10,18 @@ import theme from "../assets/theme";
 import { useGetUserDashboard } from "../services/queries/userQuery";
 import { useGetDeliveryDashboard } from "../services/queries/deliveryQuery";
 import DeliveryChart from "../components/Dashboard/DeliveryChart";
+import BarChart from "../components/Dashboard/BarChart";
 
 const Dashboard = () => {
-  const { data, isLoading } = useGetUserDashboard();
-  const {
-    data: deliveryType,
-    isLoading: deliveryLoad,
-    isSuccess: hasDelivery,
-  } = useGetDeliveryDashboard();
+  const { data } = useGetUserDashboard();
+  const { data: deliveryType, isSuccess: hasDelivery } =
+    useGetDeliveryDashboard();
 
   const deliveryData = useMemo(() => {
     if (hasDelivery) {
       return deliveryType.map((d) => d.totalDuration);
     }
   }, [deliveryType, hasDelivery]);
-  console.log(deliveryData);
-
-  if (isLoading && deliveryLoad) {
-    return <div>Loading...</div>;
-  }
-
   const cardComponents = [
     {
       icon: <SchoolOutlined sx={{ color: theme.primary, fontSize: "40px" }} />,
@@ -72,6 +64,7 @@ const Dashboard = () => {
         rowSpacing={1}
         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
         marginTop={2}
+        sx={{ transition: "max-width .3s ease" }}
       >
         {cardComponents.map((item, index) => (
           <Grid item xs={12} md={6} sm={6} lg={3} key={index}>
@@ -123,8 +116,20 @@ const Dashboard = () => {
             </Card>
           </Grid>
         ))}
-        <Grid item xs={8}></Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} md={6} lg={8}>
+          <Paper
+            elevation={3}
+            sx={{
+              padding: 3,
+              position: "relative",
+              width: "100%",
+              height: "400px",
+            }}
+          >
+            <BarChart />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6} lg={4}>
           <Paper
             elevation={3}
             sx={{

@@ -20,7 +20,7 @@ import { useGetSyllabusQuery } from "../../../services/queries/syllabusQuery";
 import TableLoader from "../../shared/loader/TableLoader";
 import { SyllabusContext } from "../../../context/SyllabusContext";
 import { PublishStatus } from "../../../constants/PublishStatusEnum";
-
+const MAX_OUTPUTS_TO_DISPLAY = 3;
 const headCells = [
   { id: "syllabusName", label: "Syllabus" },
   { id: "syllabusCode", label: "Code" },
@@ -110,20 +110,35 @@ export default function SyllabusTable() {
 
                     <TableCell sx={{ width: "20%", p: 0.5 }} align="left">
                       <Box sx={{ display: "flex" }}>
-                        {row.outputStandards.map((standard, index) => (
-                          <Box sx={{ paddingRight: "5px" }}>
-                            <Chip
-                              key={index}
-                              sx={{
-                                background: "#2D3748",
-                                color: "white",
-                                width: "75px",
-                                height: "28px",
-                              }}
-                              label={standard.trim()}
-                            />
-                          </Box>
-                        ))}
+                        {row.outputStandards
+                          .slice(0, MAX_OUTPUTS_TO_DISPLAY)
+                          .map((standard, index) => (
+                            <Box sx={{ paddingRight: "5px" }}>
+                              <Chip
+                                key={index}
+                                sx={{
+                                  background: "#2D3748",
+                                  color: "white",
+                                  width: "75px",
+                                  height: "28px",
+                                }}
+                                label={standard.trim()}
+                              />
+                            </Box>
+                          ))}
+                        {row.outputStandards.length >
+                          MAX_OUTPUTS_TO_DISPLAY && (
+                          <Chip
+                            key="more"
+                            label={`
+                            +
+                            ${
+                              row.outputStandards.length -
+                              MAX_OUTPUTS_TO_DISPLAY
+                            }`}
+                            sx={{ color: "#285D9A" }}
+                          ></Chip>
+                        )}
                       </Box>
                     </TableCell>
                     <TableCell align="left">
