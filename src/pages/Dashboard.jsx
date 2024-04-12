@@ -126,7 +126,7 @@ const Dashboard = () => {
               height: "400px",
             }}
           >
-            <BarChart />
+            <BarChart userData={data} />
           </Paper>
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
