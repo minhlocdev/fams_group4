@@ -141,14 +141,22 @@ export function ImportSyllabus({ isOpen, handleClose }) {
                 justifyContent={"space-between"}
                 direction="row"
                 spacing={2}
-                sx={{ alignItems: "center" }}
+                sx={{
+                  alignItems: "center",
+                  "& .MuiInputBase-root": {
+                    minWidth: "auto",
+                  },
+                }}
               >
                 <Typography>Encoding type</Typography>
                 <Select
                   sx={{
                     height: 22,
                     maxWidth: 300,
-                    minWidth: 150,
+                    minWidth: "auto",
+                    ".MuiInputBase-colorPrimary": {
+                      minWidth: "auto",
+                    },
                   }}
                   defaultValue={"Auto detect"}
                 >

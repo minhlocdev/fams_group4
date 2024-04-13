@@ -10,6 +10,7 @@ import AppContainer from "./components/shared/layout/AppContainer";
 import { ErrorBoundary } from "react-error-boundary";
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import ErrorFallback from "./components/shared/loader/ErrorFallback";
+import ProtectedRoute from "./middleWare/ProtectedRoute";
 const theme = createTheme();
 function App() {
 
@@ -19,9 +20,6 @@ function App() {
       <Routes>
         <Route element={<AppContainer />}>
           {publicRoute.map((route) => (
-            <Route key={route.path} path={route.path} element={route.element} />
-          ))}
-          {privateRoute.map((route) => (
             <Route key={route.path} path={route.path} element={
               <Suspense fallback={<BackdropLoader />}>
                 <ErrorBoundary
@@ -32,7 +30,22 @@ function App() {
                 >
                   {route.element}
                 </ErrorBoundary>
-              </Suspense>
+              </Suspense>} />
+          ))}
+          {privateRoute.map((route) => (
+            <Route key={route.path} path={route.path} element={
+              <ProtectedRoute level={route.level}>
+                <Suspense fallback={<BackdropLoader />}>
+                  <ErrorBoundary
+                    onReset={reset}
+                    fallbackRender={({ resetErrorBoundary }) => (
+                      <ErrorFallback resetErrorBoundary={resetErrorBoundary} />
+                    )}
+                  >
+                    {route.element}
+                  </ErrorBoundary>
+                </Suspense>
+              </ProtectedRoute>
             } />
           ))}
         </Route>

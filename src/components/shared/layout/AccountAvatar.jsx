@@ -1,9 +1,15 @@
-import { Box, Avatar, Typography, Link } from "@mui/material";
 import React, { useContext } from "react";
-
+import { Box, Avatar, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 import AuthContext from "../../../utils/authUtil";
+
 function AccountAvatar() {
   const { logout, loginUser } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <Box
       sx={{
@@ -12,32 +18,41 @@ function AccountAvatar() {
         justifyContent: "space-between",
       }}
     >
-      <Avatar
-        sx={{ marginRight: 1 }}
-        alt="Username"
-        src={loginUser.avatarUrl}
-      />
-      <Box sx={{ justifyContent: "space-between" }}>
-        <Typography
-          sx={{ color: "white", fontSize: 10, height: 15 }}
-          variant="overline"
-          display="block"
-        >
-          {loginUser?.name}
-        </Typography>
-        <Link
-          sx={{
-            color: "white",
-            textDecoration: "none",
-            height: 15,
-            fontSize: 10,
-            cursor: "pointer",
-          }}
-          onClick={() => logout()}
-        >
-          {" "}
-          Log out
+      {loginUser && (
+        <Link to={`/user/profile/${loginUser.id}`}>
+          <Avatar
+            sx={{ marginRight: 1 }}
+            alt="Username"
+            src={loginUser.avatarUrl}
+          />
         </Link>
+      )}
+      <Box sx={{ justifyContent: "space-between" }}>
+        {loginUser && (
+          <Typography
+            component={Link}
+            to={`/user/profile/${loginUser.id}`}
+            sx={{ color: "white", fontSize: 10, height: 20 }}
+            variant="overline"
+            display="block"
+          >
+            {loginUser.name}
+          </Typography>
+        )}
+        {loginUser && (
+          <Typography
+            onClick={handleLogout}
+            sx={{
+              color: "white",
+              textDecoration: "none",
+              height: 15,
+              fontSize: 10,
+              cursor: "pointer",
+            }}
+          >
+            Log out
+          </Typography>
+        )}
       </Box>
     </Box>
   );

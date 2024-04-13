@@ -1,11 +1,19 @@
-import { Box, Button, Chip, Grid, LinearProgress, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Grid,
+  LinearProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   useGetTrainingProgramByIdQuery,
   usePutTrainingMutation,
 } from "../services/queries/trainingQuery";
-import ErrorIcon from '@mui/icons-material/Error';
+import ErrorIcon from "@mui/icons-material/Error";
 import { useGetAllSyllabusQuery } from "../services/queries/syllabusQuery";
 import SyllabusCard from "../components/Syllabus/Detail/SyllabusCards";
 import SearchSyllabus from "../components/CreateTraningProgram/SearchSyllabus";
@@ -26,8 +34,12 @@ export default function EditTrainingProgram() {
   };
   const { loginUser } = useContext(AuthContext);
   const { code } = useParams();
-  const { data: oldTraining, isSuccess: isSucOldTraining, isLoading: loadingData, isError } =
-    useGetTrainingProgramByIdQuery(code);
+  const {
+    data: oldTraining,
+    isSuccess: isSucOldTraining,
+    isLoading: loadingData,
+    isError,
+  } = useGetTrainingProgramByIdQuery(code);
   const { data: Syllabuses, isLoading, isSuccess } = useGetAllSyllabusQuery();
   const [program, setProgram] = useState([]);
   const [SelectedListSyllabus, setSelectedListSyllabus] = useState([]);
@@ -37,8 +49,14 @@ export default function EditTrainingProgram() {
   };
   const handleCancle = () => {
     setup(isSuccess, isSucOldTraining, Syllabuses, oldTraining, loginUser);
-  }
-  const setup = (isSuccess, isSucOldTraining, Syllabuses, oldTraining, loginUser) => {
+  };
+  const setup = (
+    isSuccess,
+    isSucOldTraining,
+    Syllabuses,
+    oldTraining,
+    loginUser
+  ) => {
     if (
       isSuccess &&
       isSucOldTraining &&
@@ -49,7 +67,10 @@ export default function EditTrainingProgram() {
       setSelectedListSyllabus(oldTraining?.outline);
       const selectedIds = oldTraining?.outline.map((syl) => syl.id);
       const filteredProgram = Syllabuses.list.filter(
-        (syl) => !selectedIds.includes(syl.id) && syl.publishStatus !== 0 && syl.publishStatus !== -1
+        (syl) =>
+          !selectedIds.includes(syl.id) &&
+          syl.publishStatus !== 0 &&
+          syl.publishStatus !== -1
       );
       setProgram(filteredProgram);
       setSyllabusDTOs(
@@ -69,11 +90,11 @@ export default function EditTrainingProgram() {
         trainingProgramSyllabus: [],
       });
     }
-  }
+  };
   useEffect(() => {
     setup(isSuccess, isSucOldTraining, Syllabuses, oldTraining, loginUser);
+    // eslint-disable-next-line
   }, [Syllabuses, isSuccess, oldTraining, isSucOldTraining, loginUser]);
-
 
   const [syllabusDTOs, setSyllabusDTOs] = useState([]);
   const [newname, setNewName] = useState();
@@ -110,7 +131,9 @@ export default function EditTrainingProgram() {
       return syllabus;
     });
 
-    const filteredSyllabusDTOs = updatedSyllabusDTOs.filter((item) => item.syllabusId !== id);
+    const filteredSyllabusDTOs = updatedSyllabusDTOs.filter(
+      (item) => item.syllabusId !== id
+    );
     setSyllabusDTOs(filteredSyllabusDTOs);
 
     const updatedList = SelectedListSyllabus?.filter((item) => item.id !== id);
@@ -141,14 +164,21 @@ export default function EditTrainingProgram() {
   };
   if (loadingData) {
     return (
-      <Box sx={{ width: '100%', pt: 1 }}>
+      <Box sx={{ width: "100%", pt: 1 }}>
         <LinearProgress />
       </Box>
     );
   }
   if (isError) {
     return (
-      <Box sx={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
+      <Box
+        sx={{
+          textAlign: "center",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <ErrorIcon></ErrorIcon>
         ERROR CAN NOT FIND DATA
       </Box>
@@ -314,7 +344,18 @@ export default function EditTrainingProgram() {
           justifyContent: "space-between",
         }}
       >
-        <Stack direction="row" sx={{ width: 'calc(100% + 21px)', paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 4, marginLeft: -2.5, marginTop: 5, justifyContent: 'space-between' }}>
+        <Stack
+          direction="row"
+          sx={{
+            width: "calc(100% + 21px)",
+            paddingTop: 0.5,
+            paddingBottom: 0.5,
+            paddingLeft: 4,
+            marginLeft: -2.5,
+            marginTop: 5,
+            justifyContent: "space-between",
+          }}
+        >
           <Stack></Stack>
           <Stack
             direction="row"

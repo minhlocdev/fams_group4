@@ -57,3 +57,9 @@ export const duplicateClass = async (id) => {
         url: `/class/${id}/duplicate-class`,
     });
 };
+export const changeStatusClass = async ({ id, status }) => {
+    return await apiClient({
+        method: 'put',
+        url: `/classes/${id}/change-status/${status}`,
+    });
+};

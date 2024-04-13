@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import { Avatar, Typography, Divider, Button, Box, Link } from "@mui/material";
-import { useGetUserByIdQuery } from "../services/queries/userQuery";
+import { useGetUserByIdQuery } from "../../services/queries/userQuery";
 import { useParams } from "react-router";
-import UserDetailSkeleton from "../components/UserManagement/UserDetail/UserDetailSkeleton";
-import UpdateUser from "../components/UserManagement/UpdateUser";
-import EditAvatarModal from "../components/UserManagement/UserDetail/EditAvatarModal";
+import UserDetailSkeleton from "../../components/UserManagement/UserDetail/UserDetailSkeleton";
+import UpdateUser from "../../components/UserManagement/UpdateUser";
+import EditAvatarModal from "../../components/UserManagement/UserDetail/EditAvatarModal";
+import { UserProvider } from "../../context/UserContext";
 
 const UserProfileRoot = styled("div")(({ theme }) => ({
   display: "flex",
@@ -52,7 +53,7 @@ const FieldValue = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const UserDetail = () => {
+const UserProfile = () => {
   const [update, isUpdate] = useState(false);
   const [editAvatar, setEditAvatar] = useState(false);
   const { code } = useParams();
@@ -75,11 +76,15 @@ const UserDetail = () => {
         <Box
           sx={{
             position: "relative",
+            "&:hover > .MuiAvatar-root": {
+              scale: "1.2",
+              opacity: "0.2",
+            },
           }}
         >
           <UserAvatar
             sx={{
-              // transition: "scale .1s linear,  opacity .2s ease",
+              transition: "scale .1s linear,  opacity .2s ease",
               textAlign: "center",
             }}
             alt="User Avatar"
@@ -87,7 +92,7 @@ const UserDetail = () => {
           />
           {/* {forName}
           </UserAvatar>{" "} */}
-          {/* <Button
+          <Button
             variant="outlined"
             color="primary"
             sx={{
@@ -103,7 +108,7 @@ const UserDetail = () => {
             onClick={() => setEditAvatar(true)}
           >
             Edit Avatar
-          </Button> */}
+          </Button>
         </Box>
         <Username variant="h4">{data.name}</Username>
         <Bio variant="body1">{data.roleName}</Bio>
@@ -134,7 +139,7 @@ const UserDetail = () => {
             {data.status ? "Active" : "Inactive"}
           </FieldValue>
         </Field>
-        {/* <Box mt={2}>
+        <Box mt={2}>
           <Button
             variant="outlined"
             color="primary"
@@ -142,7 +147,7 @@ const UserDetail = () => {
           >
             Edit Profile
           </Button>
-        </Box> */}
+        </Box>
       </UserProfileRoot>
       <Button
         variant="filled"
@@ -173,4 +178,4 @@ const UserDetail = () => {
   );
 };
 
-export default UserDetail;
+export default UserProfile;

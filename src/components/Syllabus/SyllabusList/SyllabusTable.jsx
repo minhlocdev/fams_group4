@@ -172,7 +172,7 @@ export default function SyllabusTable() {
 
       <div>
         <Stack
-          direction={"row"}
+          direction={{ xs: "column", sm: "row" }}
           alignItems={"center"}
           justifyContent={"space-around"}
         >

@@ -12,7 +12,7 @@ const tokenManager = Token;
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [userToken, setUserToken] = useState(null);
+  const [userToken, setUserToken] = useState(!!tokenManager.getCookie(ACCESS_TOKEN_KEY));
   const [loginUser, setLoginUser] = useState(!!tokenManager.getCookie(QUERY_LOGIN_USER_KEY));
   const { data: userPermission } = useGetUserPermission()
   useEffect(() => {
@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
     }
     // eslint-disable-next-line
   }, [navigate]);
+
   const clearAllCookies = useCallback(
     () => {
       const cookies = document.cookie.split("; ");
@@ -78,15 +79,13 @@ export const AuthProvider = ({ children }) => {
     });
     setUserToken(token);
   };
-
   const logout = () => {
     navigate("/login", { replace: '/' });
     setUserToken(null); setLoginUser(null)
     clearAllCookies()
   };
-
   return (
-    <AuthContext.Provider value={{ token: userToken, login, logout, loginUser, clearAllCookies }}>
+    <AuthContext.Provider value={{ token: userToken, login, logout, loginUser, clearAllCookies, userPermission }}>
       {children}
     </AuthContext.Provider>
   );

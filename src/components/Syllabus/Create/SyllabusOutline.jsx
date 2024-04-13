@@ -37,7 +37,6 @@ export default function SyllabusOutline() {
   const theme = useTheme();
   const [totalDay, setTotalDay] = useState(outline.length);
 
-  // console.log("outline", outline);
   const addDay = (e) => {
     setTotalDay(totalDay + 1);
     const tempojt = {

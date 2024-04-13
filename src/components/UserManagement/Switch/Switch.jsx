@@ -7,6 +7,7 @@ const switchStyles = {
   height: "34px",
   display: "flex",
   justifyContent: "flex-start",
+  marginLeft: { xs: "", sm: "12%", lg: "" },
 };
 
 const sliderStyles = {

@@ -9,7 +9,6 @@ import { Box, Button, Modal, Typography } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
 import {
   useDeleteSyllabusMutation,
@@ -18,6 +17,7 @@ import {
 import ToastEmitter from "../../shared/lib/ToastEmitter";
 import queryClient from "../../../services/queries/queryClient";
 import { QUERY_SYLLABUS_KEY } from "../../../constants/query";
+import ProtectedButton from "../../shared/protected/ProtectedButton";
 
 export default function Popup({ item }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -105,36 +105,39 @@ export default function Popup({ item }) {
           variant="middle"
           component="li"
         />
-
-        <MenuItem sx={{ color: "#2C5282" }} onClick={handleClose}>
+        <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <AddCircleOutlineOutlinedIcon sx={{ color: "#285D9A" }} />
-          </ListItemIcon>
-          Add training program
-        </MenuItem>
-        <MenuItem sx={{ color: "#2C5282" }} onClick={handleClose}>
-          <ListItemIcon>
-            <CreateOutlinedIcon sx={{ color: "#285D9A" }} />
+            <CreateOutlinedIcon fontSize="small" />
           </ListItemIcon>
           Edit syllabus
         </MenuItem>
-        <MenuItem sx={{ color: "#2C5282" }} onClick={handleDuplicateSyllabus}>
-          <ListItemIcon>
-            <ContentCopyOutlinedIcon sx={{ color: "#285D9A" }} />
-          </ListItemIcon>
-          Duplicate syllabus
+        <MenuItem>
+          <ProtectedButton
+            onClick={handleDuplicateSyllabus}
+            permissionRequired={"create"}
+            pathName={"syllabus"}
+          >
+            <ListItemIcon>
+              <ContentCopyOutlinedIcon fontSize="small" />
+            </ListItemIcon>
+            Duplicate syllabus
+          </ProtectedButton>
         </MenuItem>
         <MenuItem
-          sx={{ color: "#2C5282" }}
           onClick={() => {
-            handleClickOpenModal();
             handleClose();
           }}
         >
-          <ListItemIcon>
-            <DeleteForeverOutlinedIcon sx={{ color: "#285D9A" }} />
-          </ListItemIcon>
-          Delete syllabus
+          <ProtectedButton
+            onClick={handleClickOpenModal}
+            permissionRequired={"delete"}
+            pathName={"syllabus"}
+          >
+            <ListItemIcon>
+              <DeleteForeverOutlinedIcon fontSize="small" />
+            </ListItemIcon>
+            Delete syllabus
+          </ProtectedButton>
         </MenuItem>
       </Menu>
       <Modal

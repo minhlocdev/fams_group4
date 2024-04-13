@@ -15,6 +15,7 @@ import {
 } from "../services/queries/syllabusQuery";
 import ToastEmitter from "../components/shared/lib/ToastEmitter";
 import AuthContext from "../utils/authUtil";
+import queryClient from "../services/queries/queryClient";
 
 export default function SyllabusWrapper(probs) {
   const { loginUser } = useContext(AuthContext);

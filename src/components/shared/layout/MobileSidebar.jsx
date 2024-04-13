@@ -53,7 +53,7 @@ const menus = [
     title: "Training Program",
     submenu: [
       {
-        to: "/training/list",
+        to: "/training",
         id: "1",
         title: "View Program",
       },

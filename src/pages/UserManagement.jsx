@@ -7,6 +7,7 @@ import AddUser from "../components/UserManagement/AddUser";
 import SearchUser from "../components/UserManagement/UserList/SearchUser";
 import FilterUserButton from "../components/UserManagement/UserList/FilterUserButton";
 import { UserProvider } from "../context/UserContext";
+import ProtectedButton from "../components/shared/protected/ProtectedButton";
 
 export default function UserManagement() {
   const [importFormOpen, setimportFormOpen] = useState(false);
@@ -43,22 +44,29 @@ export default function UserManagement() {
           <SearchUser />
           <FilterUserButton />
         </Stack>
-        <Button
-          sx={{
+        <ProtectedButton
+          onClick={handleOpenImportForm}
+          permissionRequired={"create"}
+          pathName={"user"}
+          style={{
             marginTop: { xs: 2, sm: 0 },
             marginLeft: { xs: 0, sm: "auto" },
             marginRight: { xs: "auto", sm: 0 },
-            background: theme.primary,
-            fontSize: 14,
-            textTransform: "capitalize",
           }}
-          variant="contained"
-          size="small"
-          startIcon={<AddCircleOutline />}
-          onClick={handleOpenImportForm}
         >
-          Add User
-        </Button>
+          <Button
+            sx={{
+              background: theme.primary,
+              fontSize: 14,
+              textTransform: "capitalize",
+            }}
+            variant="contained"
+            size="small"
+            startIcon={<AddCircleOutline />}
+          >
+            Add User
+          </Button>
+        </ProtectedButton>
         <AddUser
           isOpen={importFormOpen}
           handleClose={handleCloseImportForm}

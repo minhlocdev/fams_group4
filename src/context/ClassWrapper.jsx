@@ -181,7 +181,6 @@ export default function ClassWrapper(props) {
     trainers,
     attendee,
   ]);
-  console.log(postParams);
   const putParms = useMemo(() => {
     const [from, to] = classTime.split("-");
     const adminID = admin.map((a) => a.id);

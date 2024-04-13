@@ -36,7 +36,7 @@ const SaveButton = {
 //isError is a prop for open the modal
 //setError is a prop to set the state for the isConfirm in handleClose func
 export function SyllabusWarningModal({ isError, setError }) {
-  const [open, setOpen] = React.useState(isError);
+  const open = isError;
   const handleClose = () => setError(false);
   return (
     <div>

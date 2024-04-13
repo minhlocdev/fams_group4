@@ -7,30 +7,7 @@ import {
   FormControl,
   FormHelperText,
 } from "@mui/material";
-
-const textBox = {
-  width: "100%",
-  display: "flex",
-  justifyContent: "space-between",
-  "& .MuiFormControlLabel-label": {
-    fontSize: "16px",
-    fontWeight: "500",
-    color: "rgb(0, 0, 0)",
-  },
-};
-const textFields = {
-  display: "flex",
-  width: "315px",
-  flexDirection: "row-reseve",
-  "& .MuiInputBase-input": {
-    padding: "10px",
-  },
-  "& .MuiInputBase-input::placeholder": {
-    fontStyle: "italic",
-    fontWeight: "bolder",
-    color: "rgb(0, 0, 0)",
-  },
-};
+import { textFields, textBox } from "../UserModal.style";
 
 export default function DropDown({
   handleChange,

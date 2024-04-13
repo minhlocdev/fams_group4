@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import AppContainer from "../components/shared/layout/AppContainer";
 import {
   Box,
   Button,
@@ -15,7 +14,6 @@ import {
 } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ErrorIcon from "@mui/icons-material/Error";
-import SnippetFolderOutlinedIcon from "@mui/icons-material/SnippetFolderOutlined";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
@@ -47,18 +45,14 @@ export default function TrainingProgramDetail() {
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
-  const { data, isLoading, isSuccess, isError } =
-    useGetTrainingProgramByIdQuery(code);
+  const { data, isLoading, isError } = useGetTrainingProgramByIdQuery(code);
   const [status, setStatus] = useState();
   useEffect(() => {
     setStatus(data?.status);
   }, [data]);
-  const { mutate: putProgramStatus, isSuccess: isSuccessPut } =
-    usePutTrainingStatusMutation(code);
-  const { mutate: postDuplicateMutation, isSuccess: isSuccessPost } =
-    usePostDuplicateTrainingMutation();
-  const { mutate: deleteProgramMutation, isSuccess: isSuccessDelete } =
-    useDeleteProgramMutation();
+  const { mutate: putProgramStatus } = usePutTrainingStatusMutation(code);
+  const { mutate: postDuplicateMutation } = usePostDuplicateTrainingMutation();
+  const { mutate: deleteProgramMutation } = useDeleteProgramMutation();
   const navigate = useNavigate();
   const handleChangeStatus = () => {
     const sta = status === 0 ? 1 : 0;

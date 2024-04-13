@@ -85,6 +85,7 @@ export default function TrainingProgramTable() {
                 return (
                   <TableRow hover tabIndex={-1} key={row.trainingProgramCode}>
                     <TableCell
+                      aria-label={labelId}
                       component="th"
                       scope="row"
                       padding="none"
@@ -134,7 +135,7 @@ export default function TrainingProgramTable() {
       </Paper>
 
       <div>
-        <Stack direction={"row"} alignItems={"center"}>
+        <Stack direction={{ xs: "column", sm: "row" }} alignItems={"center"}>
           <Pagination
             sx={{
               margin: "0 auto",

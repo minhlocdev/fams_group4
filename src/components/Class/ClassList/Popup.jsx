@@ -13,6 +13,7 @@ import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
 import {
+  useChangeStatusClassMutation,
   useDeleteClassMutation,
   useDuplicateClassMutation,
   useGetClassByIdQuery,
@@ -22,10 +23,17 @@ import { QUERY_CLASS_KEY } from "../../../constants/query";
 import ToastEmitter from "../../shared/lib/ToastEmitter";
 import { useNavigate } from "react-router-dom";
 import SessionStorageUtil from "../../../utils/SessionStorageUtil";
-
-export default function Popup({ item }) {
+import ProtectedButton from "../../shared/protected/ProtectedButton";
+import {
+  CheckCircleOutline,
+  HelpOutline,
+  PauseCircleFilledOutlined,
+  PendingOutlined,
+} from "@mui/icons-material";
+export default function Popup({ item, style }) {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorElStatus, setAnchorElStatus] = React.useState(null);
   const [open, setOpen] = useState(false);
   const [id, setId] = useState(null);
   const { data, isSuccess } = useGetClassByIdQuery(id);
@@ -40,7 +48,13 @@ export default function Popup({ item }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const handleClickStatus = (event) => {
+    setAnchorElStatus(event.currentTarget);
+  };
 
+  const handleCloseStatus = () => {
+    setAnchorElStatus(null);
+  };
   const handleCloseModal = () => {
     setOpen(false);
   };
@@ -72,20 +86,17 @@ export default function Popup({ item }) {
       },
     });
   };
-  if (deleteClass.isPending) {
-    ToastEmitter.loading("...Loading", "loading");
-  }
-
   const duplicateClass = useDuplicateClassMutation();
   const handleDuplicateClass = () => {
     duplicateClass.mutate(item.id, {
-      onSuccess: () => {
+      onSuccess: (res) => {
         ToastEmitter.update(
           "Duplicate Class successfully!!!",
           "loading",
           "success"
         );
         queryClient.invalidateQueries({ queryKey: [QUERY_CLASS_KEY] });
+        navigate(`/class/detail/${res.data.id}`);
       },
       onError: (e) => {
         ToastEmitter.update(
@@ -96,7 +107,32 @@ export default function Popup({ item }) {
       },
     });
   };
-  if (duplicateClass.isPending) {
+
+  const changeStatus = useChangeStatusClassMutation();
+  const handleChangeStatus = (status) => {
+    changeStatus.mutate(
+      { id: item.id, status: status },
+      {
+        onSuccess: () => {
+          ToastEmitter.update(
+            "Change status successfully!!!",
+            "loading",
+            "success"
+          );
+          queryClient.invalidateQueries({ queryKey: [QUERY_CLASS_KEY] });
+          setAnchorEl(null);
+        },
+        onError: (e) => {
+          ToastEmitter.update("Change status failed!!", "loading", "error");
+        },
+      }
+    );
+  };
+  if (
+    duplicateClass.isPending ||
+    deleteClass.isPending ||
+    changeStatus.isPending
+  ) {
     ToastEmitter.loading("...Loading", "loading");
   }
   return (
@@ -106,6 +142,7 @@ export default function Popup({ item }) {
         aria-controls="long-menu"
         aria-haspopup="true"
         onClick={handleClick}
+        sx={style}
       >
         <MoreVertIcon />
       </IconButton>
@@ -122,25 +159,95 @@ export default function Popup({ item }) {
           </ListItemIcon>
           <Typography variant="inherit">Edit class</Typography>
         </MenuItem>
-
-        <MenuItem onClick={() => handleDuplicateClass()}>
-          <ListItemIcon>
-            <ContentCopyOutlinedIcon fontSize="small" />
-          </ListItemIcon>
-          <Typography variant="inherit">Duplicate class</Typography>
+        {/* Protected change status class  */}
+        <MenuItem onClick={handleClickStatus}>
+          <ListItemIcon children={<HelpOutline fontSize="small" />} />
+          <Typography variant="inherit">Change status</Typography>
         </MenuItem>
-
-        <MenuItem style={{ color: "gray" }} onClick={handleClickOpenModal}>
-          <ListItemIcon>
-            <DeleteForeverOutlinedIcon
-              fontSize="small"
-              style={{ color: "gray" }}
-            />
-          </ListItemIcon>
-          <Typography variant="inherit">Delete class </Typography>
+        {/* Protected duplicate class  */}
+        <MenuItem>
+          <ProtectedButton
+            onClick={handleDuplicateClass}
+            permissionRequired={"create"}
+            pathName={"class"}
+          >
+            <ListItemIcon>
+              <ContentCopyOutlinedIcon fontSize="small" />
+            </ListItemIcon>
+            <Typography variant="inherit">Duplicate class</Typography>
+          </ProtectedButton>
+        </MenuItem>
+        {/* Protected delete class */}
+        <MenuItem>
+          <ProtectedButton
+            onClick={handleClickOpenModal}
+            permissionRequired={"delete"}
+            pathName={"class"}
+          >
+            <ListItemIcon>
+              <DeleteForeverOutlinedIcon fontSize="small" />
+            </ListItemIcon>
+            <Typography variant="inherit">Delete class </Typography>
+          </ProtectedButton>
         </MenuItem>
       </Menu>
-
+      {/* Menu change status */}
+      <Menu
+        anchorEl={anchorElStatus}
+        open={Boolean(anchorElStatus)}
+        onClose={handleCloseStatus}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <MenuItem>
+          <ProtectedButton
+            onClick={() => handleChangeStatus("opening")}
+            permissionRequired={"change status"}
+            pathName={"class"}
+          >
+            <ListItemIcon children={<CheckCircleOutline fontSize="small" />} />
+            Opening
+          </ProtectedButton>
+        </MenuItem>
+        <MenuItem>
+          <ProtectedButton
+            onClick={() => handleChangeStatus("planning")}
+            permissionRequired={"change status"}
+            pathName={"class"}
+          >
+            <ListItemIcon
+              children={<PauseCircleFilledOutlined fontSize="small" />}
+            />
+            Planning
+          </ProtectedButton>
+        </MenuItem>
+        <MenuItem>
+          <ProtectedButton
+            onClick={() => handleChangeStatus("scheduled")}
+            permissionRequired={"change status"}
+            pathName={"class"}
+          >
+            <ListItemIcon children={<PendingOutlined fontSize="small" />} />
+            Scheduling
+          </ProtectedButton>
+        </MenuItem>
+        <MenuItem>
+          <ProtectedButton
+            onClick={() => handleChangeStatus("completed")}
+            permissionRequired={"change status"}
+            pathName={"class"}
+          >
+            <ListItemIcon children={<CheckCircleOutline fontSize="small" />} />
+            Complete
+          </ProtectedButton>
+        </MenuItem>
+      </Menu>
       <Modal
         open={open}
         onClose={handleCloseModal}

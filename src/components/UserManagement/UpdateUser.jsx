@@ -217,6 +217,7 @@ const UpdateContent = ({ handleClose, item }) => {
                   flexDirection: "row",
                   width: "315px",
                   justifyContent: "flex-start",
+                  marginLeft: { xs: "", sm: "15%", md: "10%", lg: "5%" },
                 }}
               >
                 <FormControlLabel

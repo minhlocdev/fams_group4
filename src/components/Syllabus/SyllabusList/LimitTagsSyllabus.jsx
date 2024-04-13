@@ -46,7 +46,7 @@ export default function LimitTagsSyllabus({
         />
       )}
       sx={{
-        width: "450px",
+        // width: "450px",
         marginTop: "5px",
         "& .MuiInputBase-root": {
           paddingY: "5px",

@@ -19,7 +19,6 @@ ChartJS.register(
   BarElement
 );
 const BarChart = ({ userData }) => {
-  console.log(userData);
   const {
     activeSyllabus,
     activeTrainer,

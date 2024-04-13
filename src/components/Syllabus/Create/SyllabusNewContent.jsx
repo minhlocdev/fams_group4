@@ -255,7 +255,7 @@ const SyllabusNewContentModal = ({ handleCloseModal, AddData }) => {
           sx={textBox}
           control={
             <Switch
-              isActive={isactive}
+              isactive={isactive}
               setActive={setActive}
               handleChange={handleChange}
               formData={formData}

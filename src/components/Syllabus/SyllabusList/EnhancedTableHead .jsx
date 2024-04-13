@@ -48,7 +48,7 @@ function EnhancedTableHead(props) {
           sx={{ backgroundColor: "#2D3748", cursor: "pointer" }}
           align="right"
           onClick={() => {
-            navigate("/syllabuses");
+            navigate("/syllabus");
           }}
         >
           <InfoTooltip title={"Reset sort"}>

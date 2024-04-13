@@ -105,10 +105,16 @@ export default function ImportSyllabus({ isOpen, handleClose }) {
     >
       <Box sx={style}>
         <Grid container sx={{ paddingRight: 4, paddingLeft: 4 }}>
-          <Grid item xs={4}>
+          <Grid
+            item
+            xs={12}
+            sm={4}
+            display="flex"
+            justifyContent={{ xs: "center", sm: "flex-start" }}
+          >
             <Typography sx={{ fontWeight: "bold" }}>Import setting</Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={12} sm={8}>
             <Stack gap={2}>
               <Stack
                 justifyContent={"space-between"}
@@ -121,6 +127,8 @@ export default function ImportSyllabus({ isOpen, handleClose }) {
                   sx={{
                     background: "#2D3748",
                     maxWidth: "100%",
+                    wordBreak: "break-all",
+                    wordWrap: "break-word",
                   }}
                   variant="contained"
                   size="small"
@@ -148,7 +156,7 @@ export default function ImportSyllabus({ isOpen, handleClose }) {
                   sx={{
                     height: 22,
                     maxWidth: 300,
-                    minWidth: 150,
+                    minWidth: "auto",
                   }}
                   defaultValue={"Auto detect"}
                 >
@@ -195,7 +203,13 @@ export default function ImportSyllabus({ isOpen, handleClose }) {
         />
 
         <Grid container sx={{ paddingRight: 4, paddingLeft: 4 }}>
-          <Grid item xs={4}>
+          <Grid
+            item
+            xs={12}
+            sm={4}
+            display="flex"
+            justifyContent={{ xs: "center", sm: "flex-start" }}
+          >
             <Typography sx={{ fontWeight: "bold" }}>
               Duplicate control
             </Typography>

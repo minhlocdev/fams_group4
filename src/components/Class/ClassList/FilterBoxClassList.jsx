@@ -187,12 +187,17 @@ export default function FilterBoxClassList() {
         ))}
       </Grid>
 
-      <Stack my={3} sx={{ flexDirection: { xs: "column", md: "row" } }}>
+      <Stack
+        my={3}
+        spacing={{ xs: 3, md: "" }}
+        gap={{ xs: "", md: 5 }}
+        sx={{ flexDirection: { xs: "column", md: "row" } }}
+      >
         <Stack
           direction="row"
           spacing={2}
           alignItems={"center"}
-          justifyContent={"space-around"}
+          // justifyContent={"space-around"}
         >
           <Typography variant="h8">FSU</Typography>
           <Box sx={{ minWidth: 120 }}>
@@ -205,9 +210,9 @@ export default function FilterBoxClassList() {
                 label="Select"
                 onChange={(e) => handleSelect("FSU", e.target.value)}
                 sx={{
-                  "& .MuiSelect-select": {
-                    width: "240px",
-                  },
+                  // "& .MuiSelect-select": {
+                  //   width: "240px",
+                  // },
                   "& .MuiSelect-nativeInput": {
                     border: "none",
                   },
@@ -229,7 +234,7 @@ export default function FilterBoxClassList() {
           direction="row"
           spacing={2}
           alignItems={"center"}
-          justifyContent={"space-around"}
+          // justifyContent={"space-around"}
         >
           <Typography variant="h8">Trainer</Typography>
           <Box sx={{ minWidth: 120 }}>

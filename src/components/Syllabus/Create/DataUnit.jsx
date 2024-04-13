@@ -12,12 +12,17 @@ import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import { PanToolOutlined } from "@mui/icons-material";
 import { SyllabusContext } from "../../../context/SyllabusContext";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-export default function DataUnit({ unit, dayIndex, unitIndex, openState }) {
+export default function DataUnit({
+  unit,
+  dayIndex,
+  unitIndex,
+  openState,
+  isShow,
+}) {
   const { outline, setOutline, handleTimeAllocation } =
     useContext(SyllabusContext);
   const [openTraining, setOpenTraining] = useState(null);
   const [openModal, setOpenModal] = React.useState(false);
-
   const AddDataUnit = (obj, dayIndex, unitIndex) => {
     const tempData = [...outline];
     const tempContent = tempData[dayIndex].trainingUnits;
@@ -85,7 +90,7 @@ export default function DataUnit({ unit, dayIndex, unitIndex, openState }) {
         unit.trainingContents.map((dataUnit, dataUnitIndex) => (
           <Collapse
             // in={isShowUnit === unitIndex}
-            in={Boolean(openState[dayIndex][unitIndex])}
+            in={isShow}
             timeout="auto"
             unmountOnExit
             key={dataUnitIndex}

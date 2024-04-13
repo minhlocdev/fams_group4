@@ -8,6 +8,7 @@ import { SyllabusFilter } from "../components/Syllabus/SyllabusList/SyllabusFilt
 import SyllabusWrapper from "../context/SyllabusWrapper";
 import SearchSyllabus from "../components/Syllabus/SyllabusList/SearchSyllabus";
 import ImportSyllabus from "../components/Syllabus/SyllabusList/ImportSyllabus";
+import ProtectedButton from "../components/shared/protected/ProtectedButton";
 
 export default function SyllabusListing() {
   const [importFormOpen, setimportFormOpen] = useState(false);
@@ -27,13 +28,10 @@ export default function SyllabusListing() {
         direction={{ xs: "column", sm: "row" }}
         display="flex"
         flexWrap="wrap"
-        justifyContent="space-between"
-        alignItems={"center"}
-        gap={1}
-        sx={{ marginTop: 3 }}
+        sx={{ marginTop: 3, justifyContent: "space-between" }}
       >
         <Stack
-          gap={2}
+          gap={3}
           direction={{ xs: "column", sm: "row" }}
           display="flex"
           flexWrap="wrap"
@@ -46,21 +44,26 @@ export default function SyllabusListing() {
           display="flex"
           flexWrap="wrap"
         >
-          <Button
-            sx={{
-              backgroundColor: "orangered",
-              marginTop: { xs: 2, sm: 0 },
-              marginLeft: { xs: 0, sm: "auto" },
-              marginRight: { xs: "auto", sm: 0 },
-              borderRadius: 2,
-            }}
-            variant="contained"
-            size="small"
+          <ProtectedButton
             onClick={handleOpenImportForm}
-            startIcon={<PublishIcon />}
+            permissionRequired={"create"}
+            pathName={"syllabus"}
           >
-            Import
-          </Button>
+            <Button
+              sx={{
+                backgroundColor: "orangered",
+                marginLeft: { xs: 0, sm: "auto" },
+                marginRight: { xs: "auto", sm: 3 },
+                marginTop: { xs: 2, sm: 0 },
+                borderRadius: 2,
+              }}
+              variant="contained"
+              size="small"
+              startIcon={<PublishIcon />}
+            >
+              Import
+            </Button>
+          </ProtectedButton>
           <ImportSyllabus
             isOpen={importFormOpen}
             handleClose={handleCloseImportForm}
@@ -68,11 +71,12 @@ export default function SyllabusListing() {
           <Link to="/syllabus/create">
             <Button
               sx={{
-                marginTop: { xs: 2, sm: 0 },
-                marginLeft: { xs: 0, sm: 2 },
+                marginLeft: { xs: 0, sm: "auto" },
                 marginRight: { xs: "auto", sm: 0 },
+                marginTop: { xs: 2, sm: 0 },
+                padding: 1,
                 background: "#2D3748",
-                borderRadius: 2,
+                // borderRadius: 2,
               }}
               variant="contained"
               size="small"

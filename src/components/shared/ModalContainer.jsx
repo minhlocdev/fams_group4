@@ -9,6 +9,7 @@ const style = {
   transform: "translate(-50%, -50%)",
   borderRadius: "20px",
   border: " 1px solid black",
+  width: { xs: "90%", sm: "65%", md: "40%", lg: "35%" },
 };
 const ModalContainer = ({ children, title, isOpen, handleClose }) => {
   const [open, setOpen] = React.useState(isOpen);
@@ -28,7 +29,6 @@ const ModalContainer = ({ children, title, isOpen, handleClose }) => {
             style={{
               display: "flex",
               flexDirection: "column",
-              width: "33.875rem",
               height: "fit-content",
               alignItems: "center",
               borderRadius: "20px",

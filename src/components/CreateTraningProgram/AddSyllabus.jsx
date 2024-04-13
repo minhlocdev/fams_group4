@@ -1,21 +1,16 @@
 import {
-  Autocomplete,
   Box,
   Button,
   Chip,
   Divider,
   Grid,
-  IconButton,
-  InputBase,
   ListItemIcon,
   Menu,
   MenuItem,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import SearchIcon from "@mui/icons-material/Search";
 
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SnippetFolderOutlinedIcon from "@mui/icons-material/SnippetFolderOutlined";
@@ -25,18 +20,11 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import SyllabusCard from "../Syllabus/Detail/SyllabusCards";
 import SearchSyllabus from "./SearchSyllabus";
-import { getAllSyllabus } from "../../services/Syllabus";
-import ClassContext from "../../context/ClassContext";
 import dayjs from "dayjs";
-import {
-  useGetAllSyllabusQuery,
-  useGetSyllabusByIdQuery,
-} from "../../services/queries/syllabusQuery";
+import { useGetAllSyllabusQuery } from "../../services/queries/syllabusQuery";
 import AuthContext from "../../utils/authUtil";
 import { usePostTrainingMutation } from "../../services/queries/trainingQuery";
-import { QUERY_PROGRAM_KEY } from "../../constants/query";
 import ToastEmitter from "../shared/lib/ToastEmitter";
-import queryClient from "../../services/queries/queryClient";
 import { useNavigate } from "react-router-dom";
 
 export default function AddSyllabus({ TraningProgramName, onClickBack }) {
@@ -52,10 +40,8 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
   };
   // fake data
   const { loginUser } = useContext(AuthContext);
-  const AccountName = "Warrior Tran";
   const [newTrainingProgram, setNewTrainingProgram] = useState({
     name: TraningProgramName,
-    userId: loginUser.id,
     userId: loginUser.id,
     startTime: new Date().toISOString(),
     duration: 0, //là durationByDay
@@ -101,7 +87,7 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
   const [syllabusDTOs, setSyllabusDTOs] = useState([]);
 
   useEffect(() => {
-    handleChange("syllabusDTOs", syllabusDTOs);
+    handleChange("syllabusDTOs", syllabusDTOs); // eslint-disable-next-line
   }, [syllabusDTOs]);
 
   const handleSearch = (syl) => {
@@ -146,8 +132,7 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
     ); //tính tổng ngày
   };
   const navigate = useNavigate();
-  const { mutate: postProgram, isSuccess: isSuccessPost } =
-    usePostTrainingMutation();
+  const { mutate: postProgram } = usePostTrainingMutation();
   const handleSubmit = (e) => {
     e.preventDefault();
     postProgram(newTrainingProgram, {

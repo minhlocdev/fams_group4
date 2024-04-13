@@ -1,18 +1,8 @@
-import {
-  Box,
-  IconButton,
-  Link,
-  Menu,
-  MenuItem,
-  Stack,
-  Typography,
-} from "@mui/material";
-import React, { useContext, useState } from "react";
+import { Box, Stack, Typography } from "@mui/material";
+import React, { useContext } from "react";
 import {
   BackHandOutlined,
   BookOutlined,
-  EditOutlined,
-  MoreHoriz,
   RecordVoiceOverOutlined,
   SettingsInputAntennaRounded,
   SpellcheckOutlined,
@@ -20,16 +10,9 @@ import {
 import ClassContext from "../../../context/ClassContext";
 import HeaderSkeleton from "../ClassSkeleton/HeaderSkeleton";
 import theme from "../../../assets/theme";
+import Popup from "../ClassList/Popup";
 
 export default function ClassHeader() {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   const { classData, isError } = useContext(ClassContext);
   if (!classData) {
     return <HeaderSkeleton />;
@@ -88,36 +71,9 @@ export default function ClassHeader() {
               >
                 {status}
               </Typography>
-              <IconButton
-                size="large"
-                color="inherit"
-                children={<MoreHoriz />}
-                sx={{ marginLeft: { md: "auto" } }}
-                id="basic-button"
-                aria-controls={open ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                onClick={handleClick}
-              ></IconButton>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                <MenuItem onClick={handleClose} disableRipple>
-                  <Link
-                    href={`/class/edit/${classData.id}`}
-                    sx={{ alignItems: "center" }}
-                  >
-                    <EditOutlined />
-                    Edit
-                  </Link>
-                </MenuItem>
-              </Menu>
+              <Box sx={{ marginLeft: { md: "auto" } }}>
+                <Popup item={classData} style={{ color: "#fff" }} />
+              </Box>
             </Stack>
             <Typography
               variant={"h6"}

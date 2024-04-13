@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { deleteClass, getClass, getClassByID, postClass, putClass, duplicateClass } from '../Class';
+import { deleteClass, getClass, getClassByID, postClass, putClass, duplicateClass, changeStatusClass } from '../Class';
 import { QUERY_CLASS_KEY } from '../../constants/query';
 
 export const useGetClassQuery = (page, limit, orderby, order, debouncedSearchTerm,
@@ -30,7 +30,9 @@ export const usePutClassMutation = () => useMutation({
 export const useDeleteClassMutation = () => useMutation({
     mutationFn: deleteClass
 })
-
 export const useDuplicateClassMutation = () => useMutation({
     mutationFn: duplicateClass
+});
+export const useChangeStatusClassMutation = () => useMutation({
+    mutationFn: changeStatusClass
 });

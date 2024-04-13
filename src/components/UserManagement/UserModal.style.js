@@ -1,29 +1,35 @@
 export const textBox = {
     width: "100%",
     display: "flex",
-    justifyContent: "space-between",
+    alignItems: { xs: "flex-start", sm: "center" },
+    justifyContent:'space-between',
+    // justifyContent: { xs:'space-between',lg: "space-between" },
+    flexDirection: { xs: "column-reverse",sm:'row-reverse',md:"row-reverse", lg: "row-reverse" },
     "& .MuiFormControlLabel-label": {
-        fontSize: "16px",
-        fontWeight: "500",
-        color: "rgb(0, 0, 0)",
+      fontSize: "16px",
+      fontWeight: "500",
+      color: "rgb(0, 0, 0)",
     },
+    // "& .MuiStack-root" : {
+    //     width: {sm:'25%'}
+    // }
 };
 export const textFields = {
     display: "flex",
-    width: "315px",
-    flexDirection: "row-reseve",
+    width: { xs: "90%",sm:'50%', lg: "315px" },
+    // flexDirection: "row-reverse",
     "& .MuiInputBase-input": {
-        padding: "10px",
+      padding: "10px",
     },
     "& .MuiInputBase-input::placeholder": {
-        fontStyle: "italic",
-        fontWeight: "bolder",
-        color: "rgb(0, 0, 0)",
+      fontStyle: "italic",
+      fontWeight: "bolder",
+      color: "rgb(0, 0, 0)",
     },
 };
 
 export const textCanlender = {
-    width: "315px",
+    // width: { xs: "90%", lg: "315px" },
     "& .MuiInputBase-input": {
         padding: "10px 10px 10px 10px",
     },

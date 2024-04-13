@@ -14,7 +14,6 @@ import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import { useGetClassQuery } from "../../../services/queries/classQuery";
 import TableLoader from "../../shared/loader/TableLoader";
-import dayjs from "dayjs";
 import theme from "../../../assets/theme";
 import { Link, Typography } from "@mui/material";
 import ClassContext from "../../../context/ClassContext";
@@ -146,7 +145,7 @@ export default function ListofClass() {
       </Paper>
 
       <div>
-        <Stack direction={"row"} alignItems={"center"}>
+        <Stack direction={{ xs: "column", sm: "row" }} alignItems={"center"}>
           <Pagination
             sx={{
               margin: "0 auto",

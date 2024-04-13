@@ -1,20 +1,11 @@
-import React, { useContext, useState } from "react";
-import ModalContainer from "../../shared/ModalContainer";
+import React, { useContext } from "react";
 import { Box, Modal } from "@mui/material";
-import { CreateIcon, DeleteForeverIcon } from "../../../assets/icon";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { SyllabusContext } from "../../../context/SyllabusContext";
 const inputStyle = {
   display: "none",
 };
 
-const buttonStyle = {
-  backgroundColor: "#2d3748",
-  borderRadius: "8px",
-  color: "white",
-  padding: "5px 15px",
-  cursor: "pointer",
-};
 const style = {
   position: "absolute",
   top: "50%",
@@ -32,15 +23,12 @@ const TrainingMaterialModalContent = () => {
     selectedDay,
     setModalData,
     updateButtonData,
-    deleteMaterialButtonData,
     syllabusID,
     unitId,
   } = useContext(SyllabusContext);
   const fileInputRef = React.useRef(null);
   const [UploadFile, setUploadFile] = React.useState(null);
-  const handleButtonClick = () => {
-    fileInputRef.current.click(); // Trigger the file input when the button is clicked
-  };
+
   const handleFileChange = (event) => {
     const validFileFormats = [
       "image/*",

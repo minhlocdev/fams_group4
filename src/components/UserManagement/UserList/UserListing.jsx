@@ -146,7 +146,7 @@ export default function UserListing() {
       </Paper>
 
       <div>
-        <Stack direction={"row"} alignItems={"center"}>
+        <Stack direction={{ xs: "column", sm: "row" }} alignItems={"center"}>
           <Pagination
             sx={{
               margin: "0 auto",

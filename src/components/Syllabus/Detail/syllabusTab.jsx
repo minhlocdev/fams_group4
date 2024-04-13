@@ -6,7 +6,6 @@ import { SyllabusContext } from "../../../context/SyllabusContext";
 
 const SyllabusTab = () => {
   const { activeTab, handleTabChange } = useContext(SyllabusContext);
-  console.log("activeTab", activeTab);
   const handleChange = (event, newValue) => {
     handleTabChange(newValue);
   };

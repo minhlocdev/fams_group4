@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover";
 import MenuItem from "@mui/material/MenuItem";
@@ -17,17 +17,17 @@ import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
 import queryClient from "../../services/queries/queryClient";
 import { QUERY_PROGRAM_KEY } from "../../constants/query";
 import ToastEmitter from "../shared/lib/ToastEmitter";
-import { useDeleteProgramMutation, usePostDuplicateTrainingMutation, usePutTrainingStatusMutation } from "../../services/queries/trainingQuery";
-import { useGetProgramByIdQuery } from "../../services/queries/programQuery";
+import {
+  useDeleteProgramMutation,
+  usePostDuplicateTrainingMutation,
+  usePutTrainingStatusMutation,
+} from "../../services/queries/trainingQuery";
 import { Link } from "react-router-dom";
 
 export default function ManageProgram({ item }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(item.status === 1);
-  const [id, setId] = useState(null);
-  const { data, isSuccess } = useGetProgramByIdQuery(id);
-  console.log('item', item)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -44,17 +44,9 @@ export default function ManageProgram({ item }) {
     setOpen(true);
   };
 
-  const notification = {
-    success: function ({ message }) {
-      console.log(message);
-    },
-    error: function ({ message, description }) {
-      console.error(message, description);
-    },
-  };
-  const { mutate: putProgramStatus, isSuccess: isSuccessPut } = usePutTrainingStatusMutation(item.id);
-  const { mutate: postDuplicateMutation, isSuccess: isSuccessPost } = usePostDuplicateTrainingMutation();
-  const { mutate: deleteProgramMutation, isSuccess: isSuccessDelete } = useDeleteProgramMutation();
+  const { mutate: putProgramStatus } = usePutTrainingStatusMutation(item.id);
+  const { mutate: postDuplicateMutation } = usePostDuplicateTrainingMutation();
+  const { mutate: deleteProgramMutation } = useDeleteProgramMutation();
   const handleDeleteProgram = () => {
     deleteProgramMutation(item.trainingProgramCode, {
       onSuccess: () => {
@@ -63,7 +55,6 @@ export default function ManageProgram({ item }) {
       },
     });
   };
-
 
   const handleDuplicateProgram = () => {
     postDuplicateMutation(item.trainingProgramCode, {
@@ -77,19 +68,21 @@ export default function ManageProgram({ item }) {
     });
   };
   const handleChangeStatus = () => {
-    const sta = item.status === 0 ? 1 : 0
-    putProgramStatus({ id: item.trainingProgramCode, status: sta }, {
-      onSuccess: () => {
-        setIsVisible(!isVisible)
-        ToastEmitter.success("Change status successfully!!!");
-        queryClient.invalidateQueries({ queryKey: [QUERY_PROGRAM_KEY] });
-      },
-      onError: () => {
-        ToastEmitter.error(" Change Status failed!! ");
-      },
-    });
-
-  }
+    const sta = item.status === 0 ? 1 : 0;
+    putProgramStatus(
+      { id: item.trainingProgramCode, status: sta },
+      {
+        onSuccess: () => {
+          setIsVisible(!isVisible);
+          ToastEmitter.success("Change status successfully!!!");
+          queryClient.invalidateQueries({ queryKey: [QUERY_PROGRAM_KEY] });
+        },
+        onError: () => {
+          ToastEmitter.error(" Change Status failed!! ");
+        },
+      }
+    );
+  };
 
   return (
     <div>
@@ -141,11 +134,9 @@ export default function ManageProgram({ item }) {
 
           <Link to={`/training/edit/${item.trainingProgramCode}`}>
             <MenuItem sx={{ color: "#2C5282" }}>
-
               <ListItemIcon>
                 <CreateOutlinedIcon sx={{ color: "#285D9A" }} />
               </ListItemIcon>
-
               Edit program
             </MenuItem>
           </Link>

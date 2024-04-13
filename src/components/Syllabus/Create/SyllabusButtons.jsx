@@ -53,16 +53,6 @@ export default function SyllabusButtons() {
         >
           Cancel
         </Button>
-        {/* </Grid> */}
-        {/* <Grid item xs={6}> */}
-        <Button
-          //   onClick={handleDraftButton}
-          sx={button}
-        >
-          Save draft
-        </Button>
-        {/* </Grid> */}
-        {/* <Grid item xs={3}> */}
         {activeTab === 2 ? (
           <Button type="submit" onClick={() => handleSave()} sx={button}>
             Save

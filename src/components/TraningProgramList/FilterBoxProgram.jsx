@@ -1,19 +1,18 @@
 import React, { useState, useContext } from "react";
-import {
-  Grid,
-  Stack,
-  Typography,
-  Button,
-} from "@mui/material";
+import { Stack, Typography, Button } from "@mui/material";
 import { parse } from "date-fns";
 import DateRangePicker from "../shared/calendar/DateRangePicker";
 import dayjs from "dayjs";
 import { TrainingProgramContext } from "../../context/TrainingProgramContext";
 
 export default function FilterBoxProgram() {
-  const { checked, setChecked, handleChangePage } = useContext(TrainingProgramContext);
+  const { checked, setChecked, handleChangePage } = useContext(
+    TrainingProgramContext
+  );
   const [selected, setSelected] = useState({
-    dateRange: !(checked.startDateBegin === "" || checked.startDateEnd === "") && {
+    dateRange: !(
+      checked.startDateBegin === "" || checked.startDateEnd === ""
+    ) && {
       from: parse(checked.startDateBegin, "MM/dd/yyyy", new Date()),
       to: parse(checked.startDateEnd, "MM/dd/yyyy", new Date()),
     },

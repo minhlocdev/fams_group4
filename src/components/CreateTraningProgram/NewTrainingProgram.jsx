@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Grid,
-  InputBase,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-const heightNav = 32;
+import { Box, Button, Grid, InputBase, Typography } from "@mui/material";
 
 export default function NewTrainingProgram({
   newProgramName,

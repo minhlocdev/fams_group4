@@ -45,6 +45,7 @@ export default function Unit({
   } = useContext(SyllabusContext);
   const [renamingUnit, setRenamingUnit] = useState(null);
   const [title, setTitle] = useState("");
+  const [isShow, setIsShow] = useState(true);
 
   const handleCreateTitle = (e, unitIndex, unitid) => {
     e.preventDefault();
@@ -56,6 +57,7 @@ export default function Unit({
       setOutline(tempArray);
     }
   };
+
   const handleRenameTitle = (e, dayIndex, unitIndex) => {
     e.preventDefault();
     const tempArray = [...outline];
@@ -136,6 +138,7 @@ export default function Unit({
         onClick={() => handleUnitClick(dayIndex, unitIndex)}
       >
         <Box
+          onClick={() => setIsShow(!isShow)}
           sx={{
             display: "flex",
             flexDirection: "row",
@@ -263,6 +266,7 @@ export default function Unit({
           onClick={(e) => e.stopPropagation()}
         >
           <DataUnit
+            isShow={isShow}
             unit={unit}
             day={day}
             dayIndex={dayIndex}

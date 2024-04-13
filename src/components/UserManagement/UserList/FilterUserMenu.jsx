@@ -86,7 +86,11 @@ export default function FilterUserMenu() {
         {checkboxData.map((category, index) => (
           <Grid item xs={6} key={index}>
             {Object.entries(category).map(([categoryName, options]) => (
-              <Stack key={categoryName} direction="row" spacing={1}>
+              <Stack
+                key={categoryName}
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+              >
                 <Typography variant="h8" py={1}>
                   {categoryName}
                 </Typography>
