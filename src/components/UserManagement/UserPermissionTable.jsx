@@ -32,9 +32,9 @@ export default function UserPermissionTable({
       <SelectForm
         id="trainingProgram"
         updating={isUpdate}
-        permissionType={item.trainingProgram}
+        permissionType={item.training}
         setPermissionData={(type) =>
-          setPermissionType(item.roleName, { field: "trainingProgram", type })
+          setPermissionType(item.roleName, { field: "training", type })
         }
       />,
       <SelectForm
@@ -59,9 +59,9 @@ export default function UserPermissionTable({
       <SelectForm
         id="userManagement"
         updating={isUpdate}
-        permissionType={item.userManagement}
+        permissionType={item.user}
         setPermissionData={(type) =>
-          setPermissionType(item.roleName, { field: "userManagement", type })
+          setPermissionType(item.roleName, { field: "user", type })
         }
       />
     )
@@ -149,6 +149,7 @@ export default function UserPermissionTable({
                   ".css-177lv70-MuiFormControl-root": {
                     margin: "0",
                   },
+                  display: row.roleName === "Super Admin" && "none",
                 }}
               >
                 <TableCell

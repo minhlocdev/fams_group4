@@ -17,8 +17,16 @@ export default function UserPermission() {
 
   const { data, isLoading, isSuccess } = useGetUserPermission();
   const [permissionData, setPermissionData] = React.useState([]);
+
   useEffect(() => {
-    if (isSuccess) setPermissionData(data.objects);
+    if (isSuccess) {
+      const modifiedData = data.map((permission) => ({
+        ...permission,
+        userManagement: permission.user,
+        trainingProgram: permission.training,
+      }));
+      setPermissionData(modifiedData);
+    }
   }, [data, isSuccess]);
   const setPermissionType = (roleName, { field, type }) => {
     const updatedPermissionData = permissionData.map((data) =>
@@ -28,7 +36,6 @@ export default function UserPermission() {
   };
   const updatePermission = usePutPermissionMutation();
   const handleSave = () => {
-    console.log("SAve ne");
     setSave(false);
     setUpdate(false);
     updatePermission.mutate(permissionData, {
