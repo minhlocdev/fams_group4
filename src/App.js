@@ -34,8 +34,8 @@ function App() {
           ))}
           {privateRoute.map((route) => (
             <Route key={route.path} path={route.path} element={
-              <ProtectedRoute level={route.level}>
-                <Suspense fallback={<BackdropLoader />}>
+              <Suspense fallback={<BackdropLoader />}>
+                <ProtectedRoute level={route.level}>
                   <ErrorBoundary
                     onReset={reset}
                     fallbackRender={({ resetErrorBoundary }) => (
@@ -44,8 +44,8 @@ function App() {
                   >
                     {route.element}
                   </ErrorBoundary>
-                </Suspense>
-              </ProtectedRoute>
+                </ProtectedRoute>
+              </Suspense>
             } />
           ))}
         </Route>
