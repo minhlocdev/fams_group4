@@ -1,9 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Typography, Button, Container } from "@mui/material";
+import { Typography, Button, Box } from "@mui/material";
 export default function UnauthorizePage() {
   return (
-    <Container maxWidth="sm" sx={{ textAlign: "center", marginTop: "50px" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "80vh",
+        textAlign: "center",
+      }}
+    >
       <Typography variant="h1" component="h1">
         <span style={{ color: "rgba(0, 0, 0, 0.3)" }}>401</span>
       </Typography>
@@ -17,6 +26,6 @@ export default function UnauthorizePage() {
       <Button component={Link} to="/" variant="contained" color="primary">
         Back to Homepage
       </Button>
-    </Container>
+    </Box>
   );
 }
