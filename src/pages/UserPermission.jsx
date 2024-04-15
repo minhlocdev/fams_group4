@@ -55,15 +55,7 @@ export default function UserPermission() {
   return (
     <>
       {isSave && <AcceptUpdate onSave={handleSave} onCancel={handleCancel} />}
-      <Typography
-        variant={"h4"}
-        sx={{
-          wordSpacing: "5px",
-          letterSpacing: "5px",
-          color: theme.primary,
-          padding: "10px 0",
-        }}
-      >
+      <Typography variant="h4" fontWeight={600} marginTop={10}>
         User Permission
       </Typography>
       <Stack direction="row">

@@ -8,7 +8,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import SnippetFolderOutlinedIcon from "@mui/icons-material/SnippetFolderOutlined";
 import { PanToolOutlined } from "@mui/icons-material";
-const Syllabusdetail = ({ unit, day }) => {
+const Syllabusdetail = ({ unit, day,materialData }) => {
   const {
     OpenTrainingMaterialModal,
     setSyllabusID,
@@ -160,7 +160,7 @@ const Syllabusdetail = ({ unit, day }) => {
                 spacing={{ xs: 0.5, sm: 1.5, md: 2, lg: 3 }}
               >
                 <Chip label={e.learningObjectiveCode} sx={layoutOutput} />
-                <Chip label={e.duration} sx={layoutTime} />
+                <Chip label={e.duration + ' ms' } sx={layoutTime} />
                 <Chip
                   label={e.trainingFormat}
                   sx={
@@ -187,7 +187,7 @@ const Syllabusdetail = ({ unit, day }) => {
                     handleProps(
                       event,
                       e.contentName,
-                      e.urlMaterials,
+                      e.materials,
                       day.dayNumber,
                       unit.unitCode,
                       unit.unitName

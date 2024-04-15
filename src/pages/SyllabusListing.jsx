@@ -9,6 +9,7 @@ import SyllabusWrapper from "../context/SyllabusWrapper";
 import SearchSyllabus from "../components/Syllabus/SyllabusList/SearchSyllabus";
 import ImportSyllabus from "../components/Syllabus/SyllabusList/ImportSyllabus";
 import ProtectedButton from "../components/shared/protected/ProtectedButton";
+import theme from "../assets/theme";
 
 export default function SyllabusListing() {
   const [importFormOpen, setimportFormOpen] = useState(false);
@@ -21,7 +22,12 @@ export default function SyllabusListing() {
 
   return (
     <SyllabusWrapper>
-      <Typography sx={{ color: "#2D3748" }} variant="h4">
+      <Typography
+        variant="h4"
+        fontWeight={600}
+        marginTop={10}
+        color={theme.primary}
+      >
         Syllabus
       </Typography>
       <Stack

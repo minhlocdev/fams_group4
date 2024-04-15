@@ -1,7 +1,5 @@
 import { paramsToString } from "../utils/paramsToString";
-import axios from "axios";
 import apiClient from "./apiClient";
-const BASE_URL = "https://659d4948633f9aee79091768.mockapi.io/api/v1"
 
 
 export const getAllTrainningProgram = async () => {
@@ -15,29 +13,12 @@ export const getAllTrainningProgram = async () => {
     url: `/training-programs?${queryString}`,
   });
 };
+
 export const getTrainningProgramById = async (id) => {
   return await apiClient({
     method: 'get',
     url: `/training-programs/${id}`,
   });
-};
-
-export const getTrainningProgramByID = async (id) => {
-  return await apiClient({
-    method: 'get',
-    url: `/training-programs/${id}`,
-  });
-};
-
-export const getAllTrainers = async () => {
-  try {
-    const trainer = await axios.get(BASE_URL + `/trainer`);
-    return trainer;
-  } catch (e) {
-    const msg = e?.response?.error.message ?? e?.message ?? "Unknown Error";
-    console.error(msg);
-    return false;
-  }
 };
 
 export const getAllProgram = async () => {

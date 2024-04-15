@@ -10,7 +10,6 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
-import SnippetFolderOutlinedIcon from "@mui/icons-material/SnippetFolderOutlined";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
@@ -23,6 +22,7 @@ import {
   usePutTrainingStatusMutation,
 } from "../../services/queries/trainingQuery";
 import { Link } from "react-router-dom";
+import ProtectedButton from "../shared/protected/ProtectedButton";
 
 export default function ManageProgram({ item }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -53,6 +53,9 @@ export default function ManageProgram({ item }) {
         ToastEmitter.success("Delete Program successfully!!!");
         queryClient.invalidateQueries({ queryKey: [QUERY_PROGRAM_KEY] });
       },
+      onError: (error) => {
+        ToastEmitter.error(error.response.data);
+      },
     });
   };
 
@@ -62,13 +65,13 @@ export default function ManageProgram({ item }) {
         ToastEmitter.success("Duplicate Program successfully!!!");
         queryClient.invalidateQueries({ queryKey: [QUERY_PROGRAM_KEY] });
       },
-      onError: () => {
-        ToastEmitter.error("Delete failed!!");
+      onError: (error) => {
+        ToastEmitter.error(error.response.data);
       },
     });
   };
   const handleChangeStatus = () => {
-    const sta = item.status === 0 ? 1 : 0;
+    const sta = item.status === 1 ? -1 : 1;
     putProgramStatus(
       { id: item.trainingProgramCode, status: sta },
       {
@@ -77,8 +80,8 @@ export default function ManageProgram({ item }) {
           ToastEmitter.success("Change status successfully!!!");
           queryClient.invalidateQueries({ queryKey: [QUERY_PROGRAM_KEY] });
         },
-        onError: () => {
-          ToastEmitter.error(" Change Status failed!! ");
+        onError: (error) => {
+          ToastEmitter.error(error.response.data);
         },
       }
     );
@@ -124,14 +127,6 @@ export default function ManageProgram({ item }) {
             variant="middle"
             component="li"
           />
-
-          <MenuItem sx={{ color: "#2C5282" }} onClick={handleClickopen}>
-            <ListItemIcon>
-              <SnippetFolderOutlinedIcon sx={{ color: "#285D9A" }} />
-            </ListItemIcon>
-            Training material
-          </MenuItem>
-
           <Link to={`/training/edit/${item.trainingProgramCode}`}>
             <MenuItem sx={{ color: "#2C5282" }}>
               <ListItemIcon>
@@ -141,55 +136,59 @@ export default function ManageProgram({ item }) {
             </MenuItem>
           </Link>
 
-          <MenuItem
-            sx={{ color: "#2C5282" }}
-            onClick={() => handleDuplicateProgram()}
-          >
-            <ListItemIcon>
-              <ContentCopyOutlinedIcon sx={{ color: "#285D9A" }} />
-            </ListItemIcon>
-            Duplicate program
+          <MenuItem sx={{ color: "#2C5282" }}>
+            <ProtectedButton
+              onClick={() => handleDuplicateProgram()}
+              permissionRequired={"create"}
+              pathName={"training"}
+            >
+              <ListItemIcon>
+                <ContentCopyOutlinedIcon sx={{ color: "#285D9A" }} />
+              </ListItemIcon>
+              Duplicate program
+            </ProtectedButton>
           </MenuItem>
 
-          <MenuItem
-            onClick={() => {
-              handleChangeStatus();
-              handleCloseMenu();
-            }}
-          >
+          <MenuItem>
             <Typography variant="inherit">
-              {!isVisible ? (
-                <>
-                  <ListItemIcon>
-                    <VisibilityIcon fontSize="small" />
-                  </ListItemIcon>{" "}
-                  Activate Program
-                </>
-              ) : (
-                <>
-                  <ListItemIcon>
-                    <VisibilityOffIcon fontSize="small" />
-                  </ListItemIcon>{" "}
-                  De-activate Program
-                </>
-              )}
+              <ProtectedButton
+                onClick={handleChangeStatus}
+                permissionRequired={"change status"}
+                pathName={"training"}
+              >
+                {!isVisible ? (
+                  <>
+                    <ListItemIcon>
+                      <VisibilityIcon fontSize="small" />
+                    </ListItemIcon>{" "}
+                    Activate Program
+                  </>
+                ) : (
+                  <>
+                    <ListItemIcon>
+                      <VisibilityOffIcon fontSize="small" />
+                    </ListItemIcon>{" "}
+                    De-activate Program
+                  </>
+                )}
+              </ProtectedButton>
             </Typography>
           </MenuItem>
 
-          <MenuItem
-            style={{ color: "gray" }}
-            onClick={() => {
-              handleClickopen();
-              handleCloseMenu();
-            }}
-          >
-            <ListItemIcon>
-              <DeleteForeverOutlinedIcon
-                fontSize="small"
-                style={{ color: "gray" }}
-              />
-            </ListItemIcon>
-            <Typography variant="inherit">Delete Program</Typography>
+          <MenuItem>
+            <ProtectedButton
+              onClick={handleClickopen}
+              permissionRequired={"delete"}
+              pathName={"training"}
+            >
+              <ListItemIcon>
+                <DeleteForeverOutlinedIcon
+                  fontSize="small"
+                  style={{ color: "gray" }}
+                />
+              </ListItemIcon>
+              <Typography variant="inherit">Delete Program</Typography>
+            </ProtectedButton>
           </MenuItem>
         </Box>
       </Popover>

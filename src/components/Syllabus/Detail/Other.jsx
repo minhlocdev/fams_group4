@@ -11,7 +11,8 @@ import React, { useEffect, useState } from "react";
 import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
 import TimeAllocation from "../../shared/TimeAllocation";
 import { useTheme } from "@emotion/react";
-
+import quill from "../../../assets/scss/quill.css";
+import ReactQuill from "react-quill";
 export default function Other({ datas, SyllabusID, timeallocation }) {
   const [assessmentScheme, setAssessmentScheme] = useState();
   const [trainingPrinciples, setTrainingPrinciples] = useState();
@@ -226,7 +227,7 @@ export default function Other({ datas, SyllabusID, timeallocation }) {
         </Grid>
       </Grid>
       <Grid container spacing={4}>
-        <Grid item xs={11.7} md={11.7} lg={11.7}>
+        <Grid item xs={11.7} md={11.7} lg={11.2}>
           <Stack>
             <Card
               sx={{ width: { xs: "91%", sm: "95%", lg: "100%" } }}
@@ -278,14 +279,13 @@ export default function Other({ datas, SyllabusID, timeallocation }) {
                       </Stack>
                     </Grid>
                     <Grid item xs={10}>
-                      <Stack spacing={1.5} sx={{ mt: 1.5, ml: 1 }}>
-                        {trainingPrinciples
-                          ?.replace(/<[^>]+>/g, "")
-                          .split("\r\n")
-                          .filter((line) => line.trim() !== "")
-                          .map((line, index) => (
-                            <div key={index}>{line}</div>
-                          ))}
+                      <Stack spacing={1.5} sx={{ mt: -1.5, ml: 1 }}>
+                        <ReactQuill
+                          value={trainingPrinciples}
+                          theme="bubble"
+                          style={quill}
+                          readOnly
+                        />
                       </Stack>
                     </Grid>
                   </Grid>

@@ -91,7 +91,7 @@ const menus = [
   },
   {
     id: "5",
-    to: "/calendar",
+    to: "/training/calendar",
     icon: <CalendarIcon />,
     title: "Training Calendar",
   },

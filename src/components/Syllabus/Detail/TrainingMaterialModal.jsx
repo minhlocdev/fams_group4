@@ -2,9 +2,6 @@ import React, { useContext } from "react";
 import { Box, Modal } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { SyllabusContext } from "../../../context/SyllabusContext";
-const inputStyle = {
-  display: "none",
-};
 
 const style = {
   position: "absolute",
@@ -18,75 +15,8 @@ const style = {
 };
 //SubComponent here
 const TrainingMaterialModalContent = () => {
-  const {
-    modalData,
-    selectedDay,
-    setModalData,
-    updateButtonData,
-    syllabusID,
-    unitId,
-  } = useContext(SyllabusContext);
-  const fileInputRef = React.useRef(null);
-  const [UploadFile, setUploadFile] = React.useState(null);
+  const { modalData } = useContext(SyllabusContext);
 
-  const handleFileChange = (event) => {
-    const validFileFormats = [
-      "image/*",
-      "application/pdf",
-      "application/vnd.ms-powerpoint",
-      "video/*",
-      "application/vnd.ms-excel",
-    ];
-    const file = event.target.files[0];
-    if (file) {
-      if (
-        validFileFormats.some((format) =>
-          file.type.includes(format.split("/")[0])
-        )
-      ) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const today = new Date();
-          const formattedDate = `${today
-            .getDate()
-            .toString()
-            .padStart(2, "0")}/${(today.getMonth() + 1)
-            .toString()
-            .padStart(2, "0")}/${today.getFullYear()}`;
-
-          const newfile = {
-            title: file.name,
-            author: "someone",
-            date: formattedDate,
-          };
-          setUploadFile(newfile);
-          const updatedModalData = {
-            ...modalData,
-            TrainingMaterial: [...modalData.TrainingMaterial, newfile],
-          };
-          setModalData(updatedModalData);
-
-          updateButtonData(selectedDay, unitId, newfile, syllabusID);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        // Handle invalid file format
-        alert("Invalid file format. Please select a valid file.");
-      }
-    }
-  };
-
-  const handleDelete = (index) => {
-    const newTrainingMaterial = [...modalData.TrainingMaterial];
-    newTrainingMaterial.splice(index, 1);
-
-    const newModalData = {
-      ...modalData,
-      TrainingMaterial: newTrainingMaterial,
-    };
-    setModalData(newModalData);
-  };
-  console.log(modalData);
   return (
     <Box
       sx={{
@@ -112,8 +42,7 @@ const TrainingMaterialModalContent = () => {
           gap: "10px",
         }}
       >
-        <Box>{modalData.title}</Box>
-        {modalData.TrainingMaterial.map((item, index) => (
+        {modalData?.TrainingMaterial.map((item, index) => (
           <Box
             key={index}
             sx={{
@@ -130,69 +59,24 @@ const TrainingMaterialModalContent = () => {
                 whiteSpace: "normal",
               }}
             >
-              {item.title}
+              <a href={item?.url} target="_blank" rel="noopener noreferrer">
+                {item?.title}
+              </a>
             </Box>
             <Box sx={{ display: "flex" }}>
               <Box
                 sx={{
                   fontStyle: "italic",
-                  fontSize: "10px",
+                  fontSize: "12px",
                   display: "flex",
                   alignItems: "center",
                 }}
               >
-                by {item.author} on {item.date}
+                by {item?.createdBy}
               </Box>
-              {/* <Box
-                sx={{
-                  fontStyle: "italic",
-                  fontSize: "10px",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <CreateIcon />
-              </Box>
-              <Box
-                sx={{
-                  fontStyle: "italic",
-                  fontSize: "10px",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-                onClick={() => (
-                  handleDelete(index),
-                  deleteMaterialButtonData(
-                    selectedDay,
-                    unitId,
-                    index,
-                    syllabusID
-                  )
-                )}
-              >
-                <DeleteForeverIcon />
-              </Box> */}
             </Box>
           </Box>
         ))}
-      </Box>
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <input
-          type="file"
-          style={inputStyle}
-          ref={fileInputRef}
-          onChange={handleFileChange}
-        />
-        {/* <button type="button" style={buttonStyle} onClick={handleButtonClick}>
-          Upload File
-        </button> */}
       </Box>
     </Box>
   );
@@ -200,7 +84,6 @@ const TrainingMaterialModalContent = () => {
 //Export Component here
 export default function TrainingMaterialModal() {
   const { handleClose, openTraining, modalData } = useContext(SyllabusContext);
-  console.log(modalData);
   return (
     <div>
       <Modal

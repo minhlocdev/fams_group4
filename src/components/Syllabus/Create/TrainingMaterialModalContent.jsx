@@ -1,16 +1,8 @@
-import { Box, IconButton } from "@mui/material";
-import React, { useContext, useState, useEffect, useRef } from "react";
-import { toast } from "react-toastify";
+import { Box, IconButton, Typography } from "@mui/material";
+import React, { useContext, useState, useRef } from "react";
 import { DeleteForeverIcon } from "../../../assets/icon";
 import { SyllabusContext } from "../../../context/SyllabusContext";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-  listAll,
-  getMetadata,
-} from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { fileDB } from "../../../utils/FireBase";
 import ToastEmitter from "../../shared/lib/ToastEmitter";
 import dayjs from "dayjs";
@@ -29,38 +21,47 @@ const inputStyle = {
 };
 
 export default function TrainingMaterialModalContent({
+  onClose,
   dataUnitId,
   dayIndex,
   unitIndex,
   dataUnitIndex,
 }) {
-  const { outline, setOutline } = useContext(SyllabusContext);
+  const { outline, setOutline, setDeletingFile } = useContext(SyllabusContext);
   const { loginUser } = useContext(AuthContext);
   const fileInputRef = useRef(null);
-  const [firebaseFiles, setFirebaseFiles] = useState([]);
+  const [firebaseFiles, setFirebaseFiles] = useState(
+    outline?.[dayIndex]?.trainingUnits?.[unitIndex]?.trainingContents?.[
+      dataUnitIndex
+    ]?.materials
+  );
+  const [remainFiles, setRemainFiles] = useState([]);
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = async (event) => {
+  const handleFileChange = (event) => {
     if (event && event.target && event.target.files) {
       const files = event.target.files;
       if (files) {
-        for (const file of files) {
-          await uploadFileToStorage(file);
-        }
+        setRemainFiles(files);
       }
     }
   };
-
+  const handleSave = async () => {
+    for (const file of remainFiles) {
+      await uploadFileToStorage(file);
+    }
+    onClose();
+  };
   const uploadFileToStorage = async (file) => {
     const storageRef = ref(
       fileDB,
       `training-content-materials/${dataUnitId}/${file.name}`
     );
-    setFirebaseFiles((prevFirebaseFiles) => [...prevFirebaseFiles, storageRef]);
     await uploadBytes(storageRef, file)
       .then(() => {
+        ToastEmitter.success("Upload file ok");
         getDownloadURL(storageRef).then((url) => {
           updateDataAfterUpload(file, url);
         });
@@ -82,44 +83,31 @@ export default function TrainingMaterialModalContent({
       dataUnitIndex
     ].materials.push(newFileData);
     setOutline(newOutline);
+    setFirebaseFiles((prev) => [...prev, newFileData]);
+    setRemainFiles([]);
+  };
+  const handleDeleteRemaining = (index) => {
+    const newFiles = [...remainFiles];
+    newFiles.splice(index, 1);
+    setRemainFiles(newFiles);
   };
 
   const handleDeleteInFirebase = async (index) => {
-    const fileName = firebaseFiles[index].name;
-    const storageRef = ref(
-      fileDB,
-      `training-content-materials/${dataUnitId}/${fileName}`
+    const fileName = firebaseFiles[index].title;
+    setDeletingFile((prev) => [...prev, firebaseFiles[index]]);
+    const newFiles = [...firebaseFiles];
+    newFiles.splice(index, 1);
+    setFirebaseFiles(newFiles);
+    const newOutline = [...outline];
+    newOutline[dayIndex].trainingUnits[unitIndex].trainingContents[
+      dataUnitIndex
+    ].materials = newOutline[dayIndex].trainingUnits[
+      unitIndex
+    ].trainingContents[dataUnitIndex].materials.filter(
+      (material) => material.title !== fileName
     );
-    try {
-      await deleteObject(storageRef);
-      setFirebaseFiles((prevFiles) =>
-        prevFiles.filter((file, idx) => idx !== index)
-      );
-      toast.success(`Deleted ${fileName} successfully`);
-    } catch (error) {
-      console.error(`Error deleting ${fileName}:`, error);
-      toast.error(`Error deleting ${fileName}`);
-    }
+    setOutline(newOutline);
   };
-
-  useEffect(() => {
-    const storageRef = ref(fileDB, `training-content-materials/${dataUnitId}`);
-    listAll(storageRef).then((res) => {
-      res.items.forEach(async (item) => {
-        const url = await getDownloadURL(item);
-        const metadata = await getMetadata(item);
-        const uploadDate = metadata.timeCreated
-          ? new Date(metadata.timeCreated).toLocaleDateString()
-          : "Unknown";
-
-        setFirebaseFiles((prevFiles) => [
-          ...prevFiles,
-          { name: item.name, url, uploadDate },
-        ]);
-      });
-    });
-  }, [dataUnitId]);
-
   return (
     <>
       <Box
@@ -180,7 +168,7 @@ export default function TrainingMaterialModalContent({
                     overflow: "hidden",
                   }}
                 >
-                  {item.name}
+                  {item.title}
                 </a>
               </Box>
               <Box
@@ -192,7 +180,55 @@ export default function TrainingMaterialModalContent({
                   marginLeft: "auto",
                 }}
               >
-                <IconButton onClick={() => handleDeleteInFirebase(index)}>
+                <IconButton
+                  onClick={() => handleDeleteInFirebase(index, item.url)}
+                >
+                  <DeleteForeverIcon />
+                </IconButton>
+              </Box>
+            </Box>
+          ))}
+          {Array.from(remainFiles).map((item, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                flexDirection: {
+                  xs: "column",
+                  sm: "row",
+                  md: "row",
+                  lg: "row",
+                },
+                alignItems: "center",
+              }}
+            >
+              <Box
+                sx={{
+                  width: { xs: "100%" },
+                }}
+              >
+                <Typography
+                  variant="p"
+                  sx={{
+                    maxWidth: "100%",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                  }}
+                >
+                  {item.name} (unsaved)
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  fontStyle: "italic",
+                  fontSize: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  marginLeft: "auto",
+                }}
+              >
+                <IconButton onClick={() => handleDeleteRemaining(index)}>
                   <DeleteForeverIcon />
                 </IconButton>
               </Box>
@@ -205,6 +241,7 @@ export default function TrainingMaterialModalContent({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            columnGap: "10px",
           }}
         >
           <input
@@ -216,6 +253,9 @@ export default function TrainingMaterialModalContent({
           />
           <button type="button" style={buttonStyle} onClick={handleButtonClick}>
             Upload New
+          </button>
+          <button type="button" style={buttonStyle} onClick={handleSave}>
+            Save
           </button>
         </Box>
       </Box>

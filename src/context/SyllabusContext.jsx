@@ -41,4 +41,6 @@ export const SyllabusContext = React.createContext({
   setChecked: () => {},
   tableState: {},
   isLoading: false,
+  deletingFiles: [],
+  setDeletingFile: () => {},
 });

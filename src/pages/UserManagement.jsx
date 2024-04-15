@@ -19,15 +19,7 @@ export default function UserManagement() {
   };
   return (
     <UserProvider>
-      <Typography
-        variant={"h4"}
-        sx={{
-          wordSpacing: "5px",
-          letterSpacing: "5px",
-          color: theme.primary,
-          padding: "10px 0",
-        }}
-      >
+      <Typography variant="h4" fontWeight={600} marginTop={10} marginBottom={2}>
         User Management
       </Typography>
       <Stack

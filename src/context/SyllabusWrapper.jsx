@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { SyllabusContext } from "./SyllabusContext";
 import useTable from "../utils/hooks/useTable";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import {
   useGetSyllabusByIdQuery,
   usePostSyllabusMutation,
@@ -15,7 +15,7 @@ import {
 } from "../services/queries/syllabusQuery";
 import ToastEmitter from "../components/shared/lib/ToastEmitter";
 import AuthContext from "../utils/authUtil";
-import queryClient from "../services/queries/queryClient";
+import dayjs from "dayjs";
 
 export default function SyllabusWrapper(probs) {
   const { loginUser } = useContext(AuthContext);
@@ -59,7 +59,9 @@ export default function SyllabusWrapper(probs) {
     day: false,
   });
   // console.log("error", error);
-  const { code } = useParams();
+  const location = useLocation();
+  const params = useParams();
+  const code = !location.pathname.includes("/training") ? params.code : undefined;
   const [checked, setChecked] = useState({
     outputStandardStrings: "",
     createdDateBegin: "",
@@ -68,6 +70,7 @@ export default function SyllabusWrapper(probs) {
   const tableState = useTable();
 
   const { data, isLoading } = useGetSyllabusByIdQuery(code);
+
   const [activeTab, setActiveTab] = useState(0);
   //State for Syllabus detail--------------------------------
   const [openState, setOpenState] = useState({});
@@ -77,6 +80,7 @@ export default function SyllabusWrapper(probs) {
   const [unitId, setUnitId] = useState(null);
   const [syllabusID, setSyllabusID] = useState(null);
   const [buttonData, setButtonData] = useState([]); //State for the origin data
+  const [deletingFiles, setDeletingFile] = useState([]);
   const postParams = useMemo(() => {
     const newOutline = outline.map((item) => ({
       dayNumber: item.dayNumber,
@@ -91,7 +95,7 @@ export default function SyllabusWrapper(probs) {
           note: "no information",
           materials: (dataUnit.materials || []).map((material) => ({
             title: material.title,
-            createdOn: material.createdOn,
+            createdOn: dayjs(),
             createdBy: material.createdBy,
             url: material.url,
           })),
@@ -122,7 +126,7 @@ export default function SyllabusWrapper(probs) {
             id: material.id,
             contentId: 0,
             title: material.title,
-            createdDate: material.createdOn,
+            createdDate: dayjs(),
             createdBy: material.createdBy,
             url: material.url,
           })),
@@ -149,8 +153,9 @@ export default function SyllabusWrapper(probs) {
       modifiedBy: loginUser.name,
       outline: newOutline,
       schema: newOther,
+      deletingFiles,
     };
-  }, [code, general, outline, other, loginUser]);
+  }, [code, general, outline, other, loginUser, deletingFiles]);
   useEffect(() => {
     if (data && !isLoading) {
       setOutline(data.outline);
@@ -497,6 +502,8 @@ export default function SyllabusWrapper(probs) {
         setChecked,
         ...tableState,
         isLoading,
+        deletingFiles,
+        setDeletingFile,
       }}
     >
       {probs.children}

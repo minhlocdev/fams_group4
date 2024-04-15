@@ -8,6 +8,7 @@ import TrainningProgramTable from "../components/TraningProgramList/TrainningPro
 import { Link } from "react-router-dom";
 import { TrainingProgramProvider } from "../context/TrainingProgramContext";
 import SearchProgram from "../components/TraningProgramList/SearchProgram";
+import theme from "../assets/theme";
 
 export default function TrainingProgramList() {
   const [importFormOpen, setimportFormOpen] = useState(false);
@@ -22,16 +23,9 @@ export default function TrainingProgramList() {
     <TrainingProgramProvider>
       <Typography
         variant="h4"
-        sx={{
-          width: "calc(100% + 21px)",
-          background: "#2D3748",
-          color: "white",
-          paddingTop: 0.5,
-          paddingBottom: 0.5,
-          paddingLeft: 4,
-          marginLeft: -2.5,
-          marginTop: -0.3,
-        }}
+        fontWeight={600}
+        marginTop={10}
+        color={theme.primary}
       >
         Training program
       </Typography>

@@ -15,7 +15,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import SyllabusWrapper from "../context/SyllabusWrapper";
 import SyllabusDetailContent from "../components/Syllabus/Detail/SyllabusDetailContent";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   useDeleteSyllabusMutation,
   useDuplicateSyllabusMutation,
@@ -25,10 +25,12 @@ import {
 import { QUERY_SYLLABUS_KEY } from "../constants/query";
 import ToastEmitter from "../components/shared/lib/ToastEmitter";
 import queryClient from "../services/queries/queryClient";
+import theme from "../assets/theme";
+import ProtectedButton from "../components/shared/protected/ProtectedButton";
 export default function SyllabusDetail() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const { code } = useParams();
-  const { data } = useGetSyllabusByIdQuery(code);
+  const { data, error, isError } = useGetSyllabusByIdQuery(code);
   const changeSyllabusStatus = usePutSyllabusStatus(Number(code));
   const navigate = useNavigate();
   const duplicateSyllabus = useDuplicateSyllabusMutation();
@@ -52,7 +54,6 @@ export default function SyllabusDetail() {
   };
   const open = Boolean(anchorEl);
   const handleStatus = () => {
-    console.log("change");
     if (data?.publishStatus === 1) {
       changeSyllabusStatus.mutate(
         { id: code, status: 0 },
@@ -92,11 +93,32 @@ export default function SyllabusDetail() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  if (isError) {
+    const errorString = error?.response?.data;
+    const startIndex = errorString.indexOf("Message = ") + "Message = ".length;
+    const endIndex = errorString.indexOf("}", startIndex);
+
+    // Extract the message
+    const message = errorString.substring(startIndex, endIndex).trim();
+    return (
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          fontSize: "35px",
+        }}
+      >
+        {message}
+      </div>
+    );
+  }
   return (
     <SyllabusWrapper>
       <Box>
-        <Box sx={{ paddingLeft: { xs: "0px", lg: "10px" } }}>
-          <Typography variant="h4" sx={{ color: "#2D3748" }}>
+        <Box sx={{ paddingLeft: { xs: "0px", lg: "10px" } }} marginTop={10}>
+          <Typography variant="h4" fontWeight={600} color={theme.primary}>
             Syllabus
           </Typography>
           <Box
@@ -149,28 +171,52 @@ export default function SyllabusDetail() {
                 <ListItemIcon>
                   <CreateIcon />
                 </ListItemIcon>
-                <ListItemText>Edit Syllabus</ListItemText>
+                <Link
+                  to={`/syllabus/edit/${code}`}
+                  style={{ color: "#545454" }}
+                >
+                  <ListItemText>Edit Syllabus</ListItemText>
+                </Link>
               </MenuItem>
-              <MenuItem onClick={() => handleDuplicateSyllabus()}>
-                <ListItemIcon>
-                  <ContentCopyIcon sx={{ color: "#2D3748" }} />
-                </ListItemIcon>
-                <ListItemText>Duplicate Syllabus</ListItemText>
+              <MenuItem>
+                <ProtectedButton
+                  onClick={handleDuplicateSyllabus}
+                  permissionRequired={"create"}
+                  pathName={"syllabus"}
+                >
+                  <ListItemIcon>
+                    <ContentCopyIcon sx={{ color: "#2D3748" }} />
+                  </ListItemIcon>
+                  <ListItemText>Duplicate Syllabus</ListItemText>
+                </ProtectedButton>
               </MenuItem>
-              <MenuItem onClick={handleStatus}>
-                <ListItemIcon>
-                  <VisibilityOffIcon sx={{ color: "#2D3748" }} />
-                </ListItemIcon>
-                <ListItemText>De-activate Syllabus</ListItemText>
+              <MenuItem>
+                <ProtectedButton
+                  onClick={handleStatus}
+                  permissionRequired={"change status"}
+                  pathName={"syllabus"}
+                >
+                  <ListItemIcon>
+                    <VisibilityOffIcon sx={{ color: "#2D3748" }} />
+                  </ListItemIcon>
+                  <ListItemText>
+                    {data?.publishStatus === 1
+                      ? "De-active syllabus"
+                      : "Active syllabus"}
+                  </ListItemText>
+                </ProtectedButton>
               </MenuItem>
-              <MenuItem
-                sx={{ color: "grey" }}
-                onClick={() => handleDeleteSyllabus()}
-              >
-                <ListItemIcon>
-                  <DeleteForeverIcon sx={{ color: "grey" }} />
-                </ListItemIcon>
-                <ListItemText>Delete Syllabus</ListItemText>
+              <MenuItem sx={{ color: "grey" }}>
+                <ProtectedButton
+                  onClick={() => handleDeleteSyllabus()}
+                  permissionRequired={"delete"}
+                  pathName={"syllabus"}
+                >
+                  <ListItemIcon>
+                    <DeleteForeverIcon sx={{ color: "grey" }} />
+                  </ListItemIcon>
+                  <ListItemText>Delete Syllabus</ListItemText>
+                </ProtectedButton>
               </MenuItem>
             </Menu>
           </Box>

@@ -235,7 +235,7 @@ export function Day(props) {
     <Badge
       key={props.day.toString()}
       overlap="circular"
-      badgeContent={isSelected ? "💧" : undefined}
+      badgeContent={isSelected ? "❣️" : undefined}
       sx={{ flex: "1 1 0" }}
     >
       <CustomPickersDay

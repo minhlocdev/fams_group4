@@ -5,15 +5,18 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import FilterCenterFocusIcon from "@mui/icons-material/FilterCenterFocus";
+import quill from "../../../assets/scss/quill.css";
+import ReactQuill from "react-quill";
 export default function General({ datas }) {
   const [data, setData] = useState();
   const AttendeeNumber = 20;
-  const Level = "All Levels";
+  const [Level, setLevel] = useState("All Levels");
   const [outputStandard, setOutputStandard] = useState();
   const [technicalRequirement, setTechnicalRequirement] = useState();
   const [CourseObjective, setCourseObjective] = useState();
   useEffect(() => {
     setData(datas);
+    setLevel(datas?.level);
     setOutputStandard(datas?.outpuStandards);
     setTechnicalRequirement(datas?.technicalRequirement);
     setCourseObjective(datas?.courseObjective);
@@ -47,21 +50,39 @@ export default function General({ datas }) {
                   <Grid item xs={5}>
                     <Stack
                       direction="row"
-                      sx={{ alignItems: "center", fontSize: 14, mt: 2 }}
+                      sx={{
+                        alignItems: "center",
+                        fontSize: 14,
+                        mt: 2,
+                        display: "flex",
+                        gap: "8px",
+                      }}
                     >
                       <StarBorderIcon />
                       Level
                     </Stack>
                     <Stack
                       direction="row"
-                      sx={{ alignItems: "center", fontSize: 14, mt: 2 }}
+                      sx={{
+                        alignItems: "center",
+                        fontSize: 14,
+                        mt: 2,
+                        display: "flex",
+                        gap: "8px",
+                      }}
                     >
                       <PeopleAltOutlinedIcon />
                       Attendee number
                     </Stack>
                     <Stack
                       direction="row"
-                      sx={{ alignItems: "center", fontSize: 14, mt: 2 }}
+                      sx={{
+                        alignItems: "center",
+                        fontSize: 14,
+                        mt: 2,
+                        display: "flex",
+                        gap: "8px",
+                      }}
                     >
                       <GppGoodOutlinedIcon />
                       Output standard
@@ -145,13 +166,12 @@ export default function General({ datas }) {
                   <span>Technical Requirement(s)</span>
                 </Stack>
                 <Stack spacing={1.5} sx={{ mt: 1.5, ml: 1 }}>
-                  {technicalRequirement
-                    ?.replace(/<[^>]+>/g, "")
-                    .split("\r\n")
-                    .filter((line) => line.trim() !== "")
-                    .map((line, index) => (
-                      <div key={index}>{line}</div>
-                    ))}
+                  <ReactQuill
+                    value={technicalRequirement}
+                    theme="bubble"
+                    style={quill}
+                    readOnly
+                  />
                 </Stack>
               </Stack>
             </CardContent>
@@ -164,12 +184,12 @@ export default function General({ datas }) {
           <span>Course objectives</span>
         </Stack>
         <Stack spacing={1.5} sx={{ mt: 1.5, ml: 1 }}>
-          {CourseObjective?.replace(/<[^>]+>/g, "")
-            .split("\r\n")
-            .filter((line) => line.trim() !== "")
-            .map((line, index) => (
-              <div key={index}>{line}</div>
-            ))}
+          <ReactQuill
+            value={CourseObjective}
+            theme="bubble"
+            style={quill}
+            readOnly
+          />
         </Stack>
       </Stack>
     </Box>

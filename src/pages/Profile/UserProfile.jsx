@@ -6,7 +6,6 @@ import { useParams } from "react-router";
 import UserDetailSkeleton from "../../components/UserManagement/UserDetail/UserDetailSkeleton";
 import UpdateUser from "../../components/UserManagement/UpdateUser";
 import EditAvatarModal from "../../components/UserManagement/UserDetail/EditAvatarModal";
-import { UserProvider } from "../../context/UserContext";
 
 const UserProfileRoot = styled("div")(({ theme }) => ({
   display: "flex",

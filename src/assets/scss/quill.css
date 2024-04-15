@@ -1,0 +1,6 @@
+.ql-editor {
+    font-family: 'Poppins';
+}
+.ql-tooltip.ql-hidden{
+    display: none;
+}   

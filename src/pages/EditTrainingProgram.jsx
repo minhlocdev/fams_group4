@@ -13,16 +13,16 @@ import {
   useGetTrainingProgramByIdQuery,
   usePutTrainingMutation,
 } from "../services/queries/trainingQuery";
-import ErrorIcon from "@mui/icons-material/Error";
-import { useGetAllSyllabusQuery } from "../services/queries/syllabusQuery";
+import { useGetAllSyllabusActiveQuery } from "../services/queries/syllabusQuery";
 import SyllabusCard from "../components/Syllabus/Detail/SyllabusCards";
 import SearchSyllabus from "../components/CreateTraningProgram/SearchSyllabus";
 import dayjs from "dayjs";
 import ContentEditable from "../components/shared/lib/ContentEditable";
 import AuthContext from "../utils/authUtil";
 import ToastEmitter from "../components/shared/lib/ToastEmitter";
-import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_PROGRAM_KEY } from "../constants/query";
+import queryClient from "../services/queries/queryClient";
+import TrainigNotFound from "../components/TrainingProgramDetail/TrainigNotFound";
 
 export default function EditTrainingProgram() {
   const formatDate = (dateString) => {
@@ -34,13 +34,21 @@ export default function EditTrainingProgram() {
   };
   const { loginUser } = useContext(AuthContext);
   const { code } = useParams();
+  useEffect(() => {
+    queryClient.resetQueries([QUERY_PROGRAM_KEY, code]);
+  }, [code]);
+
   const {
     data: oldTraining,
     isSuccess: isSucOldTraining,
     isLoading: loadingData,
     isError,
   } = useGetTrainingProgramByIdQuery(code);
-  const { data: Syllabuses, isLoading, isSuccess } = useGetAllSyllabusQuery();
+  const {
+    data: Syllabuses,
+    isLoading,
+    isSuccess,
+  } = useGetAllSyllabusActiveQuery();
   const [program, setProgram] = useState([]);
   const [SelectedListSyllabus, setSelectedListSyllabus] = useState([]);
   const [newTrainingProgram, setNewTrainingProgram] = useState({});
@@ -66,7 +74,7 @@ export default function EditTrainingProgram() {
     ) {
       setSelectedListSyllabus(oldTraining?.outline);
       const selectedIds = oldTraining?.outline.map((syl) => syl.id);
-      const filteredProgram = Syllabuses.list.filter(
+      const filteredProgram = Syllabuses.filter(
         (syl) =>
           !selectedIds.includes(syl.id) &&
           syl.publishStatus !== 0 &&
@@ -148,7 +156,6 @@ export default function EditTrainingProgram() {
   };
   const navigate = useNavigate();
   const { mutate: putProgram } = usePutTrainingMutation();
-  const queryClient = useQueryClient();
   const handleSubmit = (e) => {
     e.preventDefault();
     putProgram(newTrainingProgram, {
@@ -157,8 +164,11 @@ export default function EditTrainingProgram() {
         queryClient.invalidateQueries([QUERY_PROGRAM_KEY, { code }]);
         navigate(`/training/detail/${code}`);
       },
-      onError: () => {
-        ToastEmitter.error("Add user failed!!");
+      onError: (error) => {
+        ToastEmitter.error(
+          "Edit training program failed || ",
+          error.response?.data
+        );
       },
     });
   };
@@ -170,19 +180,7 @@ export default function EditTrainingProgram() {
     );
   }
   if (isError) {
-    return (
-      <Box
-        sx={{
-          textAlign: "center",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ErrorIcon></ErrorIcon>
-        ERROR CAN NOT FIND DATA
-      </Box>
-    );
+    return <TrainigNotFound />;
   }
 
   return (
@@ -234,7 +232,7 @@ export default function EditTrainingProgram() {
                 label="Active"
                 variant="outlined"
               />
-            ) : newTrainingProgram?.status === 0 ? (
+            ) : newTrainingProgram?.status === -1 ? (
               <Chip
                 sx={{
                   background: "#B9B9B9",

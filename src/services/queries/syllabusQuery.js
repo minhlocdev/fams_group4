@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { QUERY_LEARNING_KEY, QUERY_SYLLABUS_KEY, QUERY_TIMEALLOCATION_KEY } from '../../constants/query';
-import { ChangeSyllabusStausByID, deleteSyllabus, duplicateSyllabus, getAllSyllabus, getLearningObjective, getSyllabus, getSyllabusByID, getSyllabusByOutputStandard, getTimeAllocationByID, getSyllabusOutline, postSyllabus, putSyllabus, postImportSyllabus } from '../Syllabus';
+import { ChangeSyllabusStausByID, deleteSyllabus, duplicateSyllabus, getAllSyllabus, getLearningObjective, getSyllabus, getSyllabusByID, getSyllabusByOutputStandard, getTimeAllocationByID, getSyllabusOutline, postSyllabus, putSyllabus, postImportSyllabus, getAllSyllabusActive } from '../Syllabus';
 
 export const useGetSyllabusOutlineQuery = (id) =>
     useQuery({
@@ -33,6 +33,14 @@ export const useGetAllSyllabusQuery = () =>
         staleTime: 20000,
     },
     );
+export const useGetAllSyllabusActiveQuery = () =>
+    useQuery({
+        queryKey: [QUERY_SYLLABUS_KEY],
+        queryFn: () => getAllSyllabusActive().then((res) => res.data),
+        staleTime: 20000,
+    },
+    );
+
 export const useGetSyllabusQuery = (page, limit, orderby, order, debouncedSearchTerm, filter) =>
     useQuery({
         queryKey: [QUERY_SYLLABUS_KEY, page, limit, orderby, order, debouncedSearchTerm, filter],

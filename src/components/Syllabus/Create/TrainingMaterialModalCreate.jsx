@@ -71,6 +71,7 @@ export default function TrainingMaterialModalCreate({
               </div>
             </div>
             <TrainingMaterialModalContent
+              onClose={handleClose}
               dataUnitId={dataUnitId} // trainingContent
               dayIndex={dayIndex}
               dataUnitIndex={dataUnitIndex}

@@ -1,44 +1,22 @@
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  Grid,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Chip, Grid, Stack, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import SnippetFolderOutlinedIcon from "@mui/icons-material/SnippetFolderOutlined";
-import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
-import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import SyllabusCard from "../Syllabus/Detail/SyllabusCards";
 import SearchSyllabus from "./SearchSyllabus";
 import dayjs from "dayjs";
-import { useGetAllSyllabusQuery } from "../../services/queries/syllabusQuery";
+import { useGetAllSyllabusActiveQuery } from "../../services/queries/syllabusQuery";
 import AuthContext from "../../utils/authUtil";
 import { usePostTrainingMutation } from "../../services/queries/trainingQuery";
 import ToastEmitter from "../shared/lib/ToastEmitter";
 import { useNavigate } from "react-router-dom";
+import theme from "../../assets/theme";
+import { TrainingStatus } from "../../constants/PublishStatusEnum";
+const statusColors = {
+  Active: theme.primary,
+  Inactive: "#B9B9B9",
+  Draft: "#285D9A",
+};
 
 export default function AddSyllabus({ TraningProgramName, onClickBack }) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  // fake data
   const { loginUser } = useContext(AuthContext);
   const [newTrainingProgram, setNewTrainingProgram] = useState({
     name: TraningProgramName,
@@ -67,21 +45,13 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
       syllabusDTOs: [],
     });
     setSelectedListSyllabus([]);
-    const updatedData = data.list.filter(
-      (item) => item.publishStatus !== 0 && item.publishStatus !== -1
-    );
-    setProgram(updatedData);
+    setProgram(data);
   };
   const [program, setProgram] = useState([]);
   const [SelectedListSyllabus, setSelectedListSyllabus] = useState([]);
-  const { data, isLoading, isSuccess } = useGetAllSyllabusQuery();
+  const { data, isLoading, isSuccess } = useGetAllSyllabusActiveQuery();
   useEffect(() => {
-    if (isSuccess) {
-      const updatedData = data.list.filter(
-        (item) => item.publishStatus !== 0 && item.publishStatus !== -1
-      );
-      setProgram(updatedData);
-    }
+    setProgram(data);
   }, [data, isSuccess]);
 
   const [syllabusDTOs, setSyllabusDTOs] = useState([]);
@@ -137,11 +107,11 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
     e.preventDefault();
     postProgram(newTrainingProgram, {
       onSuccess: (res) => {
-        console.log("res", res.data);
+        ToastEmitter.success("Create trianing program successfully!!");
         navigate(`/training/detail/${res.data.trainingProgramCode}`);
       },
       onError: () => {
-        ToastEmitter.error("Add failed!!");
+        ToastEmitter.error("Create new training program failed!!");
       },
     });
   };
@@ -155,11 +125,16 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
           paddingTop: 0.5,
           paddingBottom: 0.5,
           paddingLeft: 4,
-          marginLeft: -2.5,
-          marginTop: -0.3,
         }}
       >
-        <Typography sx={{ color: "white", pt: 1, pb: 1 }} variant="h6">
+        <Typography
+          variant={"h4"}
+          sx={{
+            wordSpacing: "5px",
+            letterSpacing: "5px",
+            color: "#fff",
+          }}
+        >
           Training program
         </Typography>
         <Stack
@@ -167,108 +142,21 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
           sx={{ alignItems: "center", justifyContent: "space-between" }}
         >
           <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-            <Typography sx={{ color: "white", pt: 1, pb: 1 }} variant="h4">
+            <Typography
+              sx={{ color: "white", pt: 1, pb: 1, fontWeight: { md: 600 } }}
+              variant="h4"
+            >
               {newTrainingProgram.name}
             </Typography>
-            {newTrainingProgram?.status === 1 ? (
-              <Chip
-                sx={{
-                  background: "#2D3748",
-                  color: "white",
-                  borderColor: "white",
-                }}
-                label="Active"
-                variant="outlined"
-              />
-            ) : newTrainingProgram?.status === 0 ? (
-              <Chip
-                sx={{
-                  background: "#B9B9B9",
-                  color: "white",
-                  borderColor: "white",
-                }}
-                label="Inactive"
-                variant="outlined"
-              />
-            ) : (
-              <Chip
-                sx={{
-                  background: "#285D9A",
-                  color: "white",
-                  borderColor: "white",
-                }}
-                label="Draft"
-                variant="outlined"
-              />
-            )}
-          </Stack>
-          <Stack direction="row" spacing={2} sx={{ mr: 2 }}>
-            <Button
-              id="basic-button"
-              aria-controls={open ? "basic-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? "true" : undefined}
-              onClick={handleClick}
-              sx={{ color: "white" }}
-            >
-              <MoreHorizIcon></MoreHorizIcon>
-            </Button>
-            <Menu
+            <Chip
+              variant="outlined"
+              label={TrainingStatus[newTrainingProgram?.status]}
               sx={{
-                "& .MuiMenu-paper": {
-                  borderRadius: "10px",
-                },
+                background:
+                  statusColors[TrainingStatus[newTrainingProgram?.status]],
+                color: "white",
               }}
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-            >
-              <Typography
-                sx={{
-                  fontSize: 14,
-                  color: "#2A4365",
-                  fontWeight: "bold",
-                  ml: 2,
-                }}
-              >
-                Manage
-              </Typography>
-              <Divider
-                sx={{ background: "#ACACAC" }}
-                variant="middle"
-                component="li"
-              />
-              <MenuItem sx={{ color: "#2C5282" }} onClick={handleClose}>
-                <ListItemIcon>
-                  <SnippetFolderOutlinedIcon sx={{ color: "#285D9A" }} />
-                </ListItemIcon>
-                Training material
-              </MenuItem>
-              <MenuItem sx={{ color: "#2C5282" }} onClick={handleClose}>
-                <ListItemIcon>
-                  <CreateOutlinedIcon sx={{ color: "#285D9A" }} />
-                </ListItemIcon>
-                Edit program
-              </MenuItem>
-              <MenuItem sx={{ color: "#2C5282" }} onClick={handleClose}>
-                <ListItemIcon>
-                  <ContentCopyOutlinedIcon sx={{ color: "#285D9A" }} />
-                </ListItemIcon>
-                Duplicate program
-              </MenuItem>
-              <MenuItem sx={{ color: "#2C5282" }} onClick={handleClose}>
-                <ListItemIcon>
-                  <VisibilityOffOutlinedIcon sx={{ color: "#285D9A" }} />
-                </ListItemIcon>
-                De-activate program
-              </MenuItem>
-              <MenuItem sx={{ color: "#8B8B8B" }} onClick={handleClose}>
-                <ListItemIcon>
-                  <DeleteForeverOutlinedIcon />
-                </ListItemIcon>
-                Delete program
-              </MenuItem>
-            </Menu>
+            />
           </Stack>
         </Stack>
       </Box>

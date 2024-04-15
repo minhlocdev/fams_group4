@@ -11,6 +11,11 @@ export default function NewTrainingProgram({
     setProgramName(event.target.value);
     newProgramName(event.target.value);
   };
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      clickCreate();
+    }
+  };
   return (
     <>
       <Box
@@ -20,12 +25,17 @@ export default function NewTrainingProgram({
           paddingTop: 0.5,
           paddingBottom: 0.5,
           paddingLeft: 4,
-          marginLeft: -2.5,
-          marginTop: -0.3,
         }}
       >
-        <Typography sx={{ color: "white" }} variant="h6">
-          New Training program
+        <Typography
+          variant={"h4"}
+          sx={{
+            wordSpacing: "5px",
+            letterSpacing: "5px",
+            color: "#fff",
+          }}
+        >
+          Training program
         </Typography>
       </Box>
       <Grid container spacing={2} alignItems="center" sx={{ mt: 3 }}>
@@ -48,6 +58,7 @@ export default function NewTrainingProgram({
               inputProps={{ "aria-label": "search" }}
               value={programName}
               onChange={handleInputChange}
+              onKeyDown={handleKeyPress}
             />
           </Box>
         </Grid>

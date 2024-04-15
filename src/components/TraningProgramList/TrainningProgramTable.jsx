@@ -17,7 +17,7 @@ import theme from "../../assets/theme";
 import TableLoader from "../shared/loader/TableLoader";
 import { TrainingProgramContext } from "../../context/TrainingProgramContext";
 import { Typography } from "@mui/material";
-import { PublishStatus } from "../../constants/PublishStatusEnum";
+import { TrainingStatus } from "../../constants/PublishStatusEnum";
 import { Link } from "react-router-dom";
 
 const headCells = [
@@ -80,12 +80,9 @@ export default function TrainingProgramTable() {
             />
             <TableBody>
               {data?.list?.map((row, index) => {
-                const labelId = `enhanced-table-checkbox-${index}`;
-
                 return (
                   <TableRow hover tabIndex={-1} key={row.trainingProgramCode}>
                     <TableCell
-                      aria-label={labelId}
                       component="th"
                       scope="row"
                       padding="none"
@@ -107,10 +104,10 @@ export default function TrainingProgramTable() {
                     </TableCell>
                     <TableCell align="left">
                       <Chip
-                        label={PublishStatus[row.status]}
+                        label={TrainingStatus[row.status]}
                         style={{
                           backgroundColor:
-                            statusColors[PublishStatus[row.status]],
+                            statusColors[TrainingStatus[row.status]],
                           color: "#FFFFFF",
                         }}
                       />

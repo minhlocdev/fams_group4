@@ -65,9 +65,8 @@ export default function OutlineTabContent({ SyllabusID, timeallocation }) {
   const isSM = useMediaQuery(theme.breakpoints.up("sm"));
   const isLG = useMediaQuery(theme.breakpoints.up("lg"));
   const { data } = useGetSyllabusOutline(SyllabusID);
-
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} >
       <Grid item xs={12} lg={10}>
         <Box style={{ overflow: "auto" }}>
           {data?.map((day, dayIndex) => (
@@ -84,12 +83,12 @@ export default function OutlineTabContent({ SyllabusID, timeallocation }) {
                       setUnitId(unit?.unitCode);
                     }}
                     sx={{
-                      width: "100%", // Default width for xs screens
+                      width: "100%", 
                     }}
                   >
                     <Box
                       sx={
-                        unitIndex === 0 ? dropdowncontentzero : dropdowncontent
+                        unitIndex === day?.trainingUnits.length - 1 ? dropdowncontent : dropdowncontentzero
                       }
                     >
                       <Box
@@ -114,7 +113,7 @@ export default function OutlineTabContent({ SyllabusID, timeallocation }) {
                         >
                           <Box sx={{ textWrap: "nowrap" }}>
                             {"Unit " + unit?.unitCode}
-                          </Box>
+                          </Box>  
                           <Box>{unit?.unitName}</Box>
                         </Box>
                         <Box>
@@ -126,7 +125,7 @@ export default function OutlineTabContent({ SyllabusID, timeallocation }) {
                           sx={{ paddingLeft: { xs: "0", lg: "145px" } }}
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Syllabusdetail unit={unit} day={day} />
+                          <Syllabusdetail unit={unit} day={day} materialData={unit.trainingContents}/>
                         </Box>
                       </Collapse>
                     </Box>

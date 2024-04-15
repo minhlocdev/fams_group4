@@ -13,11 +13,13 @@ import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
 import {
   useDeleteSyllabusMutation,
   useDuplicateSyllabusMutation,
+  usePutSyllabusStatus,
 } from "../../../services/queries/syllabusQuery";
 import ToastEmitter from "../../shared/lib/ToastEmitter";
 import queryClient from "../../../services/queries/queryClient";
 import { QUERY_SYLLABUS_KEY } from "../../../constants/query";
 import ProtectedButton from "../../shared/protected/ProtectedButton";
+import { VisibilityOff } from "@mui/icons-material";
 
 export default function Popup({ item }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -62,6 +64,41 @@ export default function Popup({ item }) {
     });
   };
 
+  const changeSyllabusStatus = usePutSyllabusStatus();
+  const handleStatus = () => {
+    if (item.publishStatus === 1) {
+      changeSyllabusStatus.mutate(
+        { id: item.id, status: 0 },
+        {
+          onSuccess: () => {
+            queryClient.resetQueries({
+              queryKey: [QUERY_SYLLABUS_KEY],
+            });
+            ToastEmitter.success("Change status successfully!!!");
+          },
+          onError: (error) => {
+            ToastEmitter.error(error.response.data);
+          },
+        }
+      );
+    }
+    if (item.publishStatus === 0) {
+      changeSyllabusStatus.mutate(
+        { id: item.id, status: 1 },
+        {
+          onSuccess: () => {
+            ToastEmitter.success("Change status successfully!!!");
+            queryClient.resetQueries({
+              queryKey: [QUERY_SYLLABUS_KEY],
+            });
+          },
+          onError: (error) => {
+            ToastEmitter.error(error.response.data);
+          },
+        }
+      );
+    }
+  };
   return (
     <div>
       <IconButton
@@ -121,6 +158,20 @@ export default function Popup({ item }) {
               <ContentCopyOutlinedIcon fontSize="small" />
             </ListItemIcon>
             Duplicate syllabus
+          </ProtectedButton>
+        </MenuItem>
+        <MenuItem>
+          <ProtectedButton
+            onClick={handleStatus}
+            permissionRequired={"change status"}
+            pathName={"syllabus"}
+          >
+            <ListItemIcon>
+              <VisibilityOff fontSize="small" />
+            </ListItemIcon>
+            {item.publishStatus === 1
+              ? "De-active syllabus"
+              : "Active syllabus"}
           </ProtectedButton>
         </MenuItem>
         <MenuItem

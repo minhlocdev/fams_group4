@@ -6,7 +6,8 @@ import queryClient from "../../services/queries/queryClient";
 import { AuthProvider } from "../../utils/authUtil";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
-import Dashboard from "../Dashboard";
+import Dashboard from "../../pages/Dashboard";
+
 
 const theme = createTheme();
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -13,7 +13,6 @@ import {
   Typography,
 } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import ErrorIcon from "@mui/icons-material/Error";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
@@ -26,13 +25,22 @@ import {
   usePostDuplicateTrainingMutation,
   usePutTrainingStatusMutation,
 } from "../services/queries/trainingQuery";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SyllabusWrapper from "../context/SyllabusWrapper";
 import ToastEmitter from "../components/shared/lib/ToastEmitter";
 import { QUERY_PROGRAM_KEY } from "../constants/query";
 import queryClient from "../services/queries/queryClient";
 import SyllabusCard from "../components/Syllabus/Detail/SyllabusCards";
+import TrainigNotFound from "../components/TrainingProgramDetail/TrainigNotFound";
+import { TrainingStatus } from "../constants/PublishStatusEnum";
+import theme from "../assets/theme";
+import ProtectedButton from "../components/shared/protected/ProtectedButton";
 
+const statusColors = {
+  Active: theme.primary,
+  Inactive: "#B9B9B9",
+  Draft: "#285D9A",
+};
 export default function TrainingProgramDetail() {
   const { code } = useParams();
 
@@ -46,16 +54,14 @@ export default function TrainingProgramDetail() {
     setAnchorEl(null);
   };
   const { data, isLoading, isError } = useGetTrainingProgramByIdQuery(code);
-  const [status, setStatus] = useState();
-  useEffect(() => {
-    setStatus(data?.status);
-  }, [data]);
+  const status = data?.status;
+
   const { mutate: putProgramStatus } = usePutTrainingStatusMutation(code);
   const { mutate: postDuplicateMutation } = usePostDuplicateTrainingMutation();
   const { mutate: deleteProgramMutation } = useDeleteProgramMutation();
   const navigate = useNavigate();
   const handleChangeStatus = () => {
-    const sta = status === 0 ? 1 : 0;
+    const sta = status === 1 ? -1 : 1;
     putProgramStatus(
       { id: code, status: sta },
       {
@@ -90,10 +96,10 @@ export default function TrainingProgramDetail() {
       onSuccess: () => {
         ToastEmitter.success("Delete successfully!!!");
         queryClient.invalidateQueries([QUERY_PROGRAM_KEY]);
-        navigate(`/training/list`);
+        navigate(`/training`);
       },
-      onError: () => {
-        ToastEmitter.error("Delete failed!!");
+      onError: (error) => {
+        ToastEmitter.error(error.response.data);
       },
     });
   };
@@ -105,19 +111,7 @@ export default function TrainingProgramDetail() {
     );
   }
   if (isError) {
-    return (
-      <Box
-        sx={{
-          textAlign: "center",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ErrorIcon></ErrorIcon>
-        ERROR CAN NOT FIND DATA
-      </Box>
-    );
+    return <TrainigNotFound />;
   }
 
   return (
@@ -128,12 +122,17 @@ export default function TrainingProgramDetail() {
           background: "#2D3748",
           paddingTop: 0.5,
           paddingBottom: 0.5,
-          paddingLeft: 4,
-          marginLeft: -2.5,
-          marginTop: -0.3,
+          paddingLeft: 2,
         }}
       >
-        <Typography sx={{ color: "white", pt: 1, pb: 1 }} variant="h6">
+        <Typography
+          variant={"h4"}
+          sx={{
+            wordSpacing: "5px",
+            letterSpacing: "5px",
+            color: "#fff",
+          }}
+        >
           Training program
         </Typography>
         <Stack
@@ -141,40 +140,20 @@ export default function TrainingProgramDetail() {
           sx={{ alignItems: "center", justifyContent: "space-between" }}
         >
           <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-            <Typography sx={{ color: "white", pt: 1, pb: 1 }} variant="h4">
+            <Typography
+              sx={{ color: "white", pt: 1, pb: 1, fontWeight: { md: "600" } }}
+              variant="h4"
+            >
               {data?.name}
             </Typography>
-            {data?.status === 1 ? (
-              <Chip
-                sx={{
-                  background: "#2D3748",
-                  color: "white",
-                  borderColor: "white",
-                }}
-                label="Active"
-                variant="outlined"
-              />
-            ) : data?.status === 0 ? (
-              <Chip
-                sx={{
-                  background: "#B9B9B9",
-                  color: "white",
-                  borderColor: "white",
-                }}
-                label="Inactive"
-                variant="outlined"
-              />
-            ) : (
-              <Chip
-                sx={{
-                  background: "#285D9A",
-                  color: "white",
-                  borderColor: "white",
-                }}
-                label="Draft"
-                variant="outlined"
-              />
-            )}
+            <Chip
+              variant="outlined"
+              label={TrainingStatus[data?.status]}
+              sx={{
+                background: statusColors[TrainingStatus[data?.status]],
+                color: "white",
+              }}
+            />
           </Stack>
           <Stack direction="row" spacing={2} sx={{ mr: 2 }}>
             <Button
@@ -212,42 +191,61 @@ export default function TrainingProgramDetail() {
                 component="li"
               />
 
-              <MenuItem sx={{ color: "#2C5282" }} onClick={handleCloseMenu}>
-                <Link to={`/training/edit/${code}`}>
+              <MenuItem
+                sx={{ color: "#2C5282" }}
+                onClick={() => navigate(`/training/edit/${code}`)}
+              >
+                <ListItemIcon>
+                  <CreateOutlinedIcon sx={{ color: "#285D9A" }} />
+                </ListItemIcon>
+                Edit program
+              </MenuItem>
+              <MenuItem sx={{ color: "#2C5282" }}>
+                <ProtectedButton
+                  onClick={handleDuplicate}
+                  permissionRequired={"create"}
+                  pathName={"training"}
+                >
                   <ListItemIcon>
-                    <CreateOutlinedIcon sx={{ color: "#285D9A" }} />
+                    <ContentCopyOutlinedIcon sx={{ color: "#285D9A" }} />
                   </ListItemIcon>
-                  Edit program
-                </Link>
+                  Duplicate program
+                </ProtectedButton>
               </MenuItem>
-              <MenuItem sx={{ color: "#2C5282" }} onClick={handleDuplicate}>
-                <ListItemIcon>
-                  <ContentCopyOutlinedIcon sx={{ color: "#285D9A" }} />
-                </ListItemIcon>
-                Duplicate program
+              <MenuItem sx={{ color: "#2C5282" }}>
+                <ProtectedButton
+                  onClick={handleChangeStatus}
+                  permissionRequired={"change status"}
+                  pathName={"training"}
+                >
+                  {data?.status === 1 ? (
+                    <>
+                      <ListItemIcon>
+                        <VisibilityOffOutlinedIcon sx={{ color: "#285D9A" }} />
+                      </ListItemIcon>
+                      De-activate program
+                    </>
+                  ) : (
+                    <>
+                      <ListItemIcon>
+                        <VisibilityIcon sx={{ color: "#285D9A" }} />
+                      </ListItemIcon>
+                      Activate program
+                    </>
+                  )}
+                </ProtectedButton>
               </MenuItem>
-              <MenuItem sx={{ color: "#2C5282" }} onClick={handleChangeStatus}>
-                {data?.status ? (
-                  <>
-                    <ListItemIcon>
-                      <VisibilityOffOutlinedIcon sx={{ color: "#285D9A" }} />
-                    </ListItemIcon>
-                    De-activate program
-                  </>
-                ) : (
-                  <>
-                    <ListItemIcon>
-                      <VisibilityIcon sx={{ color: "#285D9A" }} />
-                    </ListItemIcon>
-                    Activate program
-                  </>
-                )}
-              </MenuItem>
-              <MenuItem sx={{ color: "#8B8B8B" }} onClick={handleDelete}>
-                <ListItemIcon>
-                  <DeleteForeverOutlinedIcon />
-                </ListItemIcon>
-                Delete program
+              <MenuItem sx={{ color: "#8B8B8B" }}>
+                <ProtectedButton
+                  onClick={handleDelete}
+                  permissionRequired={"delete"}
+                  pathName={"training"}
+                >
+                  <ListItemIcon>
+                    <DeleteForeverOutlinedIcon />
+                  </ListItemIcon>
+                  Delete program
+                </ProtectedButton>
               </MenuItem>
             </Menu>
           </Stack>

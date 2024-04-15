@@ -23,3 +23,15 @@ export const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const fileDB = getStorage(app);
+
+
+export const getPathStorageFromUrl = (url) => {
+  const decodedUrl = decodeURIComponent(url);
+  const pathStartIndex = decodedUrl.indexOf("/training-content-materials");
+  const queryParamIndex = decodedUrl.indexOf("?");
+  const path =
+    queryParamIndex !== -1
+      ? decodedUrl.slice(pathStartIndex, queryParamIndex)
+      : decodedUrl.slice(pathStartIndex);
+  return path;
+};

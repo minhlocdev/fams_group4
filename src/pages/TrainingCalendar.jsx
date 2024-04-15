@@ -34,22 +34,9 @@ export default function TrainingCalendar() {
   return (
     <CalendarProvider>
       <Box sx={{ width: "100%" }}>
-        <Box
-          sx={{
-            width: "calc(100% + 21px)",
-            background: "#2D3748",
-            paddingTop: 0.5,
-            paddingBottom: 0.5,
-            paddingLeft: 4,
-            marginLeft: -2.5,
-            marginTop: -0.3,
-          }}
-        >
-          <Typography sx={{ color: "white" }} variant="h6">
-            Training Calendar
-          </Typography>
-        </Box>
-
+        <Typography variant="h4" fontWeight={600} marginTop={10}>
+          Training Calendar
+        </Typography>
         {/* action right here ex:filter add import */}
         <Grid
           container

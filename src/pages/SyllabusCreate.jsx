@@ -26,6 +26,7 @@ export default function SyllabusCreate() {
         <Grid
           container
           direction="row"
+          marginTop={10}
           sx={{ alignItems: "center", marginBottom: "20px" }}
         >
           <SyllabusHeader />

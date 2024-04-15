@@ -107,24 +107,27 @@ const SyllabusCard = ({ SyllabusID, onDelete, children, onClick }) => {
             </Grid>
             {(location.pathname.includes("/training/create") ||
               location.pathname.includes("/training/edit")) && (
-              <Grid item>
-                <Button
-                  onClick={() => onDelete(data?.id)}
-                  sx={{ opacity: 1 }}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.firstChild.style.fontWeight = "bold")
+                <Grid item>
+                  {data && (
+                    <Button
+                      onClick={() => onDelete(data?.id)}
+                      sx={{ opacity: 1 }}
+                      onMouseOver={(e) =>
+                        (e.currentTarget.firstChild.style.fontWeight = "bold")
+                      }
+                      onMouseOut={(e) =>
+                        (e.currentTarget.firstChild.style.fontWeight = "normal")
+                      }
+                    >
+                      <HighlightOffIcon
+                        color="action"
+                        sx={{ fontSize: "1.5rem" }}
+                      />
+                    </Button>
+                  )
                   }
-                  onMouseOut={(e) =>
-                    (e.currentTarget.firstChild.style.fontWeight = "normal")
-                  }
-                >
-                  <HighlightOffIcon
-                    color="action"
-                    sx={{ fontSize: "1.5rem" }}
-                  />
-                </Button>
-              </Grid>
-            )}
+                </Grid>
+              )}
           </Grid>
           <Typography
             variant="body2"

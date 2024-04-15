@@ -1,6 +1,10 @@
+import { fileDB, getPathStorageFromUrl } from "../utils/FireBase";
 import { paramsToString } from "../utils/paramsToString";
 import apiClient from "./apiClient";
-
+import {
+    ref,
+    deleteObject,
+} from "firebase/storage";
 export const getSyllabusOutline = async (id) => {
     return await apiClient({
         method: 'get',
@@ -20,12 +24,14 @@ export const getAllSyllabus = async () => {
         url: `/syllabuses`,
     });
 };
-export const searchSyllabus = async (page, search) => {
+
+export const getAllSyllabusActive = async () => {
     return await apiClient({
         method: 'get',
-        url: `https://65e14c98d3db23f7624ab97a.mockapi.io/Syllabus?p=${page + 1}&search=${search}`,
+        url: `/syllabuses/all-active`,
     });
 };
+
 export const getSyllabus = async (page, limit, orderBy, order, debouncedSearchTerm, filter) => {
     const { outputStandardStrings, createdDateBegin, createdDateEnd } = filter;
     const params = {
@@ -70,7 +76,8 @@ export const putSyllabus = async ({ id,
     modifiedBy,
     outputStandards,
     schema,
-    outline }) => {
+    outline,
+    deletingFiles }) => {
     return await apiClient({
         method: 'put',
         url: `/syllabus`,
@@ -89,6 +96,11 @@ export const putSyllabus = async ({ id,
             outline
         }
         ,
+    }).then(async () => {
+        for (const file of deletingFiles) {
+            const storageRef = ref(fileDB, getPathStorageFromUrl(file.url));
+            await deleteObject(storageRef).catch(e => console.log("Error at deleting file on firebase ", e))
+        }
     });
 };
 export const ChangeSyllabusStausByID = async ({ id, status }) => {
@@ -108,8 +120,8 @@ export const deleteSyllabus = async (id) => {
 
 export const duplicateSyllabus = async (id) => {
     return await apiClient({
-      method: 'post',
-      url: `/syllabuses/duplicate-syllabus/${id}`  
+        method: 'post',
+        url: `/syllabuses/duplicate-syllabus/${id}`
     })
 };
 

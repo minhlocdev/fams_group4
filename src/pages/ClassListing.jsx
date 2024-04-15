@@ -11,18 +11,7 @@ import ClassWrapper from "../context/ClassWrapper";
 export default function ClassListing() {
   return (
     <ClassWrapper>
-      <Typography
-        variant={"h4"}
-        sx={{
-          wordSpacing: "5px",
-          letterSpacing: "5px",
-          color: "#FFFFFF",
-          padding: "10px 0",
-          bgcolor: theme.primary,
-          marginBottom: "30px",
-          paddingLeft: "30px",
-        }}
-      >
+      <Typography variant="h4" fontWeight={600} marginTop={10} marginBottom={2}>
         Training Class
       </Typography>
       <Stack
