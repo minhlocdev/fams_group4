@@ -1,4 +1,12 @@
-import { Box, Button, Chip, Grid, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Grid,
+  Link,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import SyllabusCard from "../Syllabus/Detail/SyllabusCards";
 import SearchSyllabus from "./SearchSyllabus";
@@ -31,21 +39,6 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
   });
   const handleChange = (field, value) => {
     setNewTrainingProgram({ ...newTrainingProgram, [field]: value });
-  };
-  const handleCancle = () => {
-    setNewTrainingProgram({
-      name: TraningProgramName,
-      userId: loginUser.id,
-      startTime: new Date().toISOString(),
-      duration: 0, //là durationByDay
-      topicCode: "string",
-      status: 0,
-      createdBy: loginUser.name,
-      classIds: [],
-      syllabusDTOs: [],
-    });
-    setSelectedListSyllabus([]);
-    setProgram(data);
   };
   const [program, setProgram] = useState([]);
   const [SelectedListSyllabus, setSelectedListSyllabus] = useState([]);
@@ -267,13 +260,14 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
           sx={{ justifyContent: "flex-end", marginRight: 2.5 }}
         >
           <Button
-            variant="text"
+            component={Link}
+            href="/training"
             sx={{
-              color: "#E74A3B",
+              color: "red",
               textDecoration: "underline",
-              maxHeight: 27,
+              fontWeight: "bold",
+              padding: "5px 0px 5px 15px",
             }}
-            onClick={handleCancle}
           >
             Cancel
           </Button>

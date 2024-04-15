@@ -4,6 +4,7 @@ import {
   Chip,
   Grid,
   LinearProgress,
+  Link,
   Stack,
   Typography,
 } from "@mui/material";
@@ -54,9 +55,6 @@ export default function EditTrainingProgram() {
   const [newTrainingProgram, setNewTrainingProgram] = useState({});
   const handleChange = (field, value) => {
     setNewTrainingProgram({ ...newTrainingProgram, [field]: value });
-  };
-  const handleCancle = () => {
-    setup(isSuccess, isSucOldTraining, Syllabuses, oldTraining, loginUser);
   };
   const setup = (
     isSuccess,
@@ -361,13 +359,14 @@ export default function EditTrainingProgram() {
             sx={{ justifyContent: "flex-end", marginRight: 2.5 }}
           >
             <Button
-              variant="text"
+              component={Link}
+              href="/training"
               sx={{
-                color: "#E74A3B",
+                color: "red",
                 textDecoration: "underline",
-                maxHeight: 27,
+                fontWeight: "bold",
+                padding: "5px 0px 5px 15px",
               }}
-              onClick={handleCancle}
             >
               Cancel
             </Button>

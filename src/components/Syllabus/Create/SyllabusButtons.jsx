@@ -43,7 +43,7 @@ export default function SyllabusButtons() {
         {/* <Grid item xs={3}> */}
         <Button
           component={Link}
-          to="/syllabus/detail/1"
+          href="/syllabus"
           sx={{
             color: "red",
             textDecoration: "underline",
