@@ -42,11 +42,11 @@ export default function EditTrainingProgram() {
   } = useGetTrainingProgramByIdQuery(code);
   const { data: Syllabuses, isLoading } = useGetAllSyllabusActiveQuery();
   const [program, setProgram] = useState([]);
-  console.log(program);
   const [SelectedListSyllabus, setSelectedListSyllabus] = useState([]);
   const [newTrainingProgram, setNewTrainingProgram] = useState({});
+  console.log(newTrainingProgram);
   useEffect(() => {
-    setup();
+    if (oldTraining) setup();
   }, [oldTraining]);
   const handleChange = (field, value) => {
     setNewTrainingProgram((prev) => {
@@ -54,36 +54,34 @@ export default function EditTrainingProgram() {
     });
   };
   const setup = () => {
-    if (oldTraining && Syllabuses) {
-      setSelectedListSyllabus(oldTraining?.outline);
-      const selectedIds = oldTraining?.outline.map((syl) => syl.id);
-      const filteredProgram = Syllabuses?.filter(
-        (syl) =>
-          !selectedIds.includes(syl.id) &&
-          syl.publishStatus !== 0 &&
-          syl.publishStatus !== -1
-      );
-      setProgram(filteredProgram);
-      setSyllabusDTOs(
-        oldTraining?.outline.map((line) => ({
-          syllabusId: line.id,
-          sequence: line.id,
-        }))
-      );
-      setNewTrainingProgram({
-        trainingProgramCode: oldTraining?.trainingProgramCode,
-        name: oldTraining?.name,
-        userId: loginUser.id,
-        startTime: formatDate(oldTraining?.startTime).toISOString(),
-        duration: oldTraining?.durationByDay,
-        topicCode: oldTraining?.topicCode,
-        status: oldTraining?.status,
-        trainingProgramSyllabus: oldTraining?.outline.map((syl) => ({
-          syllabusId: syl.id,
-          sequence: syl.sequence,
-        })),
-      });
-    }
+    setSelectedListSyllabus(oldTraining?.outline);
+    const selectedIds = oldTraining?.outline.map((syl) => syl.id);
+    const filteredProgram = Syllabuses?.filter(
+      (syl) =>
+        !selectedIds.includes(syl.id) &&
+        syl.publishStatus !== 0 &&
+        syl.publishStatus !== -1
+    );
+    setProgram(filteredProgram);
+    setSyllabusDTOs(
+      oldTraining?.outline.map((line) => ({
+        syllabusId: line.id,
+        sequence: line.id,
+      }))
+    );
+    setNewTrainingProgram({
+      trainingProgramCode: oldTraining?.trainingProgramCode,
+      name: oldTraining?.name,
+      userId: loginUser.id,
+      startTime: formatDate(oldTraining?.startTime).toISOString(),
+      duration: oldTraining?.durationByDay,
+      topicCode: oldTraining?.topicCode,
+      status: oldTraining?.status,
+      trainingProgramSyllabus: oldTraining?.outline.map((syl) => ({
+        syllabusId: syl.id,
+        sequence: syl.sequence,
+      })),
+    });
   };
 
   const [syllabusDTOs, setSyllabusDTOs] = useState([]);
@@ -111,7 +109,6 @@ export default function EditTrainingProgram() {
     handleAddSyllabus(syl);
   };
   const handleDeleteSyllabus = (id) => {
-    console.log("chay delete");
     const updatedSyllabusDTOs = syllabusDTOs.map((syllabus) => {
       if (syllabus.syllabusId === id) {
         const index = syllabusDTOs.findIndex((s) => s.syllabusId === id);
@@ -157,7 +154,7 @@ export default function EditTrainingProgram() {
       },
     });
   };
-  if (loadingData) {
+  if (loadingData && isLoading) {
     return (
       <Box sx={{ width: "100%", pt: 1 }}>
         <LinearProgress />
