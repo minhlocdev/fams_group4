@@ -67,7 +67,7 @@ export default function TrainingProgramList() {
           key={importFormOpen.toString()}
         />
         {/* Move to Create Training program screen */}
-        <Link to={"/tranining/create"}>
+        <Link to={"/training/create"}>
           <Button
             sx={{
               background: "#2D3748",
