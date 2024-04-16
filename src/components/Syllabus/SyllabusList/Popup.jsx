@@ -20,6 +20,7 @@ import queryClient from "../../../services/queries/queryClient";
 import { QUERY_SYLLABUS_KEY } from "../../../constants/query";
 import ProtectedButton from "../../shared/protected/ProtectedButton";
 import { VisibilityOff } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 export default function Popup({ item }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -142,11 +143,13 @@ export default function Popup({ item }) {
           variant="middle"
           component="li"
         />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <CreateOutlinedIcon fontSize="small" />
-          </ListItemIcon>
-          Edit syllabus
+        <MenuItem>
+          <Link to={`/syllabus/edit/${item.id}`}>
+            <ListItemIcon>
+              <CreateOutlinedIcon fontSize="small" />
+            </ListItemIcon>
+            Edit syllabus
+          </Link>
         </MenuItem>
         <MenuItem>
           <ProtectedButton
