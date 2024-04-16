@@ -188,23 +188,26 @@ export default function SyllabusCardUnit({ unit, syllabusId, isEdit }) {
             sx={{
               maxHeight: "400px",
               borderRadius: "10px",
-              "& .Mui-selected": {
-                backgroundColor: theme.primary,
-                color: "#fff",
-                "&:hover": {
-                  color: "#000",
-                },
-              },
             }}
           >
             {trainerData ? (
               trainerData.list.map((tr) => (
                 <MenuItem
+                  sx={{
+                    "&.Mui-selected": {
+                      backgroundColor: theme.primary,
+                      color: "#fff",
+                      "&:hover": {
+                        color: "#000",
+                      },
+                    },
+                  }}
                   key={tr.id}
                   selected={trainers.some(
                     (trainer) =>
                       trainer.trainerId === tr.id &&
-                      trainer.syllabusId === syllabusId
+                      trainer.syllabusId === syllabusId &&
+                      trainer.unitCode === unit.unitCode
                   )}
                   onClick={() => {
                     handleTrainers(unit.unitCode, tr, syllabusId);

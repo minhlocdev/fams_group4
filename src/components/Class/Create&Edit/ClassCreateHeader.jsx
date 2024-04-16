@@ -12,6 +12,7 @@ import ClassContext from "../../../context/ClassContext";
 import ContentEditable from "../../shared/lib/ContentEditable";
 import { useLocation } from "react-router-dom";
 import HeaderSkeleton from "../ClassSkeleton/HeaderSkeleton";
+import { PublishStatusEnum } from "../../../constants/PublishStatusEnum";
 
 export default function ClassCreateHeader() {
   const location = useLocation();
@@ -24,6 +25,7 @@ export default function ClassCreateHeader() {
     setClassCode,
     initialDays,
     classData,
+    status,
   } = useContext(ClassContext);
   if (!classData && !isCreate) {
     return <HeaderSkeleton />;
@@ -84,7 +86,7 @@ export default function ClassCreateHeader() {
               fontSize: "12px",
             }}
           >
-            Planning
+            {status}
           </Typography>
         </Stack>
         <Box sx={{ marginTop: { xs: "10px", md: "0" } }}>

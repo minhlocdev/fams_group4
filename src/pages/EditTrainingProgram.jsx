@@ -35,44 +35,29 @@ export default function EditTrainingProgram() {
   };
   const { loginUser } = useContext(AuthContext);
   const { code } = useParams();
-  useEffect(() => {
-    queryClient.resetQueries([QUERY_PROGRAM_KEY, code]);
-  }, [code]);
-
   const {
     data: oldTraining,
-    isSuccess: isSucOldTraining,
     isLoading: loadingData,
     isError,
   } = useGetTrainingProgramByIdQuery(code);
-  const {
-    data: Syllabuses,
-    isLoading,
-    isSuccess,
-  } = useGetAllSyllabusActiveQuery();
+  const { data: Syllabuses, isLoading } = useGetAllSyllabusActiveQuery();
   const [program, setProgram] = useState([]);
+  console.log(program);
   const [SelectedListSyllabus, setSelectedListSyllabus] = useState([]);
   const [newTrainingProgram, setNewTrainingProgram] = useState({});
+  useEffect(() => {
+    setup();
+  }, [oldTraining]);
   const handleChange = (field, value) => {
-    setNewTrainingProgram({ ...newTrainingProgram, [field]: value });
+    setNewTrainingProgram((prev) => {
+      return { ...prev, [field]: value };
+    });
   };
-  const setup = (
-    isSuccess,
-    isSucOldTraining,
-    Syllabuses,
-    oldTraining,
-    loginUser
-  ) => {
-    if (
-      isSuccess &&
-      isSucOldTraining &&
-      Syllabuses &&
-      oldTraining != null &&
-      loginUser
-    ) {
+  const setup = () => {
+    if (oldTraining && Syllabuses) {
       setSelectedListSyllabus(oldTraining?.outline);
       const selectedIds = oldTraining?.outline.map((syl) => syl.id);
-      const filteredProgram = Syllabuses.filter(
+      const filteredProgram = Syllabuses?.filter(
         (syl) =>
           !selectedIds.includes(syl.id) &&
           syl.publishStatus !== 0 &&
@@ -93,25 +78,24 @@ export default function EditTrainingProgram() {
         duration: oldTraining?.durationByDay,
         topicCode: oldTraining?.topicCode,
         status: oldTraining?.status,
-        trainingProgramSyllabus: [],
+        trainingProgramSyllabus: oldTraining?.outline.map((syl) => ({
+          syllabusId: syl.id,
+          sequence: syl.sequence,
+        })),
       });
     }
   };
-  useEffect(() => {
-    setup(isSuccess, isSucOldTraining, Syllabuses, oldTraining, loginUser);
-    // eslint-disable-next-line
-  }, [Syllabuses, isSuccess, oldTraining, isSucOldTraining, loginUser]);
 
   const [syllabusDTOs, setSyllabusDTOs] = useState([]);
-  const [newname, setNewName] = useState();
-  useEffect(() => {
-    handleChange("trainingProgramSyllabus", syllabusDTOs);
-    // eslint-disable-next-line
-  }, [syllabusDTOs]);
-  useEffect(() => {
-    handleChange("name", newname);
-    // eslint-disable-next-line
-  }, [newname]);
+
+  const handleAddSyllabus = (syl) => {
+    const syllabuses = [...newTrainingProgram.trainingProgramSyllabus];
+    syllabuses.push({
+      syllabusId: syl.id,
+      sequence: syllabuses.length + 1,
+    });
+    handleChange("trainingProgramSyllabus", syllabuses);
+  };
   const handleSearch = (syl) => {
     setSelectedListSyllabus((prevSelectedListSyllabus) => [
       ...prevSelectedListSyllabus,
@@ -124,8 +108,10 @@ export default function EditTrainingProgram() {
     const updatedList = program?.filter((item) => item.id !== syl.id);
     setProgram(updatedList);
     handleChange("duration", newTrainingProgram.duration + syl.durationByDay);
+    handleAddSyllabus(syl);
   };
   const handleDeleteSyllabus = (id) => {
+    console.log("chay delete");
     const updatedSyllabusDTOs = syllabusDTOs.map((syllabus) => {
       if (syllabus.syllabusId === id) {
         const index = syllabusDTOs.findIndex((s) => s.syllabusId === id);
@@ -143,6 +129,8 @@ export default function EditTrainingProgram() {
     setSyllabusDTOs(filteredSyllabusDTOs);
 
     const updatedList = SelectedListSyllabus?.filter((item) => item.id !== id);
+
+    handleChange("trainingProgramSyllabus", filteredSyllabusDTOs);
     setSelectedListSyllabus(updatedList);
 
     const deletedSyllabus = SelectedListSyllabus.find((item) => item.id === id);
@@ -164,8 +152,7 @@ export default function EditTrainingProgram() {
       },
       onError: (error) => {
         ToastEmitter.error(
-          "Edit training program failed || ",
-          error.response?.data
+          "Edit training program failed || " + error.response.data
         );
       },
     });
@@ -214,8 +201,8 @@ export default function EditTrainingProgram() {
             >
               <ContentEditable
                 value={newTrainingProgram?.name}
-                onChange={(updatedContent) => {
-                  setNewName(updatedContent);
+                onChange={(updateText) => {
+                  handleChange("name", updateText);
                 }}
                 tooltipTitle="Enter TrainingProgram name"
               />
@@ -271,7 +258,7 @@ export default function EditTrainingProgram() {
           day
         </Typography>
         <Typography variant="subtitle2" gutterBottom>
-          Modified on {dayjs(new Date().toISOString()).format("DD/MM/YYYY")} by{" "}
+          Modified on {dayjs().format("DD/MM/YYYY")} by{" "}
           <Typography
             component="span"
             variant="subtitle1"

@@ -11,28 +11,28 @@ export const useGetUserQuery = (page, limit, orderby, order, debouncedSearchTerm
         placeholderData: keepPreviousData
     },
     );
-export const useGetClassAdminQuery = (detail) =>
+export const useGetClassAdminQuery = (bool) =>
     useQuery({
         queryKey: [QUERY_USER_KEY, { roleName: 'Class Admin' }],
         queryFn: () => getClassAdmin().then((res) => res.data),
         staleTime: 20000,
-        enabled: !detail
+        enabled: bool
     },
     );
-export const useGetTrainerQuery = (detail) =>
+export const useGetTrainerQuery = (bool) =>
     useQuery({
         queryKey: [QUERY_USER_KEY, { roleName: 'Trainer' }],
         queryFn: () => getTrainer().then((res) => res.data),
         staleTime: 20000,
-        enabled: !detail
+        enabled: bool
     },
     );
-export const useGetAllUserQuery = (detail) =>
+export const useGetAllUserQuery = (bool) =>
     useQuery({
         queryKey: [QUERY_USER_KEY, { roleName: 'Class Admin' }],
         queryFn: () => getAllUser().then((res) => res.data),
         staleTime: 20000,
-        enabled: !detail
+        enabled: bool
     },
     );
 export const useGetUserByIdQuery = (id) =>

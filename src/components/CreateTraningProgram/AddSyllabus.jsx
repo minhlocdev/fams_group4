@@ -31,14 +31,17 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
     userId: loginUser.id,
     startTime: new Date().toISOString(),
     duration: 0, //là durationByDay
-    topicCode: "string",
+    topicCode: "",
     status: 0,
     createdBy: loginUser.name,
     classIds: [],
     syllabusDTOs: [],
   });
+  console.log(newTrainingProgram);
   const handleChange = (field, value) => {
-    setNewTrainingProgram({ ...newTrainingProgram, [field]: value });
+    setNewTrainingProgram((prev) => {
+      return { ...prev, [field]: value };
+    });
   };
   const [program, setProgram] = useState([]);
   const [SelectedListSyllabus, setSelectedListSyllabus] = useState([]);
@@ -48,11 +51,14 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
   }, [data, isSuccess]);
 
   const [syllabusDTOs, setSyllabusDTOs] = useState([]);
-
-  useEffect(() => {
-    handleChange("syllabusDTOs", syllabusDTOs); // eslint-disable-next-line
-  }, [syllabusDTOs]);
-
+  const handleAddSyllabus = (syl) => {
+    const syllabuses = [...newTrainingProgram.syllabusDTOs];
+    syllabuses.push({
+      syllabusId: syl.id,
+      sequence: syllabuses.length + 1,
+    });
+    handleChange("syllabusDTOs", syllabuses);
+  };
   const handleSearch = (syl) => {
     setSelectedListSyllabus((prevSelectedListSyllabus) => [
       ...prevSelectedListSyllabus,
@@ -62,6 +68,7 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
       ...preSyllabusDTOs,
       { syllabusId: syl.id, sequence: preSyllabusDTOs.length + 1 },
     ]);
+    handleAddSyllabus(syl);
     const updatedList = program.filter((item) => item.id !== syl.id);
     setProgram(updatedList);
     handleChange("duration", newTrainingProgram.duration + syl.durationByDay); //tính tổng ngày
@@ -82,6 +89,8 @@ export default function AddSyllabus({ TraningProgramName, onClickBack }) {
     const filteredSyllabusDTOs = updatedSyllabusDTOs.filter(
       (item) => item.syllabusId !== id
     );
+
+    handleChange("syllabusDTOs", filteredSyllabusDTOs);
     setSyllabusDTOs(filteredSyllabusDTOs);
 
     const updatedList = SelectedListSyllabus.filter((item) => item.id !== id);

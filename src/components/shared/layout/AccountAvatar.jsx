@@ -5,7 +5,6 @@ import AuthContext from "../../../utils/authUtil";
 
 function AccountAvatar() {
   const { logout, loginUser } = useContext(AuthContext);
-
   const handleLogout = () => {
     logout();
   };
@@ -30,8 +29,6 @@ function AccountAvatar() {
       <Box sx={{ justifyContent: "space-between" }}>
         {loginUser && (
           <Typography
-            component={Link}
-            to={`/user/profile/${loginUser.id}`}
             sx={{ color: "white", fontSize: 10, height: 20 }}
             variant="overline"
             display="block"

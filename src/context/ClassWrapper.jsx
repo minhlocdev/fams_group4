@@ -35,13 +35,16 @@ export default function ClassWrapper(props) {
   const navigate = useNavigate();
   const isCreate = locate.pathname.includes("create");
   const isDetail = locate.pathname.includes("detail");
+  const isEdit = locate.pathname.includes("edit");
   const { loginUser } = useContext(AuthContext);
   const { code } = useParams();
   const { data, isError } = useGetClassByIdQuery(code);
-  const { data: classAdmin } = useGetClassAdminQuery(isDetail);
-  const { data: trainerData } = useGetTrainerQuery(isDetail);
-  const { data: fsuContact } = useGetAllUserQuery(isDetail);
-  const { data: allTraining } = useGetAllTrainingProgramQuery(!isDetail);
+  const { data: classAdmin } = useGetClassAdminQuery(isCreate || isEdit);
+  const { data: trainerData } = useGetTrainerQuery(isCreate || isEdit);
+  const { data: fsuContact } = useGetAllUserQuery(isCreate || isEdit);
+  const { data: allTraining } = useGetAllTrainingProgramQuery(
+    isCreate || isEdit
+  );
   const [activeStep, setActiveStep] = React.useState(
     isDetail || isCreate ? 0 : 1
   );
@@ -67,6 +70,26 @@ export default function ClassWrapper(props) {
   const { data: trainingProgramDetail } = useGetTrainingProgramByIdQuery(
     search ? search.trainingProgramCode : null
   );
+  useEffect(() => {
+    setSearch(null);
+    setClassTitle("");
+    setClassCode("");
+    setClassTime("");
+    setStartDate(dayjs());
+    setTrainers([]);
+    setAdmin([]);
+    setFsu("");
+    setContact("");
+    setAttendee({
+      type: "",
+      planned: 0,
+      accepted: 0,
+      actual: 0,
+    });
+    setInitialDays([]);
+    setLocation("");
+    setStatus(0);
+  }, [isCreate]);
   //useEffect to set data for editing
   useEffect(() => {
     if (data) {
@@ -85,6 +108,7 @@ export default function ClassWrapper(props) {
       setClassTime(data.classTime);
       setClassCode(data.classCode);
       setStartDate(dayjs(data.startDate, "DD/MM/YYYY"));
+      setStatus(data.status);
     }
   }, [data]);
   //filter table
