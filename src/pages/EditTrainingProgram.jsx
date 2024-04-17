@@ -44,10 +44,9 @@ export default function EditTrainingProgram() {
   const [program, setProgram] = useState([]);
   const [SelectedListSyllabus, setSelectedListSyllabus] = useState([]);
   const [newTrainingProgram, setNewTrainingProgram] = useState({});
-  console.log(newTrainingProgram);
   useEffect(() => {
-    if (oldTraining) setup();
-  }, [oldTraining]);
+    if (oldTraining && Syllabuses) setup();
+  }, [oldTraining, Syllabuses]);
   const handleChange = (field, value) => {
     setNewTrainingProgram((prev) => {
       return { ...prev, [field]: value };
