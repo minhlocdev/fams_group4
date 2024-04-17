@@ -17,13 +17,17 @@ export default function UserPermission() {
 
   const { data, isLoading, isSuccess } = useGetUserPermission();
   const [permissionData, setPermissionData] = React.useState([]);
-
+  console.log(permissionData);
   useEffect(() => {
     if (isSuccess) {
       const modifiedData = data.map((permission) => ({
-        ...permission,
+        class: permission.class,
+        learningMaterial: permission.learningMaterial,
+        permissionId: permission.permissionId,
+        roleName: permission.roleName,
         userManagement: permission.user,
         trainingProgram: permission.training,
+        syllabus: permission.syllabus,
       }));
       setPermissionData(modifiedData);
     }

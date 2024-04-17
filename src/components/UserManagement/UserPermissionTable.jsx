@@ -32,9 +32,9 @@ export default function UserPermissionTable({
       <SelectForm
         id="trainingProgram"
         updating={isUpdate}
-        permissionType={item.training}
+        permissionType={item.trainingProgram}
         setPermissionData={(type) =>
-          setPermissionType(item.roleName, { field: "training", type })
+          setPermissionType(item.roleName, { field: "trainingProgram", type })
         }
       />,
       <SelectForm
@@ -59,9 +59,9 @@ export default function UserPermissionTable({
       <SelectForm
         id="userManagement"
         updating={isUpdate}
-        permissionType={item.user}
+        permissionType={item.userManagement}
         setPermissionData={(type) =>
-          setPermissionType(item.roleName, { field: "user", type })
+          setPermissionType(item.roleName, { field: "userManagement", type })
         }
       />
     )
