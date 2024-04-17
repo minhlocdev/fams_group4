@@ -42,7 +42,7 @@ const VisuallyHiddenInput = styled("input")({
 
 export default function ImportSyllabus({ isOpen, handleClose }) {
   const { loginUser } = useAuth();
-  const [duplicateHandle, setDuplicateHandle] = React.useState("Allow");
+  const [duplicateHandle, setDuplicateHandle] = React.useState("allow");
   const [scanning, setScanning] = useState([]);
   const [file, setFile] = useState({});
   const handleDuplicateHandleChange = (event) => {
@@ -234,8 +234,8 @@ export default function ImportSyllabus({ isOpen, handleClose }) {
                           },
                         }}
                         // defaultChecked
-                        checked={scanning.find((v) => v === "Code")}
-                        value={"Code"}
+                        checked={scanning.find((v) => v === "code")}
+                        value={"code"}
                         onChange={handleCheck}
                       />
                     }
@@ -249,8 +249,8 @@ export default function ImportSyllabus({ isOpen, handleClose }) {
                             color: "#2D3748",
                           },
                         }}
-                        value={"Name"}
-                        checked={scanning.find((v) => v === "Name")}
+                        value={"name"}
+                        checked={scanning.find((v) => v === "name")}
                         onChange={handleCheck}
                       />
                     }
@@ -268,7 +268,7 @@ export default function ImportSyllabus({ isOpen, handleClose }) {
                   onChange={handleDuplicateHandleChange}
                 >
                   <FormControlLabel
-                    value="Allow"
+                    value="allow"
                     control={
                       <Radio
                         sx={{
@@ -281,7 +281,7 @@ export default function ImportSyllabus({ isOpen, handleClose }) {
                     label="Allow"
                   />
                   <FormControlLabel
-                    value="Replace"
+                    value="replace"
                     control={
                       <Radio
                         sx={{
@@ -294,7 +294,7 @@ export default function ImportSyllabus({ isOpen, handleClose }) {
                     label="Replace"
                   />
                   <FormControlLabel
-                    value="Skip"
+                    value="skip"
                     control={
                       <Radio
                         sx={{
