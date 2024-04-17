@@ -44,7 +44,7 @@ export default function UserListing() {
     handleChangeRowsPerPage,
     handleSortChange,
   } = useContext(UserContext);
-  const { data, isLoading } = useGetUserQuery(
+  const { data, isLoading, error } = useGetUserQuery(
     page,
     rowsPerPage,
     orderBy,
@@ -55,6 +55,7 @@ export default function UserListing() {
   if (isLoading) {
     return <TableLoader column={6} />;
   }
+  console.log(error);
   return (
     <Box sx={{ width: "100%", overflowY: "auto" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
@@ -133,10 +134,12 @@ export default function UserListing() {
                 );
               })}
               {typeof data === "string" ||
-                (data.list.length === 0 && (
+                (error && (
                   <TableRow>
                     <TableCell colSpan={headCells.length} align="center">
-                      <Typography variant="body1">No data available</Typography>
+                      <Typography variant="body1">
+                        {error.response.data}
+                      </Typography>
                     </TableCell>
                   </TableRow>
                 ))}
